@@ -1,10 +1,28 @@
+from __future__ import annotations
+
 import math
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 
-CHARTS_PATH = Path("data/maimai_charts_13_15.csv")
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
+
+CHARTS_PATH = DATA_DIR / "maimai_charts_13_15.csv"
+COHORT_STATS_PATH = DATA_DIR / "cohort_chart_stats.csv"
+LEVEL_STATS_PATH = DATA_DIR / "level_distribution_stats.csv"
+RAW_USER_BEST50_PATH = DATA_DIR / "raw_user_best50.csv"
+
+
+LEVEL_BOUNDS = {
+    "13": (13.0, 13.5),
+    "13+": (13.6, 13.9),
+    "14": (14.0, 14.5),
+    "14+": (14.6, 14.9),
+    "15": (15.0, 99.0),
+}
 
 USER_RECORD_COLUMNS = [
     "chart_id",
@@ -20,94 +38,15 @@ USER_RECORD_COLUMNS = [
     "sync",
 ]
 
-COHORT_STATS_PATH = Path("data/cohort_chart_stats.csv")
-LEVEL_STATS_PATH = Path("data/level_distribution_stats.csv")
-
-
-LEVEL_TO_NUM = {
-    "13": 13.0,
-    "13+": 13.7,
-    "14": 14.0,
-    "14+": 14.7,
-    "15": 15.0,
-}
-
-
-LEVEL_BOUNDS = {
-    "13": (13.0, 13.5),
-    "13+": (13.6, 13.9),
-    "14": (14.0, 14.5),
-    "14+": (14.6, 14.9),
-    "15": (15.0, 99.0),
-}
-
-
 REVERSE_BORDER_MIN = 100.4000
 REVERSE_BORDER_MAX = 100.5000
 
-
-RATING_FACTORS = [
-    (100.5, 0.224),
-    (100.0, 0.216),
-    (99.5, 0.211),
-    (99.0, 0.208),
-    (98.0, 0.203),
-    (97.0, 0.200),
-    (94.0, 0.168),
-    (90.0, 0.152),
-    (80.0, 0.136),
-    (0.0, 0.000),
-]
+SIMILAR_USER_TOP_K = 30
+SIMILAR_USER_MIN_INPUT_BEST50 = 5
+SIMILAR_USER_MIN_SIMILARITY = 0.05
 
 
-# ------------------------------------------------------------
-# Basic utilities
-# ------------------------------------------------------------
-
-def get_rating_factor(achievement: float) -> float:
-    for threshold, factor in RATING_FACTORS:
-        if achievement >= threshold:
-            return factor
-
-    return 0.0
-
-
-def calculate_chart_rating(internal_level: float, achievement: float) -> int:
-    if achievement <= 0:
-        return 0
-
-    capped_achievement = min(float(achievement), 100.5)
-    factor = get_rating_factor(capped_achievement)
-
-    return math.floor(float(internal_level) * capped_achievement * factor)
-
-
-def calculate_max_chart_rating(internal_level: float) -> int:
-    return calculate_chart_rating(internal_level, 100.5)
-
-
-def normalize_is_new(value) -> bool:
-    if isinstance(value, bool):
-        return value
-
-    text = str(value).strip().lower()
-
-    return text in {"true", "1", "yes"}
-
-
-def normalize_bool(value) -> bool:
-    if isinstance(value, bool):
-        return value
-
-    if pd.isna(value):
-        return False
-
-    text = str(value).strip().lower()
-
-    return text in {"true", "1", "yes"}
-
-
-def safe_float(value, default: float = 0.0) -> float:
+def safe_float(value: Any, default: float = 0.0) -> float:
     try:
         if pd.isna(value):
             return default
@@ -117,17 +56,8 @@ def safe_float(value, default: float = 0.0) -> float:
     except Exception:
         return default
 
-def safe_str(value, default: str = "") -> str:
-    try:
-        if pd.isna(value):
-            return default
 
-        return str(value)
-
-    except Exception:
-        return default
-
-def safe_int(value, default: int = 0) -> int:
+def safe_int(value: Any, default: int = 0) -> int:
     try:
         if pd.isna(value):
             return default
@@ -138,15 +68,147 @@ def safe_int(value, default: int = 0) -> int:
         return default
 
 
-# ------------------------------------------------------------
-# Data loading
-# ------------------------------------------------------------
+def safe_str(value: Any, default: str = "") -> str:
+    try:
+        if pd.isna(value):
+            return default
+
+        return str(value)
+
+    except Exception:
+        return default
+
+
+def normalize_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+
+    if value is None:
+        return False
+
+    if isinstance(value, (int, float)):
+        if pd.isna(value):
+            return False
+
+        return value != 0
+
+    text = str(value).strip().lower()
+
+    return text in {
+        "true",
+        "1",
+        "yes",
+        "y",
+        "t",
+        "best50",
+        "b50",
+    }
+
+
+def normalize_is_new(value: Any) -> bool:
+    return normalize_bool(value)
+
+
+def make_empty_user_records() -> pd.DataFrame:
+    return pd.DataFrame(columns=USER_RECORD_COLUMNS)
+
+
+def normalize_rate_to_percent(value: Any) -> float:
+    number = safe_float(value, 0.0)
+
+    if number <= 1.5:
+        number *= 100.0
+
+    return max(0.0, min(number, 100.0))
+
+
+def normalize_rate_series(series: pd.Series) -> pd.Series:
+    numeric = pd.to_numeric(series, errors="coerce").fillna(0.0)
+
+    if len(numeric) > 0 and numeric.max() <= 1.5:
+        numeric = numeric * 100.0
+
+    return numeric.clip(lower=0.0, upper=100.0)
+
+
+def calculate_chart_rating(internal_level: Any, achievement: Any) -> int:
+    """
+    maimai 곡별 레이팅을 근사 계산한다.
+
+    실제 게임 내부 계산식과 완전히 동일하다고 보장하기보다는,
+    추천 후보 간 상승 여지를 비교하기 위한 안정적인 보조 지표로 사용한다.
+    """
+    ds = safe_float(internal_level, 0.0)
+    ach = safe_float(achievement, 0.0)
+
+    if ds <= 0 or ach <= 0:
+        return 0
+
+    ach = min(ach, 100.5)
+
+    coefficient_table = [
+        (100.5, 22.4),
+        (100.0, 21.6),
+        (99.5, 21.1),
+        (99.0, 20.8),
+        (98.0, 20.3),
+        (97.0, 20.0),
+        (94.0, 16.8),
+        (90.0, 15.2),
+        (80.0, 13.6),
+        (75.0, 12.0),
+        (70.0, 11.2),
+        (60.0, 9.6),
+        (50.0, 8.0),
+        (40.0, 6.4),
+        (30.0, 4.8),
+        (20.0, 3.2),
+        (10.0, 1.6),
+        (0.0, 0.0),
+    ]
+
+    coefficient = 0.0
+
+    for threshold, candidate_coefficient in coefficient_table:
+        if ach >= threshold:
+            coefficient = candidate_coefficient
+            break
+
+    return int(math.floor(ds * ach * coefficient / 100.0))
+
 
 def load_charts() -> pd.DataFrame:
+    if not CHARTS_PATH.exists():
+        raise FileNotFoundError(f"Chart DB not found: {CHARTS_PATH}")
+
     charts = pd.read_csv(CHARTS_PATH)
+
+    required_columns = [
+        "chart_id",
+        "title",
+        "level",
+        "internal_level",
+        "difficulty",
+        "chart_type",
+    ]
+
+    missing_columns = [
+        column for column in required_columns
+        if column not in charts.columns
+    ]
+
+    if missing_columns:
+        raise ValueError(
+            f"maimai_charts_13_15.csv missing columns: {missing_columns}"
+        )
+
+    if "is_new" not in charts.columns:
+        charts["is_new"] = False
+
     charts["is_new"] = charts["is_new"].apply(normalize_is_new)
 
     optional_columns = {
+        "song_id": "",
         "artist": "",
         "category": "",
         "version": "",
@@ -155,158 +217,79 @@ def load_charts() -> pd.DataFrame:
         "image_name": "",
         "thumbnail_url": "",
         "display_level": "",
+        "bpm": 0.0,
+        "is_special": False,
+        "note_designer": "",
+        "tap_count": 0,
+        "hold_count": 0,
+        "slide_count": 0,
+        "touch_count": 0,
+        "break_count": 0,
+        "total_note_count": 0,
     }
 
     for col, default_value in optional_columns.items():
         if col not in charts.columns:
             charts[col] = default_value
 
-        charts[col] = charts[col].fillna(default_value).astype(str)
+    text_columns = [
+        "chart_id",
+        "song_id",
+        "title",
+        "artist",
+        "category",
+        "version",
+        "sheet_version",
+        "release_date",
+        "image_name",
+        "thumbnail_url",
+        "level",
+        "display_level",
+        "difficulty",
+        "chart_type",
+        "note_designer",
+    ]
+
+    for col in text_columns:
+        charts[col] = charts[col].fillna("").astype(str)
+
+    numeric_columns = [
+        "internal_level",
+        "bpm",
+        "tap_count",
+        "hold_count",
+        "slide_count",
+        "touch_count",
+        "break_count",
+        "total_note_count",
+    ]
+
+    for col in numeric_columns:
+        charts[col] = pd.to_numeric(charts[col], errors="coerce").fillna(0.0)
+
+    charts["is_special"] = charts["is_special"].apply(normalize_bool)
 
     return charts
-
-def make_empty_user_records() -> pd.DataFrame:
-    """
-    유저 기록이 없는 경우 사용하는 빈 기록 DataFrame.
-    """
-    return pd.DataFrame(columns=USER_RECORD_COLUMNS)
-
-def prepare_user_records(user_records_df: pd.DataFrame | None = None) -> pd.DataFrame:
-    """
-    추천 로직에서 사용할 유저 기록 DataFrame을 표준화한다.
-
-    user_records_df가 None이면 더미 CSV를 읽지 않고 빈 기록을 사용한다.
-    이 경우 추천은 cohort 통계 기반 후보 중심으로 생성된다.
-    """
-    if user_records_df is None:
-        records = make_empty_user_records()
-    else:
-        records = user_records_df.copy()
-
-    if "chart_id" not in records.columns:
-        raise ValueError("user records must contain chart_id column")
-
-    if "achievement" not in records.columns:
-        records["achievement"] = 0.0
-
-    if "rank" not in records.columns:
-        records["rank"] = "NO_PLAY"
-
-    if "play_count" not in records.columns:
-        records["play_count"] = 1
-
-    if "chart_rating" not in records.columns:
-        records["chart_rating"] = pd.NA
-
-    if "is_best50" not in records.columns:
-        records["is_best50"] = False
-
-    if "best50_section" not in records.columns:
-        records["best50_section"] = "unknown"
-
-    if "best50_order" not in records.columns:
-        records["best50_order"] = pd.NA
-
-    if "record_source" not in records.columns:
-        records["record_source"] = "unknown"
-
-    if "combo" not in records.columns:
-        records["combo"] = ""
-
-    if "sync" not in records.columns:
-        records["sync"] = ""
-
-    records["achievement"] = records["achievement"].fillna(0.0)
-    records["rank"] = records["rank"].fillna("NO_PLAY")
-    records["play_count"] = records["play_count"].fillna(0)
-    records["is_best50"] = records["is_best50"].apply(normalize_bool)
-    records["best50_section"] = records["best50_section"].fillna("unknown").astype(str)
-    records["record_source"] = records["record_source"].fillna("unknown").astype(str)
-    records["combo"] = records["combo"].fillna("").astype(str)
-    records["sync"] = records["sync"].fillna("").astype(str)
-
-    return records
-
-
-def load_base_data(user_records_df: pd.DataFrame | None = None) -> pd.DataFrame:
-    charts = load_charts()
-    records = prepare_user_records(user_records_df)
-
-    df = charts.merge(records, on="chart_id", how="left")
-
-    df["achievement"] = df["achievement"].fillna(0.0)
-    df["rank"] = df["rank"].fillna("NO_PLAY")
-    df["play_count"] = df["play_count"].fillna(0)
-
-    if "chart_rating" not in df.columns:
-        df["chart_rating"] = pd.NA
-
-    if "is_best50" not in df.columns:
-        df["is_best50"] = False
-
-    if "best50_section" not in df.columns:
-        df["best50_section"] = "unknown"
-
-    if "best50_order" not in df.columns:
-        df["best50_order"] = pd.NA
-
-    if "record_source" not in df.columns:
-        df["record_source"] = "unknown"
-
-    if "combo" not in df.columns:
-        df["combo"] = ""
-
-    if "sync" not in df.columns:
-        df["sync"] = ""
-
-    df["is_best50"] = df["is_best50"].apply(normalize_bool)
-    df["best50_section"] = df["best50_section"].fillna("unknown").astype(str)
-    df["record_source"] = df["record_source"].fillna("unknown").astype(str)
-    df["combo"] = df["combo"].fillna("").astype(str)
-    df["sync"] = df["sync"].fillna("").astype(str)
-
-    def current_rating_from_row(row) -> int:
-        if row["achievement"] <= 0:
-            return 0
-
-        site_rating = row.get("chart_rating", pd.NA)
-
-        if not pd.isna(site_rating):
-            return int(site_rating)
-
-        return calculate_chart_rating(
-            row["internal_level"],
-            row["achievement"],
-        )
-
-    df["current_rating"] = df.apply(current_rating_from_row, axis=1)
-    df["max_rating"] = df["internal_level"].apply(calculate_max_chart_rating)
-    df["rating_gain"] = df["max_rating"] - df["current_rating"]
-    df["rating_gain"] = df["rating_gain"].clip(lower=0)
-
-    df["played"] = df["achievement"] > 0
-    df["rating_capped"] = df["achievement"] >= 100.5
-
-    df["reverse_border"] = (
-        (df["played"])
-        & (df["achievement"] >= REVERSE_BORDER_MIN)
-        & (df["achievement"] < REVERSE_BORDER_MAX)
-    )
-
-    df["reverse_border_gap"] = (REVERSE_BORDER_MAX - df["achievement"]).clip(lower=0)
-    df.loc[~df["reverse_border"], "reverse_border_gap"] = 0.0
-
-    df["candidate_type"] = df.apply(classify_candidate_type, axis=1)
-    df["candidate_label"] = df["candidate_type"].apply(candidate_type_to_label)
-
-    return df
 
 
 def load_cohort_stats() -> pd.DataFrame:
     if not COHORT_STATS_PATH.exists():
         return pd.DataFrame()
 
-    return pd.read_csv(COHORT_STATS_PATH)
+    df = pd.read_csv(COHORT_STATS_PATH)
+
+    if "chart_id" not in df.columns or "rating_band" not in df.columns:
+        return pd.DataFrame()
+
+    df["chart_id"] = df["chart_id"].fillna("").astype(str)
+    df["rating_band"] = df["rating_band"].fillna("").astype(str)
+
+    df = df[
+        (df["chart_id"].str.len() > 0)
+        & (df["rating_band"].str.len() > 0)
+    ].copy()
+
+    return df
 
 
 def load_level_stats() -> pd.DataFrame:
@@ -316,169 +299,448 @@ def load_level_stats() -> pd.DataFrame:
     return pd.read_csv(LEVEL_STATS_PATH)
 
 
-# ------------------------------------------------------------
-# Candidate type
-# ------------------------------------------------------------
+def load_raw_user_best50() -> pd.DataFrame:
+    """
+    협업 필터링용 raw_user_best50.csv 로더.
 
-def classify_candidate_type(row) -> str:
-    played = bool(row.get("played", False))
-    is_best50 = bool(row.get("is_best50", False))
+    각 유저의 Best50 chart_id를 이용해 user-item matrix를 구성한다.
+    """
+    if not RAW_USER_BEST50_PATH.exists():
+        return pd.DataFrame()
 
-    if played and is_best50:
-        return "best50_existing"
+    df = pd.read_csv(RAW_USER_BEST50_PATH)
 
-    if played and not is_best50:
+    if "chart_id" not in df.columns:
+        return pd.DataFrame()
+
+    if "profile_id" not in df.columns:
+        if "user_id" in df.columns:
+            df["profile_id"] = df["user_id"]
+        elif "profile_url" in df.columns:
+            df["profile_id"] = df["profile_url"]
+        else:
+            return pd.DataFrame()
+
+    df["profile_id"] = df["profile_id"].fillna("").astype(str)
+    df["chart_id"] = df["chart_id"].fillna("").astype(str)
+
+    df = df[
+        (df["profile_id"].str.len() > 0)
+        & (df["chart_id"].str.len() > 0)
+    ].copy()
+
+    if "is_best50" in df.columns:
+        df = df[df["is_best50"].apply(normalize_bool)].copy()
+
+    df = df.drop_duplicates(
+        subset=["profile_id", "chart_id"],
+        keep="first",
+    ).reset_index(drop=True)
+
+    return df
+
+
+def prepare_user_records(user_records_df: pd.DataFrame | None = None) -> pd.DataFrame:
+    if user_records_df is None:
+        user_records_df = make_empty_user_records()
+
+    records = user_records_df.copy()
+
+    for col in USER_RECORD_COLUMNS:
+        if col not in records.columns:
+            if col in {"achievement", "play_count", "chart_rating", "best50_order"}:
+                records[col] = 0
+            elif col == "is_best50":
+                records[col] = False
+            else:
+                records[col] = ""
+
+    records["chart_id"] = records["chart_id"].fillna("").astype(str)
+
+    numeric_columns = [
+        "achievement",
+        "play_count",
+        "chart_rating",
+        "best50_order",
+    ]
+
+    for col in numeric_columns:
+        records[col] = pd.to_numeric(records[col], errors="coerce").fillna(0.0)
+
+    records["is_best50"] = records["is_best50"].apply(normalize_bool)
+
+    records = records[
+        records["chart_id"].str.len() > 0
+    ].copy()
+
+    records = records.sort_values(
+        ["is_best50", "chart_rating", "achievement"],
+        ascending=[False, False, False],
+    )
+
+    records = records.drop_duplicates(
+        subset=["chart_id"],
+        keep="first",
+    ).reset_index(drop=True)
+
+    return records[USER_RECORD_COLUMNS]
+
+
+def load_base_data(user_records_df: pd.DataFrame | None = None) -> pd.DataFrame:
+    charts = load_charts()
+    user_records = prepare_user_records(user_records_df)
+
+    df = charts.merge(
+        user_records,
+        on="chart_id",
+        how="left",
+    )
+
+    df["achievement"] = pd.to_numeric(
+        df["achievement"],
+        errors="coerce",
+    ).fillna(0.0)
+
+    df["play_count"] = pd.to_numeric(
+        df["play_count"],
+        errors="coerce",
+    ).fillna(0.0)
+
+    df["chart_rating"] = pd.to_numeric(
+        df["chart_rating"],
+        errors="coerce",
+    ).fillna(0.0)
+
+    df["best50_order"] = pd.to_numeric(
+        df["best50_order"],
+        errors="coerce",
+    ).fillna(0.0)
+
+    df["is_best50"] = df["is_best50"].apply(normalize_bool)
+
+    df["rank"] = df["rank"].fillna("").astype(str)
+    df["best50_section"] = df["best50_section"].fillna("").astype(str)
+    df["record_source"] = df["record_source"].fillna("").astype(str)
+    df["combo"] = df["combo"].fillna("").astype(str)
+    df["sync"] = df["sync"].fillna("").astype(str)
+
+    df["played"] = df["achievement"] > 0
+    df["rating_capped"] = df["achievement"] >= REVERSE_BORDER_MAX
+
+    df["current_rating"] = df["chart_rating"]
+
+    missing_current_rating = (
+        (df["current_rating"] <= 0)
+        & (df["played"])
+    )
+
+    df.loc[missing_current_rating, "current_rating"] = df.loc[
+        missing_current_rating
+    ].apply(
+        lambda row: calculate_chart_rating(
+            row["internal_level"],
+            row["achievement"],
+        ),
+        axis=1,
+    )
+
+    df["max_rating"] = df.apply(
+        lambda row: calculate_chart_rating(
+            row["internal_level"],
+            REVERSE_BORDER_MAX,
+        ),
+        axis=1,
+    )
+
+    df["rating_gain"] = (
+        df["max_rating"] - df["current_rating"]
+    ).clip(lower=0.0)
+
+    df["reverse_border"] = (
+        (df["played"])
+        & (df["achievement"] >= REVERSE_BORDER_MIN)
+        & (df["achievement"] < REVERSE_BORDER_MAX)
+    )
+
+    df["reverse_border_gap"] = (
+        REVERSE_BORDER_MAX - df["achievement"]
+    ).clip(lower=0.0)
+
+    df.loc[~df["reverse_border"], "reverse_border_gap"] = 0.0
+
+    df["candidate_label"] = df.apply(classify_candidate, axis=1)
+
+    return df
+
+
+def classify_candidate(row: pd.Series) -> str:
+    if bool(row.get("is_best50", False)):
+        return "best50"
+
+    if bool(row.get("played", False)):
         return "played_not_best50"
 
-    return "not_in_parsed_records"
+    return "unplayed_or_unmatched"
 
 
-def candidate_type_to_label(candidate_type: str) -> str:
-    labels = {
-        "best50_existing": "Best 50 기존 기록",
-        "played_not_best50": "Best 50 밖 플레이 기록",
-        "not_in_parsed_records": "현재 파싱 기록 미포함 후보",
-    }
+def estimate_rating_from_records(df: pd.DataFrame) -> int | None:
+    if df.empty or "current_rating" not in df.columns:
+        return None
 
-    return labels.get(candidate_type, "후보 유형 미분류")
-
-
-# ------------------------------------------------------------
-# Rating band utilities
-# ------------------------------------------------------------
-
-def estimate_user_total_rating(df: pd.DataFrame) -> int:
     best50 = df[
-        (df["played"])
-        & (df["is_best50"])
+        (df["is_best50"])
         & (df["current_rating"] > 0)
     ].copy()
 
-    if not best50.empty:
-        return int(best50["current_rating"].sum())
+    if best50.empty:
+        best50 = df[df["current_rating"] > 0].copy()
 
-    played = df[df["played"]].copy()
+    if best50.empty:
+        return None
 
-    if played.empty:
-        return 0
+    estimated = best50["current_rating"].sort_values(
+        ascending=False
+    ).head(50).sum()
 
-    new_sum = (
-        played[played["is_new"]]
-        .sort_values("current_rating", ascending=False)
-        .head(15)["current_rating"]
-        .sum()
-    )
+    if estimated <= 0:
+        return None
 
-    old_sum = (
-        played[~played["is_new"]]
-        .sort_values("current_rating", ascending=False)
-        .head(35)["current_rating"]
-        .sum()
-    )
-
-    return int(new_sum + old_sum)
+    return int(round(float(estimated)))
 
 
-def parse_band_low(band: str) -> int:
+def parse_rating_band_low(band: str) -> int | None:
     try:
         return int(str(band).split("-")[0])
     except Exception:
-        return 0
+        return None
 
 
-def band_from_rating(rating: int, available_bands: list[str]) -> str:
-    if not available_bands:
-        return "15000-15499"
+def rating_to_band(rating: int | None) -> str:
+    if rating is None:
+        return "unknown"
 
-    band_lows = sorted([parse_band_low(b) for b in available_bands])
+    low = int(rating // 500) * 500
+    high = low + 499
 
-    if rating <= 0:
-        selected_low = band_lows[0]
-        return f"{selected_low}-{selected_low + 499}"
-
-    current_low = (rating // 500) * 500
-    valid_lows = [low for low in band_lows if low <= current_low]
-
-    if valid_lows:
-        selected_low = max(valid_lows)
-    else:
-        selected_low = min(band_lows)
-
-    return f"{selected_low}-{selected_low + 499}"
+    return f"{low}-{high}"
 
 
-def next_band(current_band: str, available_bands: list[str]) -> str:
-    current_low = parse_band_low(current_band)
-    target_low = current_low + 500
-    target_band = f"{target_low}-{target_low + 499}"
+def get_available_bands(cohort_stats: pd.DataFrame) -> list[str]:
+    if cohort_stats.empty or "rating_band" not in cohort_stats.columns:
+        return []
 
-    if target_band in set(available_bands):
-        return target_band
+    bands = []
+
+    for band in cohort_stats["rating_band"].dropna().astype(str).unique():
+        low = parse_rating_band_low(band)
+
+        if low is not None:
+            bands.append((low, band))
+
+    bands = sorted(bands, key=lambda item: item[0])
+
+    return [band for _, band in bands]
+
+
+def get_target_band(current_band: str, available_bands: list[str]) -> str:
+    current_low = parse_rating_band_low(current_band)
+
+    if current_low is None:
+        return current_band
+
+    parsed = []
+
+    for band in available_bands:
+        low = parse_rating_band_low(band)
+
+        if low is not None:
+            parsed.append((low, band))
+
+    parsed = sorted(parsed, key=lambda item: item[0])
+
+    for low, band in parsed:
+        if low > current_low:
+            return band
 
     return current_band
 
 
-def estimate_best50_cutoffs(df: pd.DataFrame) -> dict:
-    cutoffs = {
-        True: 0,
-        False: 0,
-    }
+def pick_first_existing_column(df: pd.DataFrame, candidates: list[str]) -> str | None:
+    for col in candidates:
+        if col in df.columns:
+            return col
 
-    best50 = df[
-        (df["played"])
-        & (df["is_best50"])
-        & (df["current_rating"] > 0)
+    return None
+
+
+def extract_band_features(
+    cohort_stats: pd.DataFrame,
+    rating_band: str,
+    prefix: str,
+) -> pd.DataFrame:
+    empty_columns = [
+        "chart_id",
+        f"{prefix}_best50_rate",
+        f"{prefix}_avg_achievement",
+        f"{prefix}_sss_rate",
+        f"{prefix}_sss_plus_rate",
+        f"{prefix}_record_count",
+        f"{prefix}_best50_count",
+        f"{prefix}_user_count",
+    ]
+
+    if cohort_stats.empty:
+        return pd.DataFrame(columns=empty_columns)
+
+    band_df = cohort_stats[
+        cohort_stats["rating_band"].astype(str) == str(rating_band)
     ].copy()
 
-    if not best50.empty:
-        best50["section_norm"] = best50["best50_section"].astype(str).str.lower()
+    if band_df.empty:
+        return pd.DataFrame(columns=empty_columns)
 
-        new_group = best50[best50["section_norm"] == "new"]
-        old_group = best50[best50["section_norm"] == "old"]
+    feature_specs = {
+        "best50_rate": [
+            "best50_rate",
+            "best50_ratio",
+            "best50_share",
+            "best50_appearance_rate",
+            "best50_user_rate",
+        ],
+        "avg_achievement": [
+            "avg_achievement",
+            "mean_achievement",
+            "achievement_mean",
+            "achievement_avg",
+        ],
+        "sss_rate": [
+            "sss_rate",
+            "sss_ratio",
+        ],
+        "sss_plus_rate": [
+            "sss_plus_rate",
+            "sssp_rate",
+            "sss_plus_ratio",
+            "sssp_ratio",
+        ],
+        "record_count": [
+            "record_count",
+            "play_count",
+            "count",
+            "n_records",
+        ],
+        "best50_count": [
+            "best50_count",
+            "best50_user_count",
+            "best50_records",
+        ],
+        "user_count": [
+            "user_count",
+            "profile_count",
+            "unique_user_count",
+            "n_users",
+        ],
+    }
 
-        if not new_group.empty:
-            cutoffs[True] = int(new_group["current_rating"].min())
+    out = pd.DataFrame()
+    out["chart_id"] = band_df["chart_id"].astype(str)
 
-        if not old_group.empty:
-            cutoffs[False] = int(old_group["current_rating"].min())
+    for dst_name, candidates in feature_specs.items():
+        source_col = pick_first_existing_column(band_df, candidates)
+        out_col = f"{prefix}_{dst_name}"
 
-        if cutoffs[True] > 0 or cutoffs[False] > 0:
-            return cutoffs
-
-    played = df[df["played"]].copy()
-
-    for is_new in [True, False]:
-        group = played[played["is_new"] == is_new]
-        limit = 15 if is_new else 35
-
-        if group.empty:
-            cutoffs[is_new] = 0
+        if source_col is None:
+            out[out_col] = 0.0
             continue
 
-        sorted_ratings = group["current_rating"].sort_values(ascending=False)
-
-        if len(sorted_ratings) >= limit:
-            cutoffs[is_new] = int(sorted_ratings.iloc[limit - 1])
+        if dst_name in {
+            "best50_rate",
+            "sss_rate",
+            "sss_plus_rate",
+        }:
+            out[out_col] = normalize_rate_series(band_df[source_col])
         else:
-            cutoffs[is_new] = int(sorted_ratings.min())
+            out[out_col] = pd.to_numeric(
+                band_df[source_col],
+                errors="coerce",
+            ).fillna(0.0)
 
-    return cutoffs
+    out = out.drop_duplicates(
+        subset=["chart_id"],
+        keep="first",
+    ).reset_index(drop=True)
+
+    return out
 
 
-# ------------------------------------------------------------
-# Candidate filtering
-# ------------------------------------------------------------
+def merge_cohort_features(
+    df: pd.DataFrame,
+    cohort_stats: pd.DataFrame,
+    current_band: str,
+    target_band: str,
+) -> pd.DataFrame:
+    df = df.copy()
+
+    current_features = extract_band_features(
+        cohort_stats=cohort_stats,
+        rating_band=current_band,
+        prefix="current",
+    )
+
+    target_features = extract_band_features(
+        cohort_stats=cohort_stats,
+        rating_band=target_band,
+        prefix="target",
+    )
+
+    if not current_features.empty:
+        df = df.merge(
+            current_features,
+            on="chart_id",
+            how="left",
+        )
+
+    if not target_features.empty:
+        df = df.merge(
+            target_features,
+            on="chart_id",
+            how="left",
+        )
+
+    default_columns = [
+        "current_best50_rate",
+        "current_avg_achievement",
+        "current_sss_rate",
+        "current_sss_plus_rate",
+        "current_record_count",
+        "current_best50_count",
+        "current_user_count",
+        "target_best50_rate",
+        "target_avg_achievement",
+        "target_sss_rate",
+        "target_sss_plus_rate",
+        "target_record_count",
+        "target_best50_count",
+        "target_user_count",
+    ]
+
+    for col in default_columns:
+        if col not in df.columns:
+            df[col] = 0.0
+
+        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0.0)
+
+    return df
+
 
 def filter_by_main_level(df: pd.DataFrame, main_level: str, goal: str) -> pd.DataFrame:
     """
     사용자가 선택한 주력 레벨 범위로 후보를 필터링한다.
 
-    이전 버전에서는 skill_up 모드에서 상위 0.3 내부상수를 자동으로 추가 허용했지만,
-    UI에서 '13+'를 선택했는데 14레벨 곡이 노출되는 혼란이 있었다.
-    따라서 현재 버전에서는 모든 추천 목표에서 선택 레벨 범위를 엄격하게 적용한다.
+    모든 추천 목표에서 선택 레벨 범위를 엄격하게 적용한다.
     """
     if main_level not in LEVEL_BOUNDS:
-        return df
+        return df.copy()
 
     low, high = LEVEL_BOUNDS[main_level]
 
@@ -490,549 +752,707 @@ def filter_by_main_level(df: pd.DataFrame, main_level: str, goal: str) -> pd.Dat
     return filtered
 
 
-# ------------------------------------------------------------
-# Cohort feature merge
-# ------------------------------------------------------------
+def filter_by_chart_type(df: pd.DataFrame, chart_type: str) -> pd.DataFrame:
+    if chart_type == "any":
+        return df.copy()
 
-def add_empty_cohort_columns(df: pd.DataFrame) -> pd.DataFrame:
-    columns = [
-        "curr_player_count",
-        "curr_avg_achievement",
-        "curr_median_achievement",
-        "curr_sss_rate",
-        "curr_sssplus_rate",
-        "curr_avg_chart_rating",
-        "curr_best50_rate",
-        "target_player_count",
-        "target_avg_achievement",
-        "target_median_achievement",
-        "target_sss_rate",
-        "target_sssplus_rate",
-        "target_avg_chart_rating",
-        "target_best50_rate",
-        "curr_level_avg_achievement",
-        "curr_level_sss_rate",
-        "curr_level_sssplus_rate",
-        "curr_level_coverage_rate",
-        "target_level_avg_achievement",
-        "target_level_sss_rate",
-        "target_level_sssplus_rate",
-        "target_level_coverage_rate",
-    ]
-
-    for col in columns:
-        df[col] = 0.0
-
-    return df
+    return df[
+        df["chart_type"].astype(str).str.lower() == chart_type.lower()
+    ].copy()
 
 
-def fill_cohort_na(df: pd.DataFrame) -> pd.DataFrame:
-    fill_cols = [
-        "curr_player_count",
-        "curr_avg_achievement",
-        "curr_median_achievement",
-        "curr_sss_rate",
-        "curr_sssplus_rate",
-        "curr_avg_chart_rating",
-        "curr_best50_rate",
-        "target_player_count",
-        "target_avg_achievement",
-        "target_median_achievement",
-        "target_sss_rate",
-        "target_sssplus_rate",
-        "target_avg_chart_rating",
-        "target_best50_rate",
-        "curr_level_avg_achievement",
-        "curr_level_sss_rate",
-        "curr_level_sssplus_rate",
-        "curr_level_coverage_rate",
-        "target_level_avg_achievement",
-        "target_level_sss_rate",
-        "target_level_sssplus_rate",
-        "target_level_coverage_rate",
-    ]
+def level_fit_score(row: pd.Series, main_level: str) -> float:
+    if main_level not in LEVEL_BOUNDS:
+        return 70.0
 
-    for col in fill_cols:
-        if col not in df.columns:
-            df[col] = 0.0
+    low, high = LEVEL_BOUNDS[main_level]
+    internal_level = safe_float(row.get("internal_level", 0.0))
 
-        df[col] = df[col].fillna(0.0)
-
-    return df
-
-
-def add_cohort_features(
-    df: pd.DataFrame,
-    cohort_stats: pd.DataFrame,
-    level_stats: pd.DataFrame,
-    current_band: str,
-    target_band: str,
-) -> pd.DataFrame:
-    df = df.copy()
-
-    if cohort_stats.empty:
-        return add_empty_cohort_columns(df)
-
-    current_stats = cohort_stats[cohort_stats["rating_band"] == current_band].copy()
-    target_stats = cohort_stats[cohort_stats["rating_band"] == target_band].copy()
-
-    current_cols = {
-        "player_count": "curr_player_count",
-        "avg_achievement": "curr_avg_achievement",
-        "median_achievement": "curr_median_achievement",
-        "sss_rate": "curr_sss_rate",
-        "sssplus_rate": "curr_sssplus_rate",
-        "avg_chart_rating": "curr_avg_chart_rating",
-        "best50_rate": "curr_best50_rate",
-    }
-
-    target_cols = {
-        "player_count": "target_player_count",
-        "avg_achievement": "target_avg_achievement",
-        "median_achievement": "target_median_achievement",
-        "sss_rate": "target_sss_rate",
-        "sssplus_rate": "target_sssplus_rate",
-        "avg_chart_rating": "target_avg_chart_rating",
-        "best50_rate": "target_best50_rate",
-    }
-
-    current_stats = current_stats[["chart_id"] + list(current_cols.keys())].rename(
-        columns=current_cols
-    )
-    target_stats = target_stats[["chart_id"] + list(target_cols.keys())].rename(
-        columns=target_cols
-    )
-
-    df = df.merge(current_stats, on="chart_id", how="left")
-    df = df.merge(target_stats, on="chart_id", how="left")
-
-    if not level_stats.empty:
-        df["internal_level_rounded"] = df["internal_level"].round(1)
-
-        current_level = level_stats[level_stats["rating_band"] == current_band].copy()
-        target_level = level_stats[level_stats["rating_band"] == target_band].copy()
-
-        current_level_cols = {
-            "avg_achievement": "curr_level_avg_achievement",
-            "sss_rate": "curr_level_sss_rate",
-            "sssplus_rate": "curr_level_sssplus_rate",
-            "coverage_rate": "curr_level_coverage_rate",
-        }
-
-        target_level_cols = {
-            "avg_achievement": "target_level_avg_achievement",
-            "sss_rate": "target_level_sss_rate",
-            "sssplus_rate": "target_level_sssplus_rate",
-            "coverage_rate": "target_level_coverage_rate",
-        }
-
-        current_level = current_level[
-            ["internal_level"] + list(current_level_cols.keys())
-        ].rename(columns=current_level_cols)
-
-        target_level = target_level[
-            ["internal_level"] + list(target_level_cols.keys())
-        ].rename(columns=target_level_cols)
-
-        current_level = current_level.rename(
-            columns={"internal_level": "internal_level_rounded"}
-        )
-        target_level = target_level.rename(
-            columns={"internal_level": "internal_level_rounded"}
-        )
-
-        df = df.merge(current_level, on="internal_level_rounded", how="left")
-        df = df.merge(target_level, on="internal_level_rounded", how="left")
-
-    return fill_cohort_na(df)
-
-
-# ------------------------------------------------------------
-# Preference / fit scores
-# ------------------------------------------------------------
-
-def preference_score(row, chart_type: str, bpm_preference: str) -> float:
-    score = 0.0
-
-    if chart_type == "any" or row["chart_type"] == chart_type:
-        score += 50.0
-
-    bpm = safe_float(row["bpm"])
-
-    if bpm_preference == "any":
-        score += 50.0
-    elif bpm_preference == "slow" and bpm < 160:
-        score += 50.0
-    elif bpm_preference == "normal" and 160 <= bpm <= 200:
-        score += 50.0
-    elif bpm_preference == "fast" and bpm > 200:
-        score += 50.0
-
-    return score
-
-
-def level_fit_score(row, main_level: str) -> float:
-    user_level = LEVEL_TO_NUM[main_level]
-    diff = abs(safe_float(row["internal_level"]) - user_level)
-
-    return max(0.0, 100.0 - diff * 60.0)
-
-
-def challenge_fit_score(row, main_level: str) -> float:
-    user_level = LEVEL_TO_NUM[main_level]
-    chart_level = safe_float(row["internal_level"])
-    diff = chart_level - user_level
-
-    return max(0.0, 100.0 - abs(diff - 0.5) * 80.0)
-
-
-def confidence_score(player_count: float) -> float:
-    count = safe_float(player_count)
-
-    return min(100.0, count / 5.0 * 100.0)
-
-
-# ------------------------------------------------------------
-# Scoring functions
-# ------------------------------------------------------------
-
-def rating_up_score(row, req, cutoffs: dict) -> float:
-    played = bool(row["played"])
-    capped = bool(row["rating_capped"])
-    is_new = bool(row["is_new"])
-
-    if played and capped:
+    if not (low <= internal_level <= high):
         return 0.0
 
-    curr_best50 = safe_float(row["curr_best50_rate"]) * 100.0
-    curr_sssplus = safe_float(row["curr_sssplus_rate"]) * 100.0
-    target_best50 = safe_float(row["target_best50_rate"]) * 100.0
-    target_sssplus = safe_float(row["target_sssplus_rate"]) * 100.0
+    if main_level == "15":
+        return 100.0
 
-    curr_conf = confidence_score(row["curr_player_count"])
-    target_conf = confidence_score(row["target_player_count"])
-    confidence = max(curr_conf, target_conf)
+    center = (low + high) / 2.0
+    half_span = max((high - low) / 2.0, 0.1)
+    distance = abs(internal_level - center)
 
-    if played:
-        achievement = safe_float(row["achievement"])
-        gain_score = min(100.0, safe_float(row["rating_gain"]) * 8.0)
-
-        cohort_gap = max(0.0, safe_float(row["curr_avg_achievement"]) - achievement)
-        gap_score = min(100.0, cohort_gap * 25.0)
-
-        reverse_border_bonus = 100.0 if bool(row.get("reverse_border", False)) else 0.0
-
-        score = (
-            0.30 * gain_score
-            + 0.20 * curr_sssplus
-            + 0.15 * target_best50
-            + 0.10 * target_sssplus
-            + 0.10 * gap_score
-            + 0.10 * reverse_border_bonus
-            + 0.05 * confidence
-        )
-
-    else:
-        cutoff = cutoffs.get(is_new, 0)
-        max_rating = safe_float(row["max_rating"])
-        possible_gain = max(0.0, max_rating - cutoff)
-        gain_score = min(100.0, possible_gain * 5.0)
-
-        discover_score = (
-            0.35 * curr_best50
-            + 0.30 * curr_sssplus
-            + 0.25 * target_best50
-            + 0.10 * target_sssplus
-        )
-
-        if curr_best50 == 0 and target_best50 == 0:
-            return 0.0
-
-        score = (
-            0.35 * discover_score
-            + 0.25 * gain_score
-            + 0.15 * level_fit_score(row, req.main_level)
-            + 0.15 * target_best50
-            + 0.10 * confidence
-        )
-
-    score += 0.05 * preference_score(row, req.chart_type, req.bpm_preference)
+    score = 100.0 - min(30.0, (distance / half_span) * 30.0)
 
     return round(max(0.0, min(score, 100.0)), 2)
 
 
-def reverse_border_score(row, req) -> float:
+def get_default_weakness_reference(main_level: str) -> float:
+    """
+    cohort 평균이 없을 때 사용할 레벨별 보완 기준 달성률.
+
+    약점 보완 모드는 '내가 이미 친 곡 중에서 상대적으로 낮은 기록'을 찾는 목적이므로,
+    DB 평균이 없더라도 기본 기준을 사용해 후보를 만들 수 있게 한다.
+    """
+    default_reference = {
+        "13": 100.0,
+        "13+": 99.5,
+        "14": 99.0,
+        "14+": 98.5,
+        "15": 97.5,
+    }
+
+    return default_reference.get(main_level, 99.0)
+
+
+def preference_score(row: pd.Series, chart_type: str, bpm_preference: str = "any") -> float:
+    """
+    과거 BPM 선호 옵션과의 호환성을 위해 남겨둔 함수.
+
+    현재 UI에서는 BPM 선호를 제거했으므로,
+    실질적으로는 chart_type 일치 여부만 약하게 반영한다.
+    """
+    score = 50.0
+
+    if chart_type == "any":
+        score += 20.0
+    elif safe_str(row.get("chart_type", "")).lower() == chart_type.lower():
+        score += 30.0
+
+    return round(max(0.0, min(score, 100.0)), 2)
+
+
+def rating_up_score(row: pd.Series, req: Any) -> float:
+    if bool(row.get("rating_capped", False)):
+        return 0.0
+
+    rating_gain = safe_float(row.get("rating_gain", 0.0))
+
+    if rating_gain <= 0:
+        return 0.0
+
+    target_best50_score = safe_float(row.get("target_best50_rate", 0.0))
+    current_best50_score = safe_float(row.get("current_best50_rate", 0.0))
+    cohort_score = 0.65 * target_best50_score + 0.35 * current_best50_score
+
+    rating_gain_score = min(100.0, rating_gain * 6.0)
+    level_score = level_fit_score(row, req.main_level)
+    pref_score = preference_score(
+        row,
+        req.chart_type,
+        getattr(req, "bpm_preference", "any"),
+    )
+
+    played = bool(row.get("played", False))
+    is_best50 = bool(row.get("is_best50", False))
+
+    if is_best50:
+        candidate_bonus = 35.0
+    elif played:
+        candidate_bonus = 80.0
+    else:
+        candidate_bonus = 65.0
+
+    score = (
+        0.35 * rating_gain_score
+        + 0.30 * cohort_score
+        + 0.15 * level_score
+        + 0.10 * candidate_bonus
+        + 0.10 * pref_score
+    )
+
+    return round(max(0.0, min(score, 100.0)), 2)
+
+
+def skill_up_score(row: pd.Series, req: Any) -> float:
+    target_best50_score = safe_float(row.get("target_best50_rate", 0.0))
+    target_sss_plus_score = safe_float(row.get("target_sss_plus_rate", 0.0))
+    target_record_count = safe_float(row.get("target_record_count", 0.0))
+    target_best50_count = safe_float(row.get("target_best50_count", 0.0))
+
+    current_best50_score = safe_float(row.get("current_best50_rate", 0.0))
+    current_sss_plus_score = safe_float(row.get("current_sss_plus_rate", 0.0))
+    current_record_count = safe_float(row.get("current_record_count", 0.0))
+    current_best50_count = safe_float(row.get("current_best50_count", 0.0))
+
+    level_score = level_fit_score(row, req.main_level)
+
+    if level_score <= 0:
+        return 0.0
+
+    played = bool(row.get("played", False))
+    is_best50 = bool(row.get("is_best50", False))
+
+    if is_best50:
+        candidate_bonus = 25.0
+    elif played:
+        candidate_bonus = 70.0
+    else:
+        candidate_bonus = 85.0
+
+    target_evidence_exists = (
+        target_best50_score > 0
+        or target_sss_plus_score > 0
+        or target_record_count > 0
+        or target_best50_count > 0
+    )
+
+    current_evidence_exists = (
+        current_best50_score > 0
+        or current_sss_plus_score > 0
+        or current_record_count > 0
+        or current_best50_count > 0
+    )
+
+    if target_evidence_exists:
+        best50_score = target_best50_score
+        sss_plus_score = target_sss_plus_score
+        record_count = target_record_count
+
+    elif current_evidence_exists:
+        best50_score = current_best50_score * 0.85
+        sss_plus_score = current_sss_plus_score * 0.85
+        record_count = current_record_count
+
+    else:
+        best50_score = 0.0
+        sss_plus_score = 0.0
+        record_count = 0.0
+
+    record_score = min(100.0, math.log1p(record_count) * 18.0)
+
+    internal_level = safe_float(row.get("internal_level", 0.0))
+
+    if req.main_level in LEVEL_BOUNDS:
+        low, high = LEVEL_BOUNDS[req.main_level]
+
+        if high > low:
+            position = (internal_level - low) / (high - low)
+            position = max(0.0, min(position, 1.0))
+            challenge_score = 60.0 + position * 40.0
+        else:
+            challenge_score = 80.0
+    else:
+        challenge_score = 75.0
+
+    if target_evidence_exists or current_evidence_exists:
+        score = (
+            0.35 * best50_score
+            + 0.20 * sss_plus_score
+            + 0.15 * record_score
+            + 0.15 * challenge_score
+            + 0.15 * candidate_bonus
+        )
+    else:
+        score = (
+            0.45 * challenge_score
+            + 0.30 * level_score
+            + 0.25 * candidate_bonus
+        )
+
+        score = min(score, 68.0)
+
+    return round(max(0.0, min(score, 100.0)), 2)
+
+
+def weakness_score(row: pd.Series, req: Any) -> float:
+    if not bool(row.get("played", False)):
+        return 0.0
+
+    achievement = safe_float(row.get("achievement", 0.0))
+
+    if achievement <= 0:
+        return 0.0
+
+    if achievement >= REVERSE_BORDER_MAX:
+        return 0.0
+
+    current_avg = safe_float(row.get("current_avg_achievement", 0.0))
+    target_avg = safe_float(row.get("target_avg_achievement", 0.0))
+
+    cohort_reference = 0.0
+
+    if current_avg > 0:
+        cohort_reference = current_avg
+
+    if target_avg > cohort_reference:
+        cohort_reference = target_avg
+
+    default_reference = get_default_weakness_reference(req.main_level)
+
+    reference_achievement = max(cohort_reference, default_reference)
+    gap = reference_achievement - achievement
+
+    if gap <= 0:
+        return 0.0
+
+    gap_score = min(100.0, gap * 16.0)
+
+    rating_gain_score = min(
+        100.0,
+        safe_float(row.get("rating_gain", 0.0)) * 5.0,
+    )
+
+    level_score = level_fit_score(row, req.main_level)
+
+    current_best50_score = safe_float(row.get("current_best50_rate", 0.0))
+    target_best50_score = safe_float(row.get("target_best50_rate", 0.0))
+    cohort_interest_score = max(current_best50_score, target_best50_score)
+
+    is_best50 = bool(row.get("is_best50", False))
+
+    if is_best50:
+        candidate_bonus = 70.0
+    else:
+        candidate_bonus = 85.0
+
+    score = (
+        0.45 * gap_score
+        + 0.20 * rating_gain_score
+        + 0.15 * level_score
+        + 0.10 * cohort_interest_score
+        + 0.10 * candidate_bonus
+    )
+
+    return round(max(0.0, min(score, 100.0)), 2)
+
+
+def reverse_border_score(row: pd.Series, req: Any) -> float:
     if not bool(row.get("reverse_border", False)):
         return 0.0
 
-    achievement = safe_float(row["achievement"])
-    gap = REVERSE_BORDER_MAX - achievement
+    gap = safe_float(row.get("reverse_border_gap", 0.0))
 
-    closeness_score = max(0.0, min(100.0, 100.0 - gap * 1000.0))
-    level_score = min(100.0, max(0.0, (safe_float(row["internal_level"]) - 12.5) * 30.0))
-    best50_bonus = 100.0 if bool(row.get("is_best50", False)) else 40.0
-
-    score = (
-        0.70 * closeness_score
-        + 0.20 * level_score
-        + 0.10 * best50_bonus
+    proximity_score = max(
+        0.0,
+        100.0 - min(100.0, gap * 5000.0),
     )
 
-    score += 0.05 * preference_score(row, req.chart_type, req.bpm_preference)
+    level_score = level_fit_score(row, req.main_level)
+
+    is_best50 = bool(row.get("is_best50", False))
+
+    best50_bonus = 100.0 if is_best50 else 60.0
+
+    score = (
+        0.55 * proximity_score
+        + 0.25 * level_score
+        + 0.20 * best50_bonus
+    )
 
     return round(max(0.0, min(score, 100.0)), 2)
 
 
-def skill_up_score(row, req) -> float:
-    played = bool(row["played"])
-    capped = bool(row["rating_capped"])
+def similar_user_score(row: pd.Series, req: Any) -> float:
+    """
+    나와 비슷한 유저 추천 모드 점수.
 
-    curr_best50 = safe_float(row["curr_best50_rate"]) * 100.0
-    curr_sssplus = safe_float(row["curr_sssplus_rate"]) * 100.0
-    target_best50 = safe_float(row["target_best50_rate"]) * 100.0
-    target_sssplus = safe_float(row["target_sssplus_rate"]) * 100.0
+    collaborative_score를 주력으로 사용하고,
+    target_band Best50 등장률, 레벨 적합도, 개선 가능성을 보조로 반영한다.
+    """
+    collaborative = safe_float(row.get("collaborative_score", 0.0))
 
-    target_conf = confidence_score(row["target_player_count"])
+    if collaborative <= 0:
+        return 0.0
 
-    if not played:
-        novelty_score = 100.0
-    elif not capped:
-        novelty_score = 65.0
-    else:
-        novelty_score = 10.0
+    target_best50_score = safe_float(row.get("target_best50_rate", 0.0))
+    level_score = level_fit_score(row, req.main_level)
 
-    growth_signal = max(0.0, target_best50 - curr_best50)
-    growth_score = min(100.0, growth_signal * 2.0 + target_best50 * 0.6)
+    played = bool(row.get("played", False))
+    is_best50 = bool(row.get("is_best50", False))
 
-    score = (
-        0.30 * target_best50
-        + 0.20 * growth_score
-        + 0.15 * target_sssplus
-        + 0.15 * challenge_fit_score(row, req.main_level)
-        + 0.10 * novelty_score
-        + 0.05 * curr_sssplus
-        + 0.05 * target_conf
-    )
-
-    score += 0.05 * preference_score(row, req.chart_type, req.bpm_preference)
-
-    return round(max(0.0, min(score, 100.0)), 2)
-
-
-def get_weak_internal_levels(df: pd.DataFrame) -> list[float]:
-    played = df[df["played"]].copy()
-
-    if played.empty:
-        return []
-
-    played["internal_level_rounded"] = played["internal_level"].round(1)
-
-    level_summary = (
-        played.groupby("internal_level_rounded")
-        .agg(
-            user_avg_achievement=("achievement", "mean"),
-            cohort_avg_achievement=("curr_level_avg_achievement", "first"),
-            played_count=("chart_id", "count"),
+    if is_best50:
+        improvement_score = min(
+            40.0,
+            safe_float(row.get("rating_gain", 0.0)) * 4.0,
         )
-        .reset_index()
+        candidate_bonus = 10.0
+
+    elif played:
+        improvement_score = min(
+            100.0,
+            safe_float(row.get("rating_gain", 0.0)) * 8.0,
+        )
+        candidate_bonus = 75.0
+
+    else:
+        improvement_score = 50.0
+        candidate_bonus = 60.0
+
+    score = (
+        0.65 * collaborative
+        + 0.15 * target_best50_score
+        + 0.10 * level_score
+        + 0.05 * improvement_score
+        + 0.05 * candidate_bonus
     )
 
-    level_summary["weakness_gap"] = (
-        level_summary["cohort_avg_achievement"]
-        - level_summary["user_avg_achievement"]
+    return round(max(0.0, min(score, 100.0)), 2)
+
+
+def get_input_best50_chart_ids(df: pd.DataFrame) -> set[str]:
+    """
+    입력 유저의 Best50 chart_id 집합을 추출한다.
+
+    협업 필터링에서는 이 집합을 입력 유저 벡터로 사용한다.
+    """
+    if "is_best50" not in df.columns:
+        return set()
+
+    if "chart_id" not in df.columns:
+        return set()
+
+    best50 = df[
+        (df["is_best50"])
+        & (df["chart_id"].notna())
+    ].copy()
+
+    return set(best50["chart_id"].astype(str).tolist())
+
+
+def initialize_collaborative_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    default_values = {
+        "collaborative_score": 0.0,
+        "collaborative_weight_sum": 0.0,
+        "similar_user_weighted_rate": 0.0,
+        "similar_user_chart_count": 0,
+        "similar_user_count": 0,
+        "similar_user_avg_similarity": 0.0,
+    }
+
+    for col, default_value in default_values.items():
+        if col not in df.columns:
+            df[col] = default_value
+
+    return df
+
+
+def add_collaborative_features(
+    df: pd.DataFrame,
+    input_best50_chart_ids: set[str],
+    top_k: int = SIMILAR_USER_TOP_K,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    """
+    Best50 기반 user-item matrix를 이용해 협업 필터링 feature를 생성한다.
+
+    방식:
+    1. 입력 유저 Best50 chart_id 집합 생성
+    2. raw_user_best50.csv에서 DB 유저별 Best50 집합 생성
+    3. 입력 유저와 DB 유저 간 cosine similarity 계산
+    4. 유사 유저 top-k 선정
+    5. 유사 유저들이 보유한 chart_id에 유사도 가중 등장률 부여
+    """
+    df = initialize_collaborative_columns(df)
+
+    debug = {
+        "available": False,
+        "reason": "",
+        "input_best50_count": len(input_best50_chart_ids),
+        "raw_user_count": 0,
+        "similar_user_count": 0,
+        "top_k": top_k,
+        "avg_similarity": 0.0,
+        "max_similarity": 0.0,
+        "min_similarity": 0.0,
+        "top_similarities": [],
+    }
+
+    if len(input_best50_chart_ids) < SIMILAR_USER_MIN_INPUT_BEST50:
+        debug["reason"] = (
+            f"input best50 count is less than {SIMILAR_USER_MIN_INPUT_BEST50}"
+        )
+        return df, debug
+
+    raw = load_raw_user_best50()
+
+    if raw.empty:
+        debug["reason"] = "raw_user_best50.csv is empty or invalid"
+        return df, debug
+
+    valid_chart_ids = set(df["chart_id"].astype(str).tolist())
+
+    raw = raw[raw["chart_id"].astype(str).isin(valid_chart_ids)].copy()
+
+    if raw.empty:
+        debug["reason"] = "no raw best50 chart_id matched current candidate pool"
+        return df, debug
+
+    user_groups = raw.groupby("profile_id")["chart_id"].apply(
+        lambda values: set(values.astype(str).tolist())
     )
 
-    level_summary = level_summary[
-        (level_summary["cohort_avg_achievement"] > 0)
-        & (level_summary["weakness_gap"] > 0)
+    debug["raw_user_count"] = int(len(user_groups))
+
+    input_len = len(input_best50_chart_ids)
+    similarities = []
+
+    for profile_id, user_chart_ids in user_groups.items():
+        if not user_chart_ids:
+            continue
+
+        intersection_count = len(input_best50_chart_ids & user_chart_ids)
+
+        if intersection_count == 0:
+            continue
+
+        similarity = intersection_count / math.sqrt(
+            input_len * len(user_chart_ids)
+        )
+
+        if similarity < SIMILAR_USER_MIN_SIMILARITY:
+            continue
+
+        if similarity >= 0.999 and user_chart_ids == input_best50_chart_ids:
+            continue
+
+        similarities.append({
+            "profile_id": profile_id,
+            "similarity": float(similarity),
+            "chart_ids": user_chart_ids,
+            "intersection_count": intersection_count,
+            "best50_count": len(user_chart_ids),
+        })
+
+    if not similarities:
+        debug["reason"] = "no similar users found"
+        return df, debug
+
+    similarities = sorted(
+        similarities,
+        key=lambda item: item["similarity"],
+        reverse=True,
+    )[:top_k]
+
+    total_similarity = sum(item["similarity"] for item in similarities)
+
+    if total_similarity <= 0:
+        debug["reason"] = "total similarity is zero"
+        return df, debug
+
+    chart_weight_sum = {}
+    chart_user_count = {}
+
+    for item in similarities:
+        similarity = item["similarity"]
+
+        for chart_id in item["chart_ids"]:
+            chart_weight_sum[chart_id] = (
+                chart_weight_sum.get(chart_id, 0.0) + similarity
+            )
+            chart_user_count[chart_id] = (
+                chart_user_count.get(chart_id, 0) + 1
+            )
+
+    df["_chart_id_str"] = df["chart_id"].astype(str)
+
+    df["collaborative_weight_sum"] = df["_chart_id_str"].map(
+        chart_weight_sum
+    ).fillna(0.0)
+
+    df["similar_user_chart_count"] = df["_chart_id_str"].map(
+        chart_user_count
+    ).fillna(0).astype(int)
+
+    df["similar_user_weighted_rate"] = (
+        df["collaborative_weight_sum"] / total_similarity * 100.0
+    )
+
+    df["collaborative_score"] = df["similar_user_weighted_rate"].clip(
+        lower=0.0,
+        upper=100.0,
+    )
+
+    similarity_values = [
+        item["similarity"]
+        for item in similarities
     ]
 
-    if level_summary.empty:
-        return []
+    avg_similarity = sum(similarity_values) / len(similarity_values)
 
-    level_summary = level_summary.sort_values("weakness_gap", ascending=False)
+    df["similar_user_count"] = len(similarities)
+    df["similar_user_avg_similarity"] = avg_similarity
 
-    return level_summary.head(3)["internal_level_rounded"].tolist()
+    df = df.drop(columns=["_chart_id_str"])
 
+    debug.update({
+        "available": True,
+        "reason": "ok",
+        "similar_user_count": int(len(similarities)),
+        "avg_similarity": round(float(avg_similarity), 4),
+        "max_similarity": round(float(max(similarity_values)), 4),
+        "min_similarity": round(float(min(similarity_values)), 4),
+        "top_similarities": [
+            {
+                "profile_id": item["profile_id"],
+                "similarity": round(float(item["similarity"]), 4),
+                "intersection_count": int(item["intersection_count"]),
+                "best50_count": int(item["best50_count"]),
+            }
+            for item in similarities[:10]
+        ],
+    })
 
-def weakness_score(row, req, weak_internal_levels: list[float]) -> float:
-    achievement = safe_float(row["achievement"])
-    played = bool(row["played"])
-    capped = bool(row["rating_capped"])
-
-    internal_level_rounded = round(safe_float(row["internal_level"]), 1)
-
-    curr_avg = safe_float(row["curr_avg_achievement"])
-    curr_best50 = safe_float(row["curr_best50_rate"]) * 100.0
-    curr_sssplus = safe_float(row["curr_sssplus_rate"]) * 100.0
-    target_best50 = safe_float(row["target_best50_rate"]) * 100.0
-
-    level_avg = safe_float(row["curr_level_avg_achievement"])
-    level_coverage = safe_float(row["curr_level_coverage_rate"]) * 100.0
-
-    if played:
-        if capped:
-            return 0.0
-
-        chart_gap = max(0.0, curr_avg - achievement)
-        level_gap = max(0.0, level_avg - achievement)
-
-        gap_score = min(100.0, chart_gap * 25.0 + level_gap * 10.0)
-        weak_level_bonus = 100.0 if internal_level_rounded in weak_internal_levels else 40.0
-
-        score = (
-            0.35 * gap_score
-            + 0.20 * weak_level_bonus
-            + 0.15 * curr_best50
-            + 0.10 * curr_sssplus
-            + 0.10 * level_coverage
-            + 0.10 * level_fit_score(row, req.main_level)
-        )
-
-    else:
-        weak_level_bonus = 100.0 if internal_level_rounded in weak_internal_levels else 30.0
-
-        if curr_best50 == 0 and target_best50 == 0:
-            return 0.0
-
-        score = (
-            0.30 * weak_level_bonus
-            + 0.25 * curr_best50
-            + 0.15 * curr_sssplus
-            + 0.15 * target_best50
-            + 0.10 * level_coverage
-            + 0.05 * level_fit_score(row, req.main_level)
-        )
-
-    score += 0.05 * preference_score(row, req.chart_type, req.bpm_preference)
-
-    return round(max(0.0, min(score, 100.0)), 2)
+    return df, debug
 
 
-# ------------------------------------------------------------
-# Reason text
-# ------------------------------------------------------------
-
-def make_reason(goal: str, row, current_band: str, target_band: str) -> tuple[str, str]:
-    achievement = safe_float(row["achievement"])
-    candidate_type = row.get("candidate_type", "not_in_parsed_records")
-    candidate_label = row.get("candidate_label", "현재 파싱 기록 미포함 후보")
-
-    curr_best50 = safe_float(row["curr_best50_rate"]) * 100.0
-    curr_sssplus = safe_float(row["curr_sssplus_rate"]) * 100.0
-    target_best50 = safe_float(row["target_best50_rate"]) * 100.0
-    target_sssplus = safe_float(row["target_sssplus_rate"]) * 100.0
-
-    current_rating = int(safe_float(row["current_rating"]))
-    max_rating = int(safe_float(row["max_rating"]))
-    rating_gain = int(safe_float(row["rating_gain"]))
-
+def make_reason(row: pd.Series, goal: str) -> tuple[str, str]:
     if goal == "reverse_border":
+        achievement = safe_float(row.get("achievement", 0.0))
         gap = safe_float(row.get("reverse_border_gap", 0.0))
 
         reason = (
             f"현재 달성률이 {achievement:.4f}%로, "
             f"100.5%까지 {gap:.4f}% 부족한 역보더 후보입니다. "
-            f"기준 범위는 {REVERSE_BORDER_MIN:.4f}% 이상 {REVERSE_BORDER_MAX:.4f}% 미만입니다."
+            f"기준 범위는 100.4000% 이상 100.5000% 미만입니다."
         )
-        target = "역보더 재도전 후보"
+        target = "100.5% 달성으로 레이팅 캡 도달"
+
+        return reason, target
+
+    if goal == "similar_user":
+        collaborative_score = safe_float(row.get("collaborative_score", 0.0))
+        weighted_rate = safe_float(row.get("similar_user_weighted_rate", 0.0))
+        similar_user_count = int(safe_float(row.get("similar_user_count", 0)))
+        chart_count = int(safe_float(row.get("similar_user_chart_count", 0)))
+        avg_similarity = safe_float(row.get("similar_user_avg_similarity", 0.0))
+
+        reason = (
+            f"입력 유저의 Best50 구성과 유사한 유저 {similar_user_count}명을 기준으로 계산한 추천입니다. "
+            f"이 곡은 유사 유저 중 {chart_count}명의 Best50에 등장했으며, "
+            f"유사도 가중 등장률은 {weighted_rate:.1f}%입니다. "
+            f"평균 유사도는 {avg_similarity:.3f}, "
+            f"협업 필터링 점수는 {collaborative_score:.1f}입니다."
+        )
+        target = "유사 유저 Best50 기반 추천"
 
         return reason, target
 
     if goal == "rating_up":
-        if candidate_type == "best50_existing":
-            reason = (
-                f"현재 Best 50에 포함된 기존 기록입니다. "
-                f"현재 기록은 {achievement:.4f}%이며 곡별 레이팅은 {current_rating}입니다. "
-                f"100.5% 기준 최대 레이팅은 {max_rating}로, 아직 {rating_gain}만큼 상승 여지가 있습니다. "
-                f"{current_band} 구간의 SSS+ 비율은 {curr_sssplus:.1f}%, "
-                f"{target_band} 구간 Best50 등장률은 {target_best50:.1f}%입니다."
-            )
-            target = "Best 50 기존 기록 개선"
+        rating_gain = safe_float(row.get("rating_gain", 0.0))
+        target_rate = safe_float(row.get("target_best50_rate", 0.0))
+        current_rating = safe_float(row.get("current_rating", 0.0))
+        max_rating = safe_float(row.get("max_rating", 0.0))
 
-        elif candidate_type == "played_not_best50":
+        if bool(row.get("played", False)):
             reason = (
-                f"현재 파싱된 records 페이지에는 존재하지만 Best 50에는 포함되지 않은 기록입니다. "
-                f"현재 기록은 {achievement:.4f}%이며 곡별 레이팅은 {current_rating}입니다. "
-                f"100.5% 기준 최대 레이팅은 {max_rating}로, 개선 시 Best 50 진입 가능성을 검토할 수 있습니다. "
-                f"{current_band} 구간 Best50 등장률은 {curr_best50:.1f}%, "
-                f"{target_band} 구간 Best50 등장률은 {target_best50:.1f}%입니다."
+                f"현재 곡별 레이팅은 {current_rating:.0f}이고, "
+                f"100.5% 기준 최대 레이팅은 {max_rating:.0f}입니다. "
+                f"상승 여지가 약 {rating_gain:.0f} 남아 있으며, "
+                f"상위 레이팅 구간 Best50 등장률은 {target_rate:.1f}%입니다."
             )
-            target = "Best 50 밖 플레이 기록 개선"
-
         else:
             reason = (
-                f"현재 파싱된 Best 50 및 records 노출 기록에는 없는 후보입니다. "
-                f"{current_band} 구간 Best50 등장률은 {curr_best50:.1f}%, SSS+ 비율은 {curr_sssplus:.1f}%이며, "
-                f"{target_band} 구간 Best50 등장률은 {target_best50:.1f}%입니다. "
-                f"동일/상위 구간에서 검증된 고효율 후보로 볼 수 있습니다."
+                f"아직 입력 유저 기록에 없는 후보입니다. "
+                f"상위 레이팅 구간 Best50 등장률이 {target_rate:.1f}%로 확인되어, "
+                f"레이팅 상승용 신규 후보로 추천합니다."
             )
-            target = "현재 파싱 기록 미포함 고효율 후보"
+
+        target = "100.5% 근처 달성률 확보"
 
         return reason, target
 
     if goal == "skill_up":
+        target_rate = safe_float(row.get("target_best50_rate", 0.0))
+        current_rate = safe_float(row.get("current_best50_rate", 0.0))
+        sss_plus_rate = safe_float(row.get("target_sss_plus_rate", 0.0))
+
         reason = (
-            f"후보 유형은 '{candidate_label}'입니다. "
-            f"{target_band} 구간 유저들의 Best50 등장률이 {target_best50:.1f}%이고, "
-            f"SSS+ 비율은 {target_sssplus:.1f}%입니다. "
-            f"현재 구간보다 한 단계 위 유저들이 자주 보유한 곡이므로 실력 향상용 도전곡으로 적합합니다."
+            f"선택한 레벨대에서 실력 향상 후보로 계산되었습니다. "
+            f"상위 구간 Best50 등장률은 {target_rate:.1f}%, "
+            f"현재 구간 Best50 등장률은 {current_rate:.1f}%, "
+            f"상위 구간 SSS+ 비율은 {sss_plus_rate:.1f}%입니다."
         )
-        target = "상위 레이팅 구간 적응"
+        target = "실력 향상"
 
         return reason, target
 
-    reason = (
-        f"후보 유형은 '{candidate_label}'입니다. "
-        f"동일 구간 평균 달성률은 {safe_float(row['curr_avg_achievement']):.4f}%입니다. "
-        f"현재 기록은 {achievement:.4f}%이며, "
-        f"해당 내부상수 구간의 평균 달성률은 {safe_float(row['curr_level_avg_achievement']):.4f}%입니다. "
-        f"동일 레이팅대와 비교해 보완 가치가 있는 후보입니다."
-    )
-    target = "동일 레이팅대 대비 약점 보완"
+    if goal == "weakness":
+        achievement = safe_float(row.get("achievement", 0.0))
+        current_avg = safe_float(row.get("current_avg_achievement", 0.0))
+        target_avg = safe_float(row.get("target_avg_achievement", 0.0))
+
+        cohort_reference = 0.0
+
+        if current_avg > 0:
+            cohort_reference = current_avg
+
+        if target_avg > cohort_reference:
+            cohort_reference = target_avg
+
+        default_reference = get_default_weakness_reference(
+            safe_str(row.get("level", "")),
+        )
+
+        reference_achievement = max(cohort_reference, default_reference)
+        gap = max(0.0, reference_achievement - achievement)
+
+        reason = (
+            f"현재 달성률은 {achievement:.4f}%이며, "
+            f"보완 기준 달성률은 약 {reference_achievement:.4f}%입니다. "
+            f"차이는 약 {gap:.4f}%입니다."
+        )
+        target = "약점 보완"
+
+        return reason, target
+
+    reason = "선택한 조건과 레이팅 구간 통계를 기준으로 추천된 후보입니다."
+    target = "추천 조건에 따른 후보"
 
     return reason, target
 
 
-# ------------------------------------------------------------
-# Main recommend function
-# ------------------------------------------------------------
+def sort_candidates(
+    df: pd.DataFrame,
+    sort_columns: list[str],
+    sort_ascending: list[bool],
+) -> pd.DataFrame:
+    valid_columns = []
+    valid_ascending = []
+
+    for col, asc in zip(sort_columns, sort_ascending):
+        if col in df.columns:
+            valid_columns.append(col)
+            valid_ascending.append(asc)
+
+    if not valid_columns:
+        return df.copy()
+
+    return df.sort_values(
+        valid_columns,
+        ascending=valid_ascending,
+    ).reset_index(drop=True)
+
 
 def recommend(
-    req,
+    req: Any,
     user_records_df: pd.DataFrame | None = None,
     user_rating: int | None = None,
-):
+) -> dict[str, Any]:
     df = load_base_data(user_records_df)
+
+    input_best50_chart_ids = get_input_best50_chart_ids(df)
+
+    similar_user_debug = {
+        "available": False,
+        "reason": "similar_user mode was not selected",
+        "input_best50_count": len(input_best50_chart_ids),
+    }
+
+    estimated_rating = estimate_rating_from_records(df)
+    effective_rating = user_rating if user_rating is not None else estimated_rating
+
     cohort_stats = load_cohort_stats()
-    level_stats = load_level_stats()
+    _ = load_level_stats()
 
-    available_bands = []
+    available_bands = get_available_bands(cohort_stats)
 
-    if not cohort_stats.empty:
-        available_bands = sorted(
-            cohort_stats["rating_band"].dropna().unique().tolist(),
-            key=parse_band_low,
-        )
+    current_band = rating_to_band(effective_rating)
+    target_band = get_target_band(current_band, available_bands)
 
-    estimated_rating = estimate_user_total_rating(df)
-    effective_rating = int(user_rating) if user_rating is not None else estimated_rating
-
-    current_band = band_from_rating(effective_rating, available_bands)
-    target_band = next_band(current_band, available_bands)
-
-    df = add_cohort_features(
+    df = merge_cohort_features(
         df=df,
         cohort_stats=cohort_stats,
-        level_stats=level_stats,
         current_band=current_band,
         target_band=target_band,
     )
-
-    cutoffs = estimate_best50_cutoffs(df)
-
-    if req.chart_type != "any":
-        df = df[df["chart_type"] == req.chart_type]
 
     df = filter_by_main_level(
         df=df,
@@ -1040,40 +1460,37 @@ def recommend(
         goal=req.goal,
     )
 
-    if req.goal == "rating_up":
-        df["recommend_score"] = df.apply(
-            lambda row: rating_up_score(row, req, cutoffs),
-            axis=1,
-        )
+    df = filter_by_chart_type(
+        df=df,
+        chart_type=req.chart_type,
+    )
 
-        df = df[df["recommend_score"] > 0]
+    candidate_pool_count_before_goal = int(len(df))
 
-        summary = (
-            f"입력 유저 레이팅 {effective_rating} 기준 현재 구간은 {current_band}, 목표 구간은 {target_band}입니다. "
-            f"선택한 주력 레벨 {req.main_level} 범위 안에서 추천했습니다."
-        )
+    summary = ""
+    sort_columns = [
+        "recommend_score",
+        "target_best50_rate",
+        "rating_gain",
+        "internal_level",
+    ]
+    sort_ascending = [False, False, False, False]
 
-        sort_columns = [
-            "recommend_score",
-            "target_best50_rate",
-            "curr_best50_rate",
-            "target_sssplus_rate",
-        ]
-        sort_ascending = [False, False, False, False]
-
-    elif req.goal == "reverse_border":
+    if req.goal == "reverse_border":
         df["recommend_score"] = df.apply(
             lambda row: reverse_border_score(row, req),
             axis=1,
         )
 
-        df = df[df["recommend_score"] > 0]
+        df = df[
+            (df["recommend_score"] > 0)
+            & (df["reverse_border"])
+        ].copy()
 
         summary = (
-            f"역보더 탐색 모드입니다. "
-            f"현재 파싱된 플레이 기록 중 {REVERSE_BORDER_MIN:.4f}% 이상 "
-            f"{REVERSE_BORDER_MAX:.4f}% 미만인 채보만 추렸습니다. "
-            f"100.5%에 가까운 곡을 우선 표시합니다."
+            "역보더 탐색 모드입니다. "
+            "현재 달성률이 100.4000% 이상 100.5000% 미만인 곡을 "
+            "100.5%에 가까운 순서와 Best50 여부를 함께 고려해 추천합니다."
         )
 
         sort_columns = [
@@ -1084,98 +1501,134 @@ def recommend(
         ]
         sort_ascending = [True, False, False, False]
 
+    elif req.goal == "similar_user":
+        df, similar_user_debug = add_collaborative_features(
+            df=df,
+            input_best50_chart_ids=input_best50_chart_ids,
+            top_k=SIMILAR_USER_TOP_K,
+        )
+
+        df["recommend_score"] = df.apply(
+            lambda row: similar_user_score(row, req),
+            axis=1,
+        )
+
+        df = df[
+            (df["recommend_score"] > 0)
+            & (~df["is_best50"])
+        ].copy()
+
+        summary = (
+            "나와 비슷한 유저 추천 모드입니다. "
+            f"입력 유저의 Best50 {len(input_best50_chart_ids)}개를 기준으로 "
+            "DB 유저들과 cosine similarity를 계산하고, "
+            f"유사 유저 Top {SIMILAR_USER_TOP_K}명의 Best50 등장 패턴을 반영했습니다."
+        )
+
+        sort_columns = [
+            "recommend_score",
+            "collaborative_score",
+            "similar_user_chart_count",
+            "target_best50_rate",
+        ]
+        sort_ascending = [False, False, False, False]
+
     elif req.goal == "skill_up":
         df["recommend_score"] = df.apply(
             lambda row: skill_up_score(row, req),
             axis=1,
         )
 
-        df = df[df["recommend_score"] > 0]
+        df = df[df["recommend_score"] > 0].copy()
 
         summary = (
-            f"입력 유저 레이팅 {effective_rating} 기준 목표 구간 {target_band} 유저들의 Best50 등장률이 높은 곡을 중심으로 "
-            f"실력 향상용 추천을 생성했습니다. "
-            f"선택 주력 레벨은 {req.main_level}입니다."
+            "실력 향상 모드입니다. "
+            "선택한 레벨 범위 안에서 현재/상위 레이팅 구간 통계와 레벨 난이도를 함께 고려합니다."
         )
 
         sort_columns = [
             "recommend_score",
             "target_best50_rate",
-            "curr_best50_rate",
-            "target_sssplus_rate",
+            "current_best50_rate",
+            "internal_level",
         ]
         sort_ascending = [False, False, False, False]
 
-    else:
-        weak_internal_levels = get_weak_internal_levels(df)
-
+    elif req.goal == "weakness":
         df["recommend_score"] = df.apply(
-            lambda row: weakness_score(row, req, weak_internal_levels),
+            lambda row: weakness_score(row, req),
             axis=1,
         )
 
-        df = df[df["recommend_score"] > 0]
-
-        weak_text = (
-            ", ".join([str(x) for x in weak_internal_levels])
-            if weak_internal_levels
-            else "자동 추정 불가"
-        )
+        df = df[
+            (df["recommend_score"] > 0)
+            & (df["played"])
+        ].copy()
 
         summary = (
-            f"입력 유저 레이팅 {effective_rating} 기준 현재 구간은 {current_band}입니다. "
-            f"선택한 주력 레벨 {req.main_level} 범위 안에서 약점 보완 후보를 추천했습니다. "
-            f"약점 내부상수 후보는 {weak_text}입니다."
+            "약점 보완 모드입니다. "
+            "입력 유저가 이미 플레이한 곡 중 달성률, 레이팅 상승 여지, 레벨 기준을 함께 고려합니다."
         )
 
         sort_columns = [
             "recommend_score",
+            "rating_gain",
+            "achievement",
+            "internal_level",
+        ]
+        sort_ascending = [False, False, True, False]
+
+    else:
+        df["recommend_score"] = df.apply(
+            lambda row: rating_up_score(row, req),
+            axis=1,
+        )
+
+        df = df[df["recommend_score"] > 0].copy()
+
+        summary = (
+            "레이팅 상승 모드입니다. "
+            "입력 유저의 현재 기록, 100.5% 기준 상승 여지, 동일/상위 레이팅 구간 Best50 통계를 함께 고려합니다."
+        )
+
+        sort_columns = [
+            "recommend_score",
+            "rating_gain",
             "target_best50_rate",
-            "curr_best50_rate",
-            "target_sssplus_rate",
+            "internal_level",
         ]
         sort_ascending = [False, False, False, False]
 
-    candidate_pool_count = int(len(df))
-    reverse_border_candidate_count = (
-        int(df["reverse_border"].sum())
-        if "reverse_border" in df.columns
-        else 0
+    candidate_pool_count_after_goal = int(len(df))
+    reverse_border_candidate_count = int(
+        df["reverse_border"].sum()
+    ) if "reverse_border" in df.columns else 0
+
+    candidate_type_counts = (
+        df["candidate_label"].value_counts().to_dict()
+        if "candidate_label" in df.columns
+        else {}
     )
 
-    if not df.empty:
-        df = df.sort_values(
-            sort_columns,
-            ascending=sort_ascending,
-        ).head(req.top_n)
+    df = sort_candidates(
+        df=df,
+        sort_columns=sort_columns,
+        sort_ascending=sort_ascending,
+    )
+
+    top_n = safe_int(getattr(req, "top_n", 10), 10)
+    top_n = max(1, min(top_n, 30))
 
     recommendations = []
 
-    for idx, (_, row) in enumerate(df.iterrows(), start=1):
-        reason, target = make_reason(req.goal, row, current_band, target_band)
+    for idx, (_, row) in enumerate(df.head(top_n).iterrows(), start=1):
+        reason, target = make_reason(row, req.goal)
 
         recommendations.append({
             "rank": idx,
-            "chart_id": row["chart_id"],
-            "title": row["title"],
-            "difficulty": row["difficulty"],
-            "level": row["level"],
-            "internal_level": float(row["internal_level"]),
-            "chart_type": row["chart_type"],
-            "bpm": int(safe_float(row["bpm"])),
-            "recommend_score": float(row["recommend_score"]),
-            "candidate_type": row.get("candidate_type", "not_in_parsed_records"),
-            "candidate_label": row.get("candidate_label", "현재 파싱 기록 미포함 후보"),
-            "played": bool(row.get("played", False)),
-            "is_best50": bool(row.get("is_best50", False)),
-            "achievement": float(safe_float(row.get("achievement", 0.0))),
-            "current_rating": int(safe_int(row.get("current_rating", 0))),
-            "max_rating": int(safe_int(row.get("max_rating", 0))),
-            "rating_gain": int(safe_int(row.get("rating_gain", 0))),
-            "reverse_border": bool(row.get("reverse_border", False)),
-            "reverse_border_gap": float(safe_float(row.get("reverse_border_gap", 0.0))),
-            "reason": reason,
-            "target": target,
+            "chart_id": safe_str(row.get("chart_id", "")),
+            "song_id": safe_str(row.get("song_id", "")),
+            "title": safe_str(row.get("title", "")),
             "artist": safe_str(row.get("artist", "")),
             "category": safe_str(row.get("category", "")),
             "version": safe_str(row.get("version", "")),
@@ -1183,7 +1636,46 @@ def recommend(
             "release_date": safe_str(row.get("release_date", "")),
             "image_name": safe_str(row.get("image_name", "")),
             "thumbnail_url": safe_str(row.get("thumbnail_url", "")),
-            "display_level": safe_str(row.get("display_level", row.get("level", "")))
+            "difficulty": safe_str(row.get("difficulty", "")),
+            "level": safe_str(row.get("level", "")),
+            "display_level": safe_str(
+                row.get("display_level", row.get("level", "")),
+            ),
+            "internal_level": float(safe_float(row.get("internal_level", 0.0))),
+            "chart_type": safe_str(row.get("chart_type", "")),
+            "bpm": float(safe_float(row.get("bpm", 0.0))),
+            "played": bool(row.get("played", False)),
+            "achievement": float(safe_float(row.get("achievement", 0.0))),
+            "rank_label": safe_str(row.get("rank", "")),
+            "play_count": int(safe_int(row.get("play_count", 0))),
+            "is_best50": bool(row.get("is_best50", False)),
+            "best50_section": safe_str(row.get("best50_section", "")),
+            "best50_order": int(safe_int(row.get("best50_order", 0))),
+            "record_source": safe_str(row.get("record_source", "")),
+            "combo": safe_str(row.get("combo", "")),
+            "sync": safe_str(row.get("sync", "")),
+            "current_rating": float(safe_float(row.get("current_rating", 0.0))),
+            "max_rating": float(safe_float(row.get("max_rating", 0.0))),
+            "rating_gain": float(safe_float(row.get("rating_gain", 0.0))),
+            "current_best50_rate": float(safe_float(row.get("current_best50_rate", 0.0))),
+            "target_best50_rate": float(safe_float(row.get("target_best50_rate", 0.0))),
+            "current_avg_achievement": float(safe_float(row.get("current_avg_achievement", 0.0))),
+            "target_avg_achievement": float(safe_float(row.get("target_avg_achievement", 0.0))),
+            "current_sss_rate": float(safe_float(row.get("current_sss_rate", 0.0))),
+            "target_sss_rate": float(safe_float(row.get("target_sss_rate", 0.0))),
+            "current_sss_plus_rate": float(safe_float(row.get("current_sss_plus_rate", 0.0))),
+            "target_sss_plus_rate": float(safe_float(row.get("target_sss_plus_rate", 0.0))),
+            "recommend_score": float(safe_float(row.get("recommend_score", 0.0))),
+            "candidate_label": safe_str(row.get("candidate_label", "")),
+            "reverse_border": bool(row.get("reverse_border", False)),
+            "reverse_border_gap": float(safe_float(row.get("reverse_border_gap", 0.0))),
+            "collaborative_score": float(safe_float(row.get("collaborative_score", 0.0))),
+            "similar_user_weighted_rate": float(safe_float(row.get("similar_user_weighted_rate", 0.0))),
+            "similar_user_chart_count": int(safe_int(row.get("similar_user_chart_count", 0))),
+            "similar_user_count": int(safe_int(row.get("similar_user_count", 0))),
+            "similar_user_avg_similarity": float(safe_float(row.get("similar_user_avg_similarity", 0.0))),
+            "reason": reason,
+            "target": target,
         })
 
     return {
@@ -1199,16 +1691,17 @@ def recommend(
             "selected_goal": req.goal,
             "selected_chart_type": req.chart_type,
             "available_bands": available_bands,
-            "candidate_pool_count": candidate_pool_count,
+            "input_best50_count": int(len(input_best50_chart_ids)),
+            "similar_user_debug": similar_user_debug,
+            "candidate_pool_count": candidate_pool_count_after_goal,
+            "candidate_pool_count_before_goal": candidate_pool_count_before_goal,
             "reverse_border_candidate_count": reverse_border_candidate_count,
-            "candidate_type_counts": df["candidate_type"].value_counts().to_dict()
-            if "candidate_type" in df.columns
-            else {},
-            "best50_record_count": int(df["is_best50"].sum())
-            if "is_best50" in df.columns
-            else 0,
-            "played_record_count": int(df["played"].sum())
-            if "played" in df.columns
-            else 0,
+            "candidate_type_counts": candidate_type_counts,
+            "best50_record_count": int(
+                df["is_best50"].sum()
+            ) if "is_best50" in df.columns else 0,
+            "played_record_count": int(
+                df["played"].sum()
+            ) if "played" in df.columns else 0,
         },
     }

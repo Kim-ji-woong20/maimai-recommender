@@ -169,103 +169,97 @@
 14500-14999,魔法少女とチョコレゐト__dx__master,1,99.8238,99.8238,0.0,0.0,284.0,284,魔法少女とチョコレゐト,master,13,13.5,dx,niconico＆ボーカロイド,False,6,0.1667
 14500-14999,Retribution ～ Cycle of Redemption ～__dx__expert,1,100.0991,100.0991,1.0,0.0,281.0,281,Retribution ～ Cycle of Redemption ～,expert,13,13.0,dx,ゲーム＆バラエティ,False,6,0.1667
 14500-14999,Unwelcome School__dx__remaster,1,98.1284,98.1284,0.0,0.0,278.0,278,Unwelcome School,remaster,14,14.1,dx,ゲーム＆バラエティ,False,6,0.1667
-15000-15499,きゅうくらりん__dx__master,14,100.6535,100.6462,1.0,1.0,308.0,308,きゅうくらりん,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.7368
-15000-15499,OMAKENO Stroke__dx__master,14,100.5631,100.5368,1.0,0.9286,309.2143,310,OMAKENO Stroke,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.7368
-15000-15499,テトリス__dx__remaster,14,100.5621,100.5746,1.0,0.9286,307.0714,308,テトリス,remaster,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.7368
-15000-15499,M@GICAL☆CURE! LOVE ♥ SHOT!__dx__master,13,100.6308,100.6487,1.0,0.8462,306.3077,308,M@GICAL☆CURE! LOVE ♥ SHOT!,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.6842
-15000-15499,Xaleid◆scopiX__dx__expert,13,100.4576,100.5329,1.0,0.6923,304.2308,308,Xaleid◆scopiX,expert,13+,13.7,dx,maimai,False,19,0.6842
-15000-15499,バベル__dx__master,12,100.645,100.6543,1.0,1.0,308.0,308,バベル,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.6316
-15000-15499,enchanted wanderer__dx__master,12,100.5753,100.5568,1.0,0.9167,309.0833,310,enchanted wanderer,master,13+,13.8,dx,maimai,False,19,0.6316
-15000-15499,偉大なる悪魔は実は大天使パトラちゃん様なのだ！__dx__master,12,100.6169,100.6326,1.0,0.9167,309.0,310,偉大なる悪魔は実は大天使パトラちゃん様なのだ！,master,13+,13.8,dx,POPS＆アニメ,False,19,0.6316
-15000-15499,Last Kingdom__dx__master,11,100.578,100.5672,1.0,0.9091,308.9091,310,Last Kingdom,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.5789
-15000-15499,CiRCLE CAMPAiGN__dx__master,11,100.6064,100.6234,1.0,0.9091,307.0,308,CiRCLE CAMPAiGN,master,13+,13.7,dx,maimai,False,19,0.5789
-15000-15499,エンジェル ドリーム__dx__master,11,100.5646,100.5927,1.0,0.8182,305.8182,308,エンジェル ドリーム,master,13+,13.6,dx,ゲーム＆バラエティ,False,19,0.5789
-15000-15499,Ref:rain (for 7th Heaven)__dx__master,11,100.3359,100.5095,0.9091,0.5455,308.4545,315,Ref:rain (for 7th Heaven),master,14,14.0,dx,maimai,False,19,0.5789
-15000-15499,Knight Rider__dx__master,10,100.6007,100.6067,1.0,1.0,310.0,310,Knight Rider,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.5263
+15000-15499,きゅうくらりん__dx__master,12,100.6544,100.6438,1.0,1.0,308.0,308,きゅうくらりん,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.6316
+15000-15499,OMAKENO Stroke__dx__master,12,100.5523,100.533,1.0,0.9167,309.0833,310,OMAKENO Stroke,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.6316
+15000-15499,テトリス__dx__remaster,12,100.5431,100.5637,1.0,0.9167,306.9167,308,テトリス,remaster,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.6316
+15000-15499,バベル__dx__master,11,100.641,100.6528,1.0,1.0,308.0,308,バベル,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.5789
+15000-15499,enchanted wanderer__dx__master,11,100.5764,100.5539,1.0,0.9091,309.0,310,enchanted wanderer,master,13+,13.8,dx,maimai,False,19,0.5789
+15000-15499,偉大なる悪魔は実は大天使パトラちゃん様なのだ！__dx__master,11,100.5963,100.623,1.0,0.9091,308.9091,310,偉大なる悪魔は実は大天使パトラちゃん様なのだ！,master,13+,13.8,dx,POPS＆アニメ,False,19,0.5789
+15000-15499,M@GICAL☆CURE! LOVE ♥ SHOT!__dx__master,11,100.6199,100.6287,1.0,0.8182,306.0,308,M@GICAL☆CURE! LOVE ♥ SHOT!,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.5789
+15000-15499,Xaleid◆scopiX__dx__expert,11,100.4069,100.5192,1.0,0.6364,303.5455,308,Xaleid◆scopiX,expert,13+,13.7,dx,maimai,False,19,0.5789
 15000-15499,プラネタリウム・レヴュー__dx__remaster,10,100.6667,100.6215,1.0,1.0,308.0,308,プラネタリウム・レヴュー,remaster,13+,13.6,dx,POPS＆アニメ,False,19,0.5263
-15000-15499,どんぐりGAME__dx__master,10,100.6156,100.6027,1.0,1.0,306.0,306,どんぐりGAME,master,13+,13.6,dx,POPS＆アニメ,False,19,0.5263
-15000-15499,しゅ～しん？変身☆ハカイシンzzZ__dx__master,10,100.5894,100.5564,1.0,0.8,307.7,310,しゅ～しん？変身☆ハカイシンzzZ,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.5263
-15000-15499,Fraq__dx__master,10,100.5448,100.5947,1.0,0.7,304.5,308,Fraq,master,13+,13.7,dx,maimai,False,19,0.5263
-15000-15499,INFiNiTE ENERZY -Overdoze-__dx__master,9,100.5919,100.6046,1.0,1.0,315.0,315,INFiNiTE ENERZY -Overdoze-,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.4737
+15000-15499,CiRCLE CAMPAiGN__dx__master,10,100.5996,100.5974,1.0,0.9,306.9,308,CiRCLE CAMPAiGN,master,13+,13.7,dx,maimai,False,19,0.5263
+15000-15499,どんぐりGAME__dx__master,9,100.6186,100.6173,1.0,1.0,306.0,306,どんぐりGAME,master,13+,13.6,dx,POPS＆アニメ,False,19,0.4737
 15000-15499,ホラフキパペット__dx__master,9,100.6072,100.561,1.0,1.0,306.0,306,ホラフキパペット,master,13+,13.6,dx,POPS＆アニメ,False,19,0.4737
-15000-15499,INTERNET OVERDOSE__dx__master,9,100.6368,100.6463,1.0,1.0,303.0,303,INTERNET OVERDOSE,master,13,13.5,dx,POPS＆アニメ,False,19,0.4737
-15000-15499,Complex Mind__dx__master,8,100.6185,100.6278,1.0,1.0,310.0,310,Complex Mind,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.4211
+15000-15499,Last Kingdom__dx__master,9,100.5564,100.5487,1.0,0.8889,308.6667,310,Last Kingdom,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.4737
+15000-15499,エンジェル ドリーム__dx__master,9,100.5257,100.5703,1.0,0.7778,305.3333,308,エンジェル ドリーム,master,13+,13.6,dx,ゲーム＆バラエティ,False,19,0.4737
+15000-15499,Fraq__dx__master,9,100.5351,100.5717,1.0,0.6667,304.1111,308,Fraq,master,13+,13.7,dx,maimai,False,19,0.4737
+15000-15499,Ref:rain (for 7th Heaven)__dx__master,9,100.3604,100.5095,1.0,0.5556,309.2222,315,Ref:rain (for 7th Heaven),master,14,14.0,dx,maimai,False,19,0.4737
+15000-15499,Knight Rider__dx__master,8,100.5948,100.5832,1.0,1.0,310.0,310,Knight Rider,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.4211
 15000-15499,ヒアソビ__dx__master,8,100.5402,100.5453,1.0,1.0,308.0,308,ヒアソビ,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.4211
-15000-15499,バカ通信__dx__master,8,100.6136,100.5818,1.0,1.0,306.0,306,バカ通信,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.4211
 15000-15499,命テステス__dx__master,8,100.68,100.6712,1.0,1.0,306.0,306,命テステス,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.4211
-15000-15499,スカーレット警察のゲットーパトロール24時__dx__master,8,100.6945,100.7165,1.0,1.0,303.0,303,スカーレット警察のゲットーパトロール24時,master,13,13.5,dx,東方Project,False,19,0.4211
-15000-15499,ウミユリ海底譚__std__master,8,100.7905,100.8261,1.0,1.0,301.0,301,ウミユリ海底譚,master,13,13.4,std,niconico＆ボーカロイド,False,19,0.4211
+15000-15499,INTERNET OVERDOSE__dx__master,8,100.6448,100.6475,1.0,1.0,303.0,303,INTERNET OVERDOSE,master,13,13.5,dx,POPS＆アニメ,False,19,0.4211
 15000-15499,ずんだパーリナイ__dx__master,8,100.5438,100.5695,1.0,0.875,308.5,310,ずんだパーリナイ,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.4211
-15000-15499,MORNINGLOOM__dx__master,8,100.5884,100.5769,1.0,0.875,306.625,308,MORNINGLOOM,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.4211
-15000-15499,病み垢ステロイド__dx__master,8,100.5796,100.5819,1.0,0.75,309.25,312,病み垢ステロイド,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.4211
-15000-15499,IMAWANOKIWA__dx__master,7,100.614,100.59,1.0,1.0,308.0,308,IMAWANOKIWA,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.3684
-15000-15499,終点__std__master,7,100.6704,100.654,1.0,1.0,308.0,308,終点,master,13+,13.7,std,niconico＆ボーカロイド,False,19,0.3684
-15000-15499,Drivessover__dx__master,7,100.5806,100.5486,1.0,1.0,306.0,306,Drivessover,master,13+,13.6,dx,オンゲキ＆CHUNITHM,False,19,0.3684
+15000-15499,しゅ～しん？変身☆ハカイシンzzZ__dx__master,8,100.5359,100.5221,1.0,0.75,307.125,310,しゅ～しん？変身☆ハカイシンzzZ,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.4211
+15000-15499,INFiNiTE ENERZY -Overdoze-__dx__master,7,100.5992,100.6046,1.0,1.0,315.0,315,INFiNiTE ENERZY -Overdoze-,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.3684
 15000-15499,エスオーエス__dx__master,7,100.6965,100.7351,1.0,1.0,306.0,306,エスオーエス,master,13+,13.6,dx,maimai,False,19,0.3684
+15000-15499,バカ通信__dx__master,7,100.6185,100.5845,1.0,1.0,306.0,306,バカ通信,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.3684
 15000-15499,Transcend Lights__dx__master,7,100.6404,100.6049,1.0,1.0,303.0,303,Transcend Lights,master,13,13.5,dx,オンゲキ＆CHUNITHM,False,19,0.3684
-15000-15499,オーバーライド__dx__master,7,100.5988,100.5646,1.0,1.0,301.0,301,オーバーライド,master,13,13.4,dx,niconico＆ボーカロイド,False,19,0.3684
-15000-15499,INTERNET YAMERO__dx__remaster,7,100.5037,100.5461,1.0,0.8571,308.2857,310,INTERNET YAMERO,remaster,13+,13.8,dx,POPS＆アニメ,False,19,0.3684
-15000-15499,ありきたりな恋の歌__dx__master,7,100.5854,100.6159,1.0,0.8571,308.2857,310,ありきたりな恋の歌,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.3684
-15000-15499,Luminescence__dx__master,7,100.48,100.5276,1.0,0.7143,306.7143,310,Luminescence,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.3684
-15000-15499,Rainbow Rush Story__dx__master,6,100.5575,100.558,1.0,1.0,310.0,310,Rainbow Rush Story,master,13+,13.8,dx,maimai,False,19,0.3158
-15000-15499,ここからはじまるプロローグ。 (Kanon Remix)__dx__master,6,100.6023,100.5778,1.0,1.0,310.0,310,ここからはじまるプロローグ。 (Kanon Remix),master,13+,13.8,dx,maimai,False,19,0.3158
+15000-15499,スカーレット警察のゲットーパトロール24時__dx__master,7,100.6546,100.7129,1.0,1.0,303.0,303,スカーレット警察のゲットーパトロール24時,master,13,13.5,dx,東方Project,False,19,0.3684
+15000-15499,ウミユリ海底譚__std__master,7,100.766,100.8249,1.0,1.0,301.0,301,ウミユリ海底譚,master,13,13.4,std,niconico＆ボーカロイド,False,19,0.3684
+15000-15499,MORNINGLOOM__dx__master,7,100.5719,100.5586,1.0,0.8571,306.4286,308,MORNINGLOOM,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.3684
+15000-15499,病み垢ステロイド__dx__master,7,100.5722,100.561,1.0,0.7143,308.8571,312,病み垢ステロイド,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.3684
+15000-15499,Complex Mind__dx__master,6,100.6085,100.6254,1.0,1.0,310.0,310,Complex Mind,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.3158
+15000-15499,INTERNET YAMERO__dx__remaster,6,100.5466,100.5488,1.0,1.0,310.0,310,INTERNET YAMERO,remaster,13+,13.8,dx,POPS＆アニメ,False,19,0.3158
 15000-15499,エゴロック__dx__master,6,100.6102,100.5896,1.0,1.0,310.0,310,エゴロック,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.3158
 15000-15499,Altale__std__master,6,100.6516,100.6531,1.0,1.0,308.0,308,Altale,master,13+,13.7,std,ゲーム＆バラエティ,False,19,0.3158
-15000-15499,raputa__dx__expert,6,100.6201,100.5866,1.0,1.0,308.0,308,raputa,expert,13+,13.7,dx,maimai,False,19,0.3158
+15000-15499,IMAWANOKIWA__dx__master,6,100.6039,100.5715,1.0,1.0,308.0,308,IMAWANOKIWA,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.3158
 15000-15499,星空パーティーチューン__dx__master,6,100.5652,100.5576,1.0,1.0,308.0,308,星空パーティーチューン,master,13+,13.7,dx,maimai,False,19,0.3158
 15000-15499,無敵We are one!!__std__master,6,100.5889,100.5729,1.0,1.0,308.0,308,無敵We are one!!,master,13+,13.7,std,オンゲキ＆CHUNITHM,False,19,0.3158
-15000-15499,ぱぱぱらビーチ__dx__master,6,100.6296,100.646,1.0,1.0,306.0,306,ぱぱぱらビーチ,master,13+,13.6,dx,maimai,False,19,0.3158
-15000-15499,雨露霜雪__dx__expert,6,100.6844,100.6983,1.0,1.0,303.0,303,雨露霜雪,expert,13,13.5,dx,maimai,False,19,0.3158
-15000-15499,氷滅の135小節__dx__expert,6,100.5939,100.578,1.0,1.0,301.0,301,氷滅の135小節,expert,13,13.4,dx,maimai,False,19,0.3158
+15000-15499,Drivessover__dx__master,6,100.592,100.549,1.0,1.0,306.0,306,Drivessover,master,13+,13.6,dx,オンゲキ＆CHUNITHM,False,19,0.3158
+15000-15499,オーバーライド__dx__master,6,100.5896,100.558,1.0,1.0,301.0,301,オーバーライド,master,13,13.4,dx,niconico＆ボーカロイド,False,19,0.3158
 15000-15499,Lover's Trick__dx__master,6,100.5364,100.5838,1.0,0.8333,306.0,308,Lover's Trick,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.3158
-15000-15499,Arty Party__dx__master,6,100.424,100.5167,1.0,0.6667,308.1667,312,Arty Party,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.3158
-15000-15499,SUPER AMBULANCE__dx__master,6,100.2221,100.2766,0.8333,0.3333,311.5,321,SUPER AMBULANCE,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,19,0.3158
-15000-15499,ピポピポ -People People- feat. ななひら__dx__master,5,100.5548,100.5523,1.0,1.0,310.0,310,ピポピポ -People People- feat. ななひら,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.2632
+15000-15499,Luminescence__dx__master,6,100.472,100.5326,1.0,0.6667,306.1667,310,Luminescence,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.3158
+15000-15499,Rainbow Rush Story__dx__master,5,100.5487,100.5479,1.0,1.0,310.0,310,Rainbow Rush Story,master,13+,13.8,dx,maimai,False,19,0.2632
+15000-15499,ここからはじまるプロローグ。 (Kanon Remix)__dx__master,5,100.613,100.6071,1.0,1.0,310.0,310,ここからはじまるプロローグ。 (Kanon Remix),master,13+,13.8,dx,maimai,False,19,0.2632
 15000-15499,Ultimate taste__dx__master,5,100.5406,100.5367,1.0,1.0,308.0,308,Ultimate taste,master,13+,13.7,dx,東方Project,False,19,0.2632
 15000-15499,You Mean the World to Me__dx__master,5,100.6403,100.6093,1.0,1.0,308.0,308,You Mean the World to Me,master,13+,13.7,dx,maimai,False,19,0.2632
+15000-15499,raputa__dx__expert,5,100.6287,100.596,1.0,1.0,308.0,308,raputa,expert,13+,13.7,dx,maimai,False,19,0.2632
 15000-15499,ゆけむり魂温泉 II__dx__master,5,100.6474,100.6744,1.0,1.0,308.0,308,ゆけむり魂温泉 II,master,13+,13.6,dx,東方Project,False,19,0.2632
+15000-15499,終点__std__master,5,100.6457,100.6382,1.0,1.0,308.0,308,終点,master,13+,13.7,std,niconico＆ボーカロイド,False,19,0.2632
+15000-15499,ぱぱぱらビーチ__dx__master,5,100.6153,100.5972,1.0,1.0,306.0,306,ぱぱぱらビーチ,master,13+,13.6,dx,maimai,False,19,0.2632
 15000-15499,リフヴェイン__dx__master,5,100.5831,100.5435,1.0,1.0,306.0,306,リフヴェイン,master,13+,13.6,dx,maimai,False,19,0.2632
+15000-15499,雨露霜雪__dx__expert,5,100.6812,100.6964,1.0,1.0,303.0,303,雨露霜雪,expert,13,13.5,dx,maimai,False,19,0.2632
+15000-15499,氷滅の135小節__dx__expert,5,100.5697,100.5766,1.0,1.0,301.0,301,氷滅の135小節,expert,13,13.4,dx,maimai,False,19,0.2632
 15000-15499,"Help me, ERINNNNNN!!__dx__master",5,100.6564,100.6285,1.0,1.0,299.0,299,"Help me, ERINNNNNN!!",master,13,13.3,dx,東方Project,False,19,0.2632
+15000-15499,ありきたりな恋の歌__dx__master,5,100.5853,100.6159,1.0,0.8,307.6,310,ありきたりな恋の歌,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.2632
 15000-15499,なんかノイズにきこえる__dx__master,5,100.5093,100.5621,1.0,0.8,305.6,308,なんかノイズにきこえる,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.2632
-15000-15499,ダーリンダンス__dx__remaster,5,100.5781,100.567,1.0,0.8,300.8,303,ダーリンダンス,remaster,13,13.5,dx,niconico＆ボーカロイド,False,19,0.2632
-15000-15499,マツヨイナイトバグ__dx__master,5,100.4192,100.5148,1.0,0.6,307.4,312,マツヨイナイトバグ,master,13+,13.9,dx,東方Project,False,19,0.2632
-15000-15499,Luminaria__dx__master,5,100.3872,100.2941,1.0,0.4,307.6,315,Luminaria,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.2632
+15000-15499,Arty Party__dx__master,5,100.4047,100.5129,1.0,0.6,307.4,312,Arty Party,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.2632
+15000-15499,SUPER AMBULANCE__dx__master,5,100.1866,100.1538,0.8,0.4,311.8,321,SUPER AMBULANCE,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,19,0.2632
 15000-15499,Zitronectar__dx__master,5,100.0327,100.1816,0.6,0.0,305.6,309,Zitronectar,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,19,0.2632
-15000-15499,Final Step!__dx__master,4,100.5944,100.5654,1.0,1.0,310.0,310,Final Step!,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,Rodeo Machine__std__master,4,100.6398,100.6367,1.0,1.0,310.0,310,Rodeo Machine,master,13+,13.8,std,POPS＆アニメ,False,19,0.2105
-15000-15499,ウルトラトレーラー__dx__master,4,100.5962,100.582,1.0,1.0,310.0,310,ウルトラトレーラー,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.2105
+15000-15499,ピポピポ -People People- feat. ななひら__dx__master,4,100.5394,100.5378,1.0,1.0,310.0,310,ピポピポ -People People- feat. ななひら,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,my flow__dx__master,4,100.5729,100.57,1.0,1.0,308.0,308,my flow,master,13+,13.7,dx,maimai,False,19,0.2105
 15000-15499,おとせサンダー__dx__remaster,4,100.554,100.5483,1.0,1.0,308.0,308,おとせサンダー,remaster,13+,13.7,dx,POPS＆アニメ,False,19,0.2105
-15000-15499,月光__dx__master,4,100.6242,100.6172,1.0,1.0,308.0,308,月光,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.2105
 15000-15499,生命不詳__dx__master,4,100.6012,100.5559,1.0,1.0,308.0,308,生命不詳,master,13+,13.7,dx,maimai,False,19,0.2105
-15000-15499,迷える音色は恋の唄__dx__master,4,100.6278,100.6304,1.0,1.0,308.0,308,迷える音色は恋の唄,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,コンティニュー！ feat. 藍月なくる__dx__master,4,100.5481,100.5506,1.0,1.0,306.0,306,コンティニュー！ feat. 藍月なくる,master,13+,13.6,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,地獄__dx__master,4,100.6193,100.6197,1.0,1.0,306.0,306,地獄,master,13+,13.6,dx,maimai,False,19,0.2105
-15000-15499,まっすぐ→→→ストリーム！__dx__master,4,100.5745,100.5224,1.0,1.0,303.0,303,まっすぐ→→→ストリーム！,master,13,13.5,dx,オンゲキ＆CHUNITHM,False,19,0.2105
 15000-15499,モニタリング__dx__remaster,4,100.6038,100.6006,1.0,1.0,301.0,301,モニタリング,remaster,13,13.4,dx,niconico＆ボーカロイド,False,19,0.2105
-15000-15499,The wheel to the right__std__expert,4,100.7226,100.6929,1.0,1.0,299.25,300,The wheel to the right,expert,13,13.3,std,オンゲキ＆CHUNITHM,False,19,0.2105
 15000-15499,Kattobi KEIKYU Rider__std__master,4,100.5496,100.6,1.0,0.75,305.0,308,Kattobi KEIKYU Rider,master,13+,13.7,std,オンゲキ＆CHUNITHM,False,19,0.2105
+15000-15499,ダーリンダンス__dx__remaster,4,100.5237,100.5636,1.0,0.75,300.25,303,ダーリンダンス,remaster,13,13.5,dx,niconico＆ボーカロイド,False,19,0.2105
+15000-15499,マツヨイナイトバグ__dx__master,4,100.3936,100.5032,1.0,0.5,306.25,312,マツヨイナイトバグ,master,13+,13.9,dx,東方Project,False,19,0.2105
 15000-15499,電光刹歌__dx__master,4,100.542,100.5435,1.0,0.5,304.5,310,電光刹歌,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.2105
-15000-15499,系ぎて__dx__expert,4,100.4418,100.4926,1.0,0.5,304.25,310,系ぎて,expert,13+,13.8,dx,maimai,False,19,0.2105
 15000-15499,Don't Fight The Music__dx__master,4,100.3147,100.2918,1.0,0.25,307.75,317,Don't Fight The Music,master,14,14.1,dx,オンゲキ＆CHUNITHM,False,19,0.2105
+15000-15499,Luminaria__dx__master,4,100.3433,100.2825,1.0,0.25,305.75,315,Luminaria,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,crazy (about you)__dx__master,4,100.1958,100.1264,1.0,0.25,301.0,310,crazy (about you),master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.2105
 15000-15499,Break The Speakers__dx__master,4,99.2838,99.3257,0.0,0.0,303.0,304,Break The Speakers,master,14+,14.7,dx,maimai,False,19,0.2105
-15000-15499,Synthesis.__dx__master,4,100.0068,100.0274,0.5,0.0,300.5,305,Synthesis.,master,14,14.1,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,MYTH Re：LEASE__dx__master,4,99.26,99.1865,0.0,0.0,300.0,304,MYTH Re：LEASE,master,14,14.5,dx,ゲーム＆バラエティ,False,19,0.2105
 15000-15499,熱異常__dx__remaster,3,100.5852,100.5344,1.0,1.0,312.0,312,熱異常,remaster,13+,13.9,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,Doll Judgment__std__master,3,100.5563,100.5289,1.0,1.0,310.0,310,Doll Judgment,master,13+,13.8,std,東方Project,False,19,0.1579
+15000-15499,Final Step!__dx__master,3,100.6092,100.5715,1.0,1.0,310.0,310,Final Step!,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.1579
+15000-15499,ウルトラトレーラー__dx__master,3,100.5847,100.5334,1.0,1.0,310.0,310,ウルトラトレーラー,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,星界ちゃんと可不ちゃんのおつかい合騒曲__dx__master,3,100.5953,100.5915,1.0,1.0,310.0,310,星界ちゃんと可不ちゃんのおつかい合騒曲,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,Alice's Suitcase__dx__master,3,100.5489,100.5443,1.0,1.0,308.0,308,Alice's Suitcase,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1579
-15000-15499,Random__dx__master,3,100.6015,100.5862,1.0,1.0,308.0,308,Random,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1579
-15000-15499,最っ高のエンタメだ!!__dx__master,3,100.6195,100.607,1.0,1.0,308.0,308,最っ高のエンタメだ!!,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.1579
+15000-15499,月光__dx__master,3,100.6218,100.603,1.0,1.0,308.0,308,月光,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.1579
+15000-15499,迷える音色は恋の唄__dx__master,3,100.6193,100.6095,1.0,1.0,308.0,308,迷える音色は恋の唄,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1579
 15000-15499,魔ジョ狩リ__dx__master,3,100.6265,100.661,1.0,1.0,308.0,308,魔ジョ狩リ,master,13+,13.7,dx,maimai,False,19,0.1579
 15000-15499,Everybody Say HARDCORE TANO*C__dx__master,3,100.5465,100.5427,1.0,1.0,306.0,306,Everybody Say HARDCORE TANO*C,master,13+,13.6,dx,ゲーム＆バラエティ,False,19,0.1579
 15000-15499,Oshama Scramble!__dx__master,3,100.6266,100.6517,1.0,1.0,306.0,306,Oshama Scramble!,master,13+,13.6,dx,maimai,False,19,0.1579
 15000-15499,リッジでリッジでGO!GO!GO! -GMT mashup-__std__master,3,100.5521,100.5485,1.0,1.0,306.0,306,リッジでリッジでGO!GO!GO! -GMT mashup-,master,13+,13.6,std,ゲーム＆バラエティ,False,19,0.1579
-15000-15499,タカハせ！名人マン__std__master,3,100.7475,100.7137,1.0,1.0,303.0,303,タカハせ！名人マン,master,13,13.5,std,maimai,False,19,0.1579
+15000-15499,まっすぐ→→→ストリーム！__dx__master,3,100.5953,100.5328,1.0,1.0,303.0,303,まっすぐ→→→ストリーム！,master,13,13.5,dx,オンゲキ＆CHUNITHM,False,19,0.1579
 15000-15499,㋰責任集合体__dx__master,3,100.67,100.6485,1.0,1.0,303.0,303,㋰責任集合体,master,13,13.4,dx,niconico＆ボーカロイド,False,19,0.1579
-15000-15499,宙天__dx__expert,3,100.6354,100.6257,1.0,1.0,303.0,303,宙天,expert,13,13.5,dx,maimai,False,19,0.1579
-15000-15499,Believe the Rainbow__std__master,3,100.7062,100.7404,1.0,1.0,301.0,301,Believe the Rainbow,master,13,13.4,std,maimai,False,19,0.1579
+15000-15499,ケロ⑨destiny__dx__master,3,100.7501,100.7325,1.0,1.0,301.0,301,ケロ⑨destiny,master,13,13.4,dx,東方Project,False,19,0.1579
+15000-15499,The wheel to the right__std__expert,3,100.6441,100.5898,1.0,1.0,299.0,299,The wheel to the right,expert,13,13.3,std,オンゲキ＆CHUNITHM,False,19,0.1579
 15000-15499,スローグロー__dx__master,3,100.6385,100.5539,1.0,1.0,299.0,299,スローグロー,master,13,13.3,dx,maimai,False,19,0.1579
 15000-15499,三妖精SAY YA!!!__dx__master,3,100.6812,100.6411,1.0,1.0,299.0,299,三妖精SAY YA!!!,master,13,13.3,dx,東方Project,False,19,0.1579
 15000-15499,あいたい星人__dx__master,3,100.6546,100.6627,1.0,1.0,297.0,297,あいたい星人,master,13,13.2,dx,niconico＆ボーカロイド,False,19,0.1579
@@ -276,60 +270,54 @@
 15000-15499,トレジャーガーデン__dx__master,3,100.4376,100.5262,1.0,0.6667,306.0,310,トレジャーガーデン,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,メズマライザー__dx__remaster,3,100.5857,100.65,1.0,0.6667,306.0,310,メズマライザー,remaster,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,モ°ルモ°ル (MZK Skippin' Remix)__dx__master,3,100.6098,100.5435,1.0,0.6667,304.3333,308,モ°ルモ°ル (MZK Skippin' Remix),master,13+,13.7,dx,maimai,False,19,0.1579
-15000-15499,み　む　かｩ　わ　ナ　イ　ス　ト　ラ　イ__dx__master,3,100.4861,100.601,1.0,0.6667,304.0,308,み　む　かｩ　わ　ナ　イ　ス　ト　ラ　イ,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.1579
 15000-15499,アトロポスと最果の探究者__dx__master,3,100.4552,100.5246,1.0,0.6667,304.0,308,アトロポスと最果の探究者,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1579
 15000-15499,Cthugha__dx__master,3,100.19,100.0582,1.0,0.0,306.6667,308,Cthugha,master,14,14.2,dx,ゲーム＆バラエティ,False,19,0.1579
 15000-15499,雨露霜雪__dx__master,3,99.471,99.5224,0.0,0.0,306.3333,308,雨露霜雪,master,14+,14.6,dx,maimai,False,19,0.1579
 15000-15499,Trrricksters!!__dx__master,3,99.907,99.857,0.3333,0.0,303.3333,308,Trrricksters!!,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,19,0.1579
 15000-15499,DATAERR0R__dx__master,3,100.2839,100.304,1.0,0.0,302.6667,303,DATAERR0R,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.1579
+15000-15499,Synthesis.__dx__master,3,100.1109,100.1283,0.6667,0.0,302.0,305,Synthesis.,master,14,14.1,dx,ゲーム＆バラエティ,False,19,0.1579
 15000-15499,シリウスの輝きのように__dx__remaster,2,100.5798,100.5798,1.0,1.0,315.0,315,シリウスの輝きのように,remaster,14,14.0,dx,POPS＆アニメ,False,19,0.1053
 15000-15499,Last Samurai__dx__master,2,100.5156,100.5156,1.0,1.0,312.0,312,Last Samurai,master,13+,13.9,dx,maimai,False,19,0.1053
 15000-15499,NightTheater__dx__master,2,100.5538,100.5538,1.0,1.0,312.0,312,NightTheater,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.1053
-15000-15499,RE:INCARNATED DRAGNER__dx__master,2,100.5458,100.5458,1.0,1.0,312.0,312,RE:INCARNATED DRAGNER,master,13+,13.9,dx,maimai,False,19,0.1053
 15000-15499,れっつ！みらくる☆はーどこあっ！__dx__master,2,100.6589,100.6589,1.0,1.0,312.0,312,れっつ！みらくる☆はーどこあっ！,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,ウィーアーピコピコハンマーズ!!!!__dx__master,2,100.5788,100.5788,1.0,1.0,312.0,312,ウィーアーピコピコハンマーズ!!!!,master,13+,13.9,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,ハードコア・シンドローム__dx__master,2,100.6329,100.6329,1.0,1.0,312.0,312,ハードコア・シンドローム,master,13+,13.9,dx,オンゲキ＆CHUNITHM,False,19,0.1053
-15000-15499,Baqeela__dx__master,2,100.6692,100.6692,1.0,1.0,310.0,310,Baqeela,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,Blows Up Everything__dx__master,2,100.6125,100.6125,1.0,1.0,310.0,310,Blows Up Everything,master,13+,13.8,dx,maimai,False,19,0.1053
-15000-15499,"Hello, Hologram__dx__master",2,100.7027,100.7027,1.0,1.0,310.0,310,"Hello, Hologram",master,13+,13.8,dx,POPS＆アニメ,False,19,0.1053
 15000-15499,How To Make 音ゲ～曲！__dx__master,2,100.5879,100.5879,1.0,1.0,310.0,310,How To Make 音ゲ～曲！,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,Lost Desire__dx__master,2,100.6532,100.6532,1.0,1.0,310.0,310,Lost Desire,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.1053
-15000-15499,Nyan Cat EX__std__master,2,100.587,100.587,1.0,1.0,310.0,310,Nyan Cat EX,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,POWER OF UNITY__dx__master,2,100.6257,100.6257,1.0,1.0,310.0,310,POWER OF UNITY,master,13+,13.8,dx,maimai,False,19,0.1053
 15000-15499,Revive The Rave__std__master,2,100.5294,100.5294,1.0,1.0,310.0,310,Revive The Rave,master,13+,13.8,std,maimai,False,19,0.1053
 15000-15499,VANTABLACK RAVER__dx__master,2,100.5684,100.5684,1.0,1.0,310.0,310,VANTABLACK RAVER,master,13+,13.8,dx,maimai,False,19,0.1053
 15000-15499,あつすぎの歌__dx__master,2,100.5405,100.5405,1.0,1.0,310.0,310,あつすぎの歌,master,13+,13.8,dx,POPS＆アニメ,False,19,0.1053
-15000-15499,群青シグナル__dx__master,2,100.5432,100.5432,1.0,1.0,310.0,310,群青シグナル,master,13+,13.8,dx,maimai,False,19,0.1053
-15000-15499,頓珍漢の宴__std__master,2,100.5384,100.5384,1.0,1.0,310.0,310,頓珍漢の宴,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,Empire of Winter__dx__master,2,100.5954,100.5954,1.0,1.0,308.0,308,Empire of Winter,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,Geranium__dx__master,2,100.5354,100.5354,1.0,1.0,308.0,308,Geranium,master,13+,13.7,dx,maimai,False,19,0.1053
 15000-15499,Never Give Up!__dx__remaster,2,100.5728,100.5728,1.0,1.0,308.0,308,Never Give Up!,remaster,13+,13.7,dx,maimai,False,19,0.1053
+15000-15499,Random__dx__master,2,100.5516,100.5516,1.0,1.0,308.0,308,Random,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,STAIRWAY TO GENERATION__std__master,2,100.6157,100.6157,1.0,1.0,308.0,308,STAIRWAY TO GENERATION,master,13+,13.7,std,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,enchanted love__dx__master,2,100.587,100.587,1.0,1.0,308.0,308,enchanted love,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,snooze__dx__master,2,100.5466,100.5466,1.0,1.0,308.0,308,snooze,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,うぇいびー__dx__remaster,2,100.6362,100.6362,1.0,1.0,308.0,308,うぇいびー,remaster,13+,13.7,dx,POPS＆アニメ,False,19,0.1053
+15000-15499,み　む　かｩ　わ　ナ　イ　ス　ト　ラ　イ__dx__master,2,100.6238,100.6238,1.0,1.0,308.0,308,み　む　かｩ　わ　ナ　イ　ス　ト　ラ　イ,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,コトバ・カラフル__std__master,2,100.6498,100.6498,1.0,1.0,308.0,308,コトバ・カラフル,master,13+,13.7,std,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,シエルブルーマルシェ__dx__remaster,2,100.6452,100.6452,1.0,1.0,308.0,308,シエルブルーマルシェ,remaster,13+,13.7,dx,maimai,False,19,0.1053
-15000-15499,ヒミツCULT__dx__master,2,100.6224,100.6224,1.0,1.0,308.0,308,ヒミツCULT,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,レーイレーイ__dx__remaster,2,100.539,100.539,1.0,1.0,308.0,308,レーイレーイ,remaster,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,人マニア__dx__master,2,100.6674,100.6674,1.0,1.0,308.0,308,人マニア,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.1053
-15000-15499,最愛人生ランナー__dx__master,2,100.5917,100.5917,1.0,1.0,308.0,308,最愛人生ランナー,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1053
+15000-15499,最っ高のエンタメだ!!__dx__master,2,100.6004,100.6004,1.0,1.0,308.0,308,最っ高のエンタメだ!!,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,月面基地__dx__master,2,100.5984,100.5984,1.0,1.0,308.0,308,月面基地,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,果ての空、僕らが見た光。__dx__master,2,100.568,100.568,1.0,1.0,308.0,308,果ての空、僕らが見た光。,master,13+,13.6,dx,maimai,False,19,0.1053
 15000-15499,遺伝子レベル∞スパイラル__dx__master,2,100.5559,100.5559,1.0,1.0,308.0,308,遺伝子レベル∞スパイラル,master,13+,13.7,dx,maimai,False,19,0.1053
 15000-15499,Irresistible__dx__master,2,100.6612,100.6612,1.0,1.0,306.0,306,Irresistible,master,13+,13.6,dx,maimai,False,19,0.1053
 15000-15499,ドーナツホール__std__master,2,100.5982,100.5982,1.0,1.0,306.0,306,ドーナツホール,master,13+,13.6,std,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,Sunday Night feat Kanata.N__dx__master,2,100.5888,100.5888,1.0,1.0,303.0,303,Sunday Night feat Kanata.N,master,13,13.5,dx,ゲーム＆バラエティ,False,19,0.1053
-15000-15499,チューリングの跡__dx__expert,2,100.6413,100.6413,1.0,1.0,303.0,303,チューリングの跡,expert,13,13.5,dx,maimai,False,19,0.1053
+15000-15499,タカハせ！名人マン__std__master,2,100.7966,100.7966,1.0,1.0,303.0,303,タカハせ！名人マン,master,13,13.5,std,maimai,False,19,0.1053
+15000-15499,宙天__dx__expert,2,100.6403,100.6403,1.0,1.0,303.0,303,宙天,expert,13,13.5,dx,maimai,False,19,0.1053
 15000-15499,患部で止まってすぐ溶ける～狂気の優曇華院__dx__master,2,100.5359,100.5359,1.0,1.0,303.0,303,患部で止まってすぐ溶ける～狂気の優曇華院,master,13,13.5,dx,東方Project,False,19,0.1053
-15000-15499,隠密あんみつDX__dx__master,2,100.578,100.578,1.0,1.0,303.0,303,隠密あんみつDX,master,13,13.5,dx,maimai,False,19,0.1053
 15000-15499,39__std__remaster,2,100.557,100.557,1.0,1.0,301.0,301,39,remaster,13,13.4,std,niconico＆ボーカロイド,False,19,0.1053
+15000-15499,Believe the Rainbow__std__master,2,100.645,100.645,1.0,1.0,301.0,301,Believe the Rainbow,master,13,13.4,std,maimai,False,19,0.1053
 15000-15499,NOIZY BOUNCE__dx__master,2,100.5364,100.5364,1.0,1.0,301.0,301,NOIZY BOUNCE,master,13,13.4,dx,maimai,False,19,0.1053
 15000-15499,YA･DA･YO [Reborn]__std__master,2,100.6578,100.6578,1.0,1.0,301.0,301,YA･DA･YO [Reborn],master,13,13.4,std,ゲーム＆バラエティ,False,19,0.1053
-15000-15499,ケロ⑨destiny__dx__master,2,100.7674,100.7674,1.0,1.0,301.0,301,ケロ⑨destiny,master,13,13.4,dx,東方Project,False,19,0.1053
 15000-15499,ヒトガタ__dx__master,2,100.5341,100.5341,1.0,1.0,301.0,301,ヒトガタ,master,13,13.4,dx,POPS＆アニメ,False,19,0.1053
 15000-15499,フタタビ__dx__master,2,100.6278,100.6278,1.0,1.0,301.0,301,フタタビ,master,13,13.4,dx,maimai,False,19,0.1053
-15000-15499,ヴァンパイア__dx__remaster,2,100.6327,100.6327,1.0,1.0,301.0,301,ヴァンパイア,remaster,13,13.4,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,真空都市__dx__master,2,100.5554,100.5554,1.0,1.0,301.0,301,真空都市,master,13,13.4,dx,maimai,False,19,0.1053
 15000-15499,PERSONA feat. PANXI__dx__master,2,100.5908,100.5908,1.0,1.0,299.0,299,PERSONA feat. PANXI,master,13,13.3,dx,ゲーム＆バラエティ,False,19,0.1053
 15000-15499,きたさいたま2000__std__expert,2,100.6586,100.6586,1.0,1.0,299.0,299,きたさいたま2000,expert,13,13.3,std,ゲーム＆バラエティ,False,19,0.1053
@@ -339,11 +327,9 @@
 15000-15499,ローリンガール__dx__master,2,100.6028,100.6028,1.0,1.0,299.0,299,ローリンガール,master,13,13.3,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,"False Amber (from the Black Bazaar, Or by A Kervan Trader from the Lands Afar, Or Buried Beneath the Shifting Sands That Lead Everywhere but Nowhere)__dx__expert",2,100.5534,100.5534,1.0,1.0,297.0,297,"False Amber (from the Black Bazaar, Or by A Kervan Trader from the Lands Afar, Or Buried Beneath the Shifting Sands That Lead Everywhere but Nowhere)",expert,13,13.2,dx,maimai,False,19,0.1053
 15000-15499,はいよろこんで__dx__remaster,2,100.6896,100.6896,1.0,1.0,297.0,297,はいよろこんで,remaster,13,13.2,dx,POPS＆アニメ,False,19,0.1053
-15000-15499,サイエンス__dx__master,2,100.8418,100.8418,1.0,1.0,292.0,292,サイエンス,master,13,13.0,dx,niconico＆ボーカロイド,False,19,0.1053
 15000-15499,Unwelcome School__dx__remaster,2,100.3024,100.3024,1.0,0.5,308.5,315,Unwelcome School,remaster,14,14.1,dx,ゲーム＆バラエティ,False,19,0.1053
-15000-15499,Restricted Access__dx__master,2,100.4683,100.4683,1.0,0.5,304.0,310,Restricted Access,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.1053
+15000-15499,系ぎて__dx__expert,2,100.4926,100.4926,1.0,0.5,304.5,310,系ぎて,expert,13+,13.8,dx,maimai,False,19,0.1053
 15000-15499,六兆年と一夜物語__dx__master,2,100.409,100.409,1.0,0.5,304.0,310,六兆年と一夜物語,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.1053
-15000-15499,管弦楽組曲 第3番 ニ長調「第2曲（G線上のアリア）」BWV.1068-2__dx__master,2,100.4079,100.4079,1.0,0.5,304.0,310,管弦楽組曲 第3番 ニ長調「第2曲（G線上のアリア）」BWV.1068-2,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,とびだせ！TO THE COSMIC!!__dx__master,2,100.4641,100.4641,1.0,0.5,302.5,308,とびだせ！TO THE COSMIC!!,master,13+,13.7,dx,maimai,False,19,0.1053
 15000-15499,FLUFFY FLASH__dx__master,2,100.2042,100.2042,1.0,0.0,311.0,311,FLUFFY FLASH,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,Raven Emperor__dx__master,2,100.0704,100.0704,0.5,0.0,309.5,314,Raven Emperor,master,14,14.5,dx,maimai,False,19,0.1053
@@ -356,25 +342,25 @@
 15000-15499,ラストピースに祝福と栄光を__dx__master,2,99.0174,99.0174,0.0,0.0,296.5,301,ラストピースに祝福と栄光を,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,19,0.1053
 15000-15499,Revive The Rave__std__remaster,1,100.5696,100.5696,1.0,1.0,324.0,324,Revive The Rave,remaster,14,14.4,std,maimai,False,19,0.0526
 15000-15499,Hainuwele__dx__master,1,100.6257,100.6257,1.0,1.0,321.0,321,Hainuwele,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,19,0.0526
-15000-15499,エータ・ベータ・イータ__dx__master,1,100.5303,100.5303,1.0,1.0,317.0,317,エータ・ベータ・イータ,master,14,14.1,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,カゲロウデイズ__std__remaster,1,100.6139,100.6139,1.0,1.0,317.0,317,カゲロウデイズ,remaster,14,14.1,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Tricolor⁂circuS__dx__master,1,100.673,100.673,1.0,1.0,315.0,315,Tricolor⁂circuS,master,14,14.0,dx,maimai,False,19,0.0526
-15000-15499,僕の和風本当上手__dx__master,1,100.5203,100.5203,1.0,1.0,315.0,315,僕の和風本当上手,master,14,14.0,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,Löschen__dx__master,1,100.5503,100.5503,1.0,1.0,312.0,312,Löschen,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.0526
+15000-15499,RE:INCARNATED DRAGNER__dx__master,1,100.5544,100.5544,1.0,1.0,312.0,312,RE:INCARNATED DRAGNER,master,13+,13.9,dx,maimai,False,19,0.0526
 15000-15499,Sound Chimera__dx__master,1,100.5034,100.5034,1.0,1.0,312.0,312,Sound Chimera,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,folern__dx__master,1,100.545,100.545,1.0,1.0,312.0,312,folern,master,13+,13.9,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,keep hopping__std__master,1,100.6592,100.6592,1.0,1.0,312.0,312,keep hopping,master,13+,13.9,std,maimai,False,19,0.0526
 15000-15499,セイクリッド　ルイン__std__master,1,100.6261,100.6261,1.0,1.0,312.0,312,セイクリッド　ルイン,master,13+,13.9,std,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,初音天地開闢神話__dx__master,1,100.567,100.567,1.0,1.0,312.0,312,初音天地開闢神話,master,13+,13.9,dx,niconico＆ボーカロイド,False,19,0.0526
-15000-15499,胡蝶乃舞__dx__master,1,100.6823,100.6823,1.0,1.0,312.0,312,胡蝶乃舞,master,13+,13.9,dx,ゲーム＆バラエティ,False,19,0.0526
+15000-15499,Baqeela__dx__master,1,100.5398,100.5398,1.0,1.0,310.0,310,Baqeela,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,Cyaegha__dx__master,1,100.6456,100.6456,1.0,1.0,310.0,310,Cyaegha,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,DADDY MULK -Groove remix-__std__remaster,1,100.5657,100.5657,1.0,1.0,310.0,310,DADDY MULK -Groove remix-,remaster,13+,13.8,std,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,DANGEROOOOUS JUNGLE__dx__master,1,100.6387,100.6387,1.0,1.0,310.0,310,DANGEROOOOUS JUNGLE,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.0526
+15000-15499,"Hello, Hologram__dx__master",1,100.8308,100.8308,1.0,1.0,310.0,310,"Hello, Hologram",master,13+,13.8,dx,POPS＆アニメ,False,19,0.0526
 15000-15499,Imperishable Night 2006 (2016 Refine)__std__master,1,100.5362,100.5362,1.0,1.0,310.0,310,Imperishable Night 2006 (2016 Refine),master,13+,13.8,std,東方Project,False,19,0.0526
 15000-15499,Jouez Avec Moi?__dx__master,1,100.6097,100.6097,1.0,1.0,310.0,310,Jouez Avec Moi?,master,13+,13.8,dx,maimai,False,19,0.0526
 15000-15499,"Little ""Sister"" Bitch__dx__master",1,100.6207,100.6207,1.0,1.0,310.0,310,"Little ""Sister"" Bitch",master,13+,13.8,dx,東方Project,False,19,0.0526
-15000-15499,MAXRAGE__dx__master,1,100.5824,100.5824,1.0,1.0,310.0,310,MAXRAGE,master,13+,13.8,dx,maimai,False,19,0.0526
 15000-15499,My First Phone__std__master,1,100.5918,100.5918,1.0,1.0,310.0,310,My First Phone,master,13+,13.8,std,オンゲキ＆CHUNITHM,False,19,0.0526
+15000-15499,Nyan Cat EX__std__master,1,100.5187,100.5187,1.0,1.0,310.0,310,Nyan Cat EX,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Unfinished Epic__dx__master,1,100.7116,100.7116,1.0,1.0,310.0,310,Unfinished Epic,master,13+,13.8,dx,maimai,False,19,0.0526
 15000-15499,YKWTD__dx__master,1,100.5525,100.5525,1.0,1.0,310.0,310,YKWTD,master,13+,13.8,dx,maimai,False,19,0.0526
 15000-15499,きゅびびびびずむ__dx__master,1,100.6284,100.6284,1.0,1.0,310.0,310,きゅびびびびずむ,master,13+,13.8,dx,POPS＆アニメ,False,19,0.0526
@@ -382,27 +368,27 @@
 15000-15499,トルコ行進曲 - オワタ＼(^o^)／__std__master,1,100.5665,100.5665,1.0,1.0,310.0,310,トルコ行進曲 - オワタ＼(^o^)／,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,ピュグマリオンの咒文__dx__master,1,100.7434,100.7434,1.0,1.0,310.0,310,ピュグマリオンの咒文,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,モエチャッカファイア__dx__master,1,100.7426,100.7426,1.0,1.0,310.0,310,モエチャッカファイア,master,13+,13.9,dx,POPS＆アニメ,False,19,0.0526
-15000-15499,人生リセットボタン__std__master,1,100.6177,100.6177,1.0,1.0,310.0,310,人生リセットボタン,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,六兆年と一夜物語__std__master,1,100.5233,100.5233,1.0,1.0,310.0,310,六兆年と一夜物語,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,夜咄ディセイブ__std__master,1,100.6016,100.6016,1.0,1.0,310.0,310,夜咄ディセイブ,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
+15000-15499,群青シグナル__dx__master,1,100.5038,100.5038,1.0,1.0,310.0,310,群青シグナル,master,13+,13.8,dx,maimai,False,19,0.0526
 15000-15499,花と、雪と、ドラムンベース。__std__remaster,1,100.6377,100.6377,1.0,1.0,310.0,310,花と、雪と、ドラムンベース。,remaster,13+,13.8,std,maimai,False,19,0.0526
+15000-15499,頓珍漢の宴__std__master,1,100.5374,100.5374,1.0,1.0,310.0,310,頓珍漢の宴,master,13+,13.8,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,BOUNCE & DANCE__dx__master,1,100.5938,100.5938,1.0,1.0,308.0,308,BOUNCE & DANCE,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,Beautiful Future__dx__master,1,100.5187,100.5187,1.0,1.0,308.0,308,Beautiful Future,master,13+,13.7,dx,maimai,False,19,0.0526
 15000-15499,LOSE CONTROL__dx__master,1,100.6236,100.6236,1.0,1.0,308.0,308,LOSE CONTROL,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,MAGENTA POTION__dx__master,1,100.6171,100.6171,1.0,1.0,308.0,308,MAGENTA POTION,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,New York Back Raise__dx__master,1,100.5958,100.5958,1.0,1.0,308.0,308,New York Back Raise,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.0526
-15000-15499,PinqPiq (xovevox Remix)__dx__master,1,100.7135,100.7135,1.0,1.0,308.0,308,PinqPiq (xovevox Remix),master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,REVIVER オルタンシア・サーガ -蒼の騎士団- オリジナルVer.__std__master,1,100.5505,100.5505,1.0,1.0,308.0,308,REVIVER オルタンシア・サーガ -蒼の騎士団- オリジナルVer.,master,13+,13.7,std,POPS＆アニメ,False,19,0.0526
 15000-15499,Resolution__dx__master,1,100.5933,100.5933,1.0,1.0,308.0,308,Resolution,master,13+,13.7,dx,オンゲキ＆CHUNITHM,False,19,0.0526
-15000-15499,sølips__dx__expert,1,100.5947,100.5947,1.0,1.0,308.0,308,sølips,expert,13+,13.7,dx,maimai,False,19,0.0526
 15000-15499,いっしそう電☆舞舞神拳！__std__master,1,100.7007,100.7007,1.0,1.0,308.0,308,いっしそう電☆舞舞神拳！,master,13+,13.7,std,maimai,False,19,0.0526
 15000-15499,すーぱーぬこになりたい__std__master,1,100.5769,100.5769,1.0,1.0,308.0,308,すーぱーぬこになりたい,master,13+,13.7,std,niconico＆ボーカロイド,False,19,0.0526
-15000-15499,にゃーにゃー冒険譚__dx__master,1,100.6724,100.6724,1.0,1.0,308.0,308,にゃーにゃー冒険譚,master,13+,13.7,dx,maimai,False,19,0.0526
 15000-15499,サイバーサンダーサイダー__dx__master,1,100.741,100.741,1.0,1.0,308.0,308,サイバーサンダーサイダー,master,13+,13.7,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,ネトゲ廃人シュプレヒコール__std__master,1,100.613,100.613,1.0,1.0,308.0,308,ネトゲ廃人シュプレヒコール,master,13+,13.7,std,niconico＆ボーカロイド,False,19,0.0526
+15000-15499,ヒミツCULT__dx__master,1,100.5673,100.5673,1.0,1.0,308.0,308,ヒミツCULT,master,13+,13.7,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,ヨミビトシラズ__dx__master,1,100.5727,100.5727,1.0,1.0,308.0,308,ヨミビトシラズ,master,13+,13.7,dx,maimai,False,19,0.0526
 15000-15499,リスペク風神__dx__master,1,100.6224,100.6224,1.0,1.0,308.0,308,リスペク風神,master,13+,13.7,dx,東方Project,False,19,0.0526
 15000-15499,光線チューニング__std__master,1,100.6161,100.6161,1.0,1.0,308.0,308,光線チューニング,master,13+,13.7,std,オンゲキ＆CHUNITHM,False,19,0.0526
+15000-15499,最愛人生ランナー__dx__master,1,100.5746,100.5746,1.0,1.0,308.0,308,最愛人生ランナー,master,13+,13.8,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,猛進ソリストライフ！__std__master,1,100.5665,100.5665,1.0,1.0,308.0,308,猛進ソリストライフ！,master,13+,13.7,std,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,赤心性：カマトト荒療治__std__master,1,100.5352,100.5352,1.0,1.0,308.0,308,赤心性：カマトト荒療治,master,13+,13.7,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,進め！イッスン軍団 -Rebellion of the Dwarfs-__std__master,1,100.6403,100.6403,1.0,1.0,308.0,308,進め！イッスン軍団 -Rebellion of the Dwarfs-,master,13+,13.7,std,東方Project,False,19,0.0526
@@ -413,19 +399,21 @@
 15000-15499,新人類__dx__master,1,100.5053,100.5053,1.0,1.0,306.0,306,新人類,master,13+,13.6,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,EVERGREEN__std__master,1,100.5431,100.5431,1.0,1.0,303.0,303,EVERGREEN,master,13,13.5,std,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,アージェントシンメトリー__std__master,1,100.6209,100.6209,1.0,1.0,303.0,303,アージェントシンメトリー,master,13,13.5,std,maimai,False,19,0.0526
+15000-15499,チューリングの跡__dx__expert,1,100.5649,100.5649,1.0,1.0,303.0,303,チューリングの跡,expert,13,13.5,dx,maimai,False,19,0.0526
 15000-15499,トランスダンスアナーキー__dx__master,1,100.6017,100.6017,1.0,1.0,303.0,303,トランスダンスアナーキー,master,13,13.5,dx,東方Project,False,19,0.0526
 15000-15499,神々が恋した幻想郷__dx__master,1,100.6245,100.6245,1.0,1.0,303.0,303,神々が恋した幻想郷,master,13,13.5,dx,東方Project,False,19,0.0526
+15000-15499,隠密あんみつDX__dx__master,1,100.524,100.524,1.0,1.0,303.0,303,隠密あんみつDX,master,13,13.5,dx,maimai,False,19,0.0526
 15000-15499,魔法少女とチョコレゐト__dx__master,1,100.5222,100.5222,1.0,1.0,303.0,303,魔法少女とチョコレゐト,master,13,13.5,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Limit Break__std__master,1,100.6033,100.6033,1.0,1.0,301.0,301,Limit Break,master,13,13.4,std,maimai,False,19,0.0526
 15000-15499,Make Up Your World feat. キョンシーのCiちゃん & らっぷびと__dx__master,1,100.6672,100.6672,1.0,1.0,301.0,301,Make Up Your World feat. キョンシーのCiちゃん & らっぷびと,master,13,13.4,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,Ourania__dx__master,1,100.5025,100.5025,1.0,1.0,301.0,301,Ourania,master,13,13.4,dx,maimai,False,19,0.0526
-15000-15499,Splash Dance!!__dx__master,1,100.682,100.682,1.0,1.0,301.0,301,Splash Dance!!,master,13,13.4,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,Still__std__master,1,100.5476,100.5476,1.0,1.0,301.0,301,Still,master,13,13.4,std,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,the EmpErroR__std__expert,1,100.5304,100.5304,1.0,1.0,301.0,301,the EmpErroR,expert,13,13.4,std,maimai,False,19,0.0526
 15000-15499,with U__dx__master,1,100.8684,100.8684,1.0,1.0,301.0,301,with U,master,13,13.4,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,ばかみたい【Taxi Driver Edition】__dx__master,1,100.619,100.619,1.0,1.0,301.0,301,ばかみたい【Taxi Driver Edition】,master,13,13.4,dx,ゲーム＆バラエティ,False,19,0.0526
 15000-15499,ヒバリ__dx__master,1,100.8447,100.8447,1.0,1.0,301.0,301,ヒバリ,master,13,13.4,dx,POPS＆アニメ,False,19,0.0526
 15000-15499,ベースラインやってる？笑__dx__master,1,100.5248,100.5248,1.0,1.0,301.0,301,ベースラインやってる？笑,master,13,13.4,dx,ゲーム＆バラエティ,False,19,0.0526
+15000-15499,ヴァンパイア__dx__remaster,1,100.6955,100.6955,1.0,1.0,301.0,301,ヴァンパイア,remaster,13,13.4,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,化けの花__dx__master,1,100.5142,100.5142,1.0,1.0,301.0,301,化けの花,master,13,13.4,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,唱__dx__remaster,1,100.6936,100.6936,1.0,1.0,301.0,301,唱,remaster,13,13.4,dx,POPS＆アニメ,False,19,0.0526
 15000-15499,夢現妄想世界__dx__master,1,100.6298,100.6298,1.0,1.0,301.0,301,夢現妄想世界,master,13,13.4,dx,POPS＆アニメ,False,19,0.0526
@@ -444,14 +432,10 @@
 15000-15499,神っぽいな__dx__remaster,1,100.5314,100.5314,1.0,1.0,299.0,299,神っぽいな,remaster,13,13.3,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Hyper Active__std__expert,1,100.9107,100.9107,1.0,1.0,298.0,298,Hyper Active,expert,13,13.2,std,maimai,False,19,0.0526
 15000-15499,ビビデバ__dx__remaster,1,100.9444,100.9444,1.0,1.0,298.0,298,ビビデバ,remaster,13,13.2,dx,POPS＆アニメ,False,19,0.0526
-15000-15499,Kattobi KEIKYU Rider__std__expert,1,100.7177,100.7177,1.0,1.0,297.0,297,Kattobi KEIKYU Rider,expert,13,13.2,std,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,Magical Flavor__dx__master,1,100.5591,100.5591,1.0,1.0,297.0,297,Magical Flavor,master,13,13.2,dx,maimai,False,19,0.0526
-15000-15499,Tell Your World__std__remaster,1,100.8942,100.8942,1.0,1.0,297.0,297,Tell Your World,remaster,13,13.2,std,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,ハオ__dx__master,1,100.5088,100.5088,1.0,1.0,297.0,297,ハオ,master,13,13.2,dx,niconico＆ボーカロイド,False,19,0.0526
-15000-15499,World's end BLACKBOX__dx__expert,1,100.893,100.893,1.0,1.0,294.0,294,World's end BLACKBOX,expert,13,13.1,dx,maimai,False,19,0.0526
 15000-15499,ホシシズク__dx__master,1,100.712,100.712,1.0,1.0,294.0,294,ホシシズク,master,13,13.1,dx,maimai,False,19,0.0526
-15000-15499,有頂天ドリーマーズ__dx__master,1,100.5394,100.5394,1.0,1.0,294.0,294,有頂天ドリーマーズ,master,13,13.1,dx,東方Project,False,19,0.0526
-15000-15499,勝手に生きましょ__dx__master,1,101.0,101.0,1.0,1.0,293.0,293,勝手に生きましょ,master,13,13.0,dx,POPS＆アニメ,False,19,0.0526
+15000-15499,サイエンス__dx__master,1,100.7926,100.7926,1.0,1.0,292.0,292,サイエンス,master,13,13.0,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Trick tear__dx__master,1,100.1829,100.1829,1.0,0.0,311.0,311,Trick tear,master,14,14.4,dx,maimai,False,19,0.0526
 15000-15499,スピカの天秤__dx__master,1,100.3059,100.3059,1.0,0.0,311.0,311,スピカの天秤,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,HERA__std__master,1,100.0975,100.0975,1.0,0.0,309.0,309,HERA,master,14,14.3,std,maimai,False,19,0.0526
@@ -482,8 +466,9 @@
 15000-15499,ツムギボシ__dx__master,1,100.1997,100.1997,1.0,0.0,300.0,300,ツムギボシ,master,13+,13.9,dx,maimai,False,19,0.0526
 15000-15499,華の集落、秋のお届け__dx__master,1,100.0983,100.0983,1.0,0.0,300.0,300,華の集落、秋のお届け,master,13+,13.9,dx,maimai,False,19,0.0526
 15000-15499,Leave All Behind__dx__master,1,100.484,100.484,1.0,0.0,299.0,299,Leave All Behind,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.0526
-15000-15499,初音ミクの消失__dx__master,1,99.3667,99.3667,0.0,0.0,299.0,299,初音ミクの消失,master,14,14.5,dx,niconico＆ボーカロイド,False,19,0.0526
 15000-15499,Magical Paradox__dx__master,1,100.214,100.214,1.0,0.0,298.0,298,Magical Paradox,master,13+,13.8,dx,maimai,False,19,0.0526
+15000-15499,Restricted Access__dx__master,1,100.2707,100.2707,1.0,0.0,298.0,298,Restricted Access,master,13+,13.8,dx,ゲーム＆バラエティ,False,19,0.0526
+15000-15499,管弦楽組曲 第3番 ニ長調「第2曲（G線上のアリア）」BWV.1068-2__dx__master,1,100.1035,100.1035,1.0,0.0,298.0,298,管弦楽組曲 第3番 ニ長調「第2曲（G線上のアリア）」BWV.1068-2,master,13+,13.8,dx,オンゲキ＆CHUNITHM,False,19,0.0526
 15000-15499,Xaleid◆scopiX__dx__master,1,98.3091,98.3091,0.0,0.0,297.0,297,Xaleid◆scopiX,master,14+,14.9,dx,maimai,False,19,0.0526
 15000-15499,躯樹の墓守__dx__master,1,98.416,98.416,0.0,0.0,297.0,297,躯樹の墓守,master,14+,14.9,dx,maimai,False,19,0.0526
 15000-15499,Abstruse Dilemma__dx__master,1,99.0073,99.0073,0.0,0.0,296.0,296,Abstruse Dilemma,master,14,14.5,dx,ゲーム＆バラエティ,False,19,0.0526
@@ -821,156 +806,154 @@
 15500-15999,はいよろこんで__dx__remaster,1,100.2688,100.2688,1.0,0.0,285.0,285,はいよろこんで,remaster,13,13.2,dx,POPS＆アニメ,False,20,0.05
 15500-15999,概して過誤__dx__master,1,99.0545,99.0545,0.0,0.0,282.0,282,概して過誤,master,13+,13.7,dx,maimai,False,20,0.05
 15500-15999,マヌルネコのうた__dx__master,1,100.0492,100.0492,1.0,0.0,280.0,280,マヌルネコのうた,master,13,13.0,dx,POPS＆アニメ,False,20,0.05
-16000-16499,MYTH Re：LEASE__dx__master,15,100.6472,100.679,1.0,0.9333,325.1333,326,MYTH Re：LEASE,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.8824
-16000-16499,ATLAS RUSH__dx__master,15,100.4775,100.5113,1.0,0.6,325.0667,330,ATLAS RUSH,master,14+,14.7,dx,maimai,False,17,0.8824
-16000-16499,Zitronectar__dx__master,14,100.6831,100.6411,1.0,1.0,321.0,321,Zitronectar,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.8235
-16000-16499,Break The Speakers__dx__master,14,100.4948,100.5458,1.0,0.7143,326.4286,330,Break The Speakers,master,14+,14.7,dx,maimai,False,17,0.8235
-16000-16499,Åntinomiε__dx__master,14,100.4984,100.5353,1.0,0.6429,323.6429,328,Åntinomiε,master,14+,14.6,dx,maimai,False,17,0.8235
-16000-16499,Retribution ～ Cycle of Redemption ～__dx__master,13,100.5856,100.5812,1.0,1.0,324.0,324,Retribution ～ Cycle of Redemption ～,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.7647
-16000-16499,雨露霜雪__dx__master,13,100.5877,100.5878,1.0,0.9231,329.0769,330,雨露霜雪,master,14+,14.6,dx,maimai,False,17,0.7647
-16000-16499,MarbleBlue.__dx__master,11,100.5717,100.5665,1.0,1.0,326.0,326,MarbleBlue.,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.6471
-16000-16499,Destined Marionette__dx__master,11,100.6634,100.6304,1.0,1.0,319.0,319,Destined Marionette,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.6471
-16000-16499,Falsum Atlantis.__dx__master,10,100.6339,100.642,1.0,1.0,326.0,326,Falsum Atlantis.,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.5882
-16000-16499,Trick tear__dx__master,10,100.6313,100.6171,1.0,1.0,324.0,324,Trick tear,master,14,14.4,dx,maimai,False,17,0.5882
-16000-16499,ViRTUS__dx__master,9,100.6056,100.598,1.0,1.0,328.0,328,ViRTUS,master,14+,14.6,dx,maimai,False,17,0.5294
-16000-16499,Energizing Flame__dx__master,9,100.6858,100.7137,1.0,1.0,324.0,324,Energizing Flame,master,14,14.4,dx,maimai,False,17,0.5294
-16000-16499,天使光輪__dx__master,9,100.5693,100.5419,1.0,1.0,324.0,324,天使光輪,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.5294
-16000-16499,Hainuwele__dx__master,9,100.7256,100.7416,1.0,1.0,321.0,321,Hainuwele,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.5294
-16000-16499,ニルヴの心臓__dx__master,9,100.5724,100.5447,1.0,1.0,321.0,321,ニルヴの心臓,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.5294
-16000-16499,Dazzle hop__dx__master,9,100.6441,100.622,1.0,1.0,319.0,319,Dazzle hop,master,14,14.2,dx,オンゲキ＆CHUNITHM,False,17,0.5294
-16000-16499,殿ッ！？ご乱心！？__dx__master,9,100.611,100.6326,1.0,1.0,319.0,319,殿ッ！？ご乱心！？,master,14,14.2,dx,maimai,False,17,0.5294
-16000-16499,LAMIA__dx__master,9,100.633,100.6121,1.0,0.8889,328.6667,330,LAMIA,master,14+,14.7,dx,オンゲキ＆CHUNITHM,False,17,0.5294
-16000-16499,FLΛME/FRΦST__dx__master,9,100.3221,100.2756,1.0,0.3333,324.3333,333,FLΛME/FRΦST,master,14+,14.8,dx,maimai,False,17,0.5294
-16000-16499,Customized Justice__dx__master,9,100.3687,100.3771,1.0,0.3333,324.1111,333,Customized Justice,master,14+,14.8,dx,maimai,False,17,0.5294
-16000-16499,mystique as iris__dx__master,8,100.6125,100.5815,1.0,1.0,328.0,328,mystique as iris,master,14+,14.6,dx,maimai,False,17,0.4706
-16000-16499,Λzure Vixen__dx__master,8,100.5572,100.5514,1.0,1.0,328.0,328,Λzure Vixen,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.4706
-16000-16499,超熊猫的周遊記（ワンダーパンダートラベラー）__dx__master,8,100.5826,100.5688,1.0,1.0,328.0,328,超熊猫的周遊記（ワンダーパンダートラベラー）,master,14+,14.6,dx,maimai,False,17,0.4706
-16000-16499,QUATTUORUX__dx__master,8,100.6721,100.6524,1.0,1.0,326.0,326,QUATTUORUX,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.4706
-16000-16499,#狂った民族２ PRAVARGYAZOOQA__dx__master,8,100.5964,100.5453,1.0,1.0,324.0,324,#狂った民族２ PRAVARGYAZOOQA,master,14,14.4,dx,maimai,False,17,0.4706
-16000-16499,GEOMETRIC DANCE__dx__master,8,100.6075,100.6078,1.0,1.0,324.0,324,GEOMETRIC DANCE,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4706
-16000-16499,Revive The Rave__std__remaster,8,100.6618,100.6516,1.0,1.0,324.0,324,Revive The Rave,remaster,14,14.4,std,maimai,False,17,0.4706
-16000-16499,スピカの天秤__dx__master,8,100.6187,100.6234,1.0,1.0,324.0,324,スピカの天秤,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4706
-16000-16499,SUPER AMBULANCE__dx__master,8,100.7705,100.8142,1.0,1.0,321.125,322,SUPER AMBULANCE,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.4706
-16000-16499,VERTeX (rintaro soma deconstructed remix)__dx__master,7,100.5764,100.5571,1.0,1.0,328.0,328,VERTeX (rintaro soma deconstructed remix),master,14+,14.6,dx,maimai,False,17,0.4118
-16000-16499,源平大戦絵巻テーマソング__std__remaster,7,100.6079,100.5987,1.0,1.0,328.0,328,源平大戦絵巻テーマソング,remaster,14+,14.6,std,ゲーム＆バラエティ,False,17,0.4118
+16000-16499,MYTH Re：LEASE__dx__master,14,100.6296,100.6548,1.0,0.9286,325.0714,326,MYTH Re：LEASE,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.8235
+16000-16499,Break The Speakers__dx__master,14,100.4789,100.5104,1.0,0.6429,325.5714,330,Break The Speakers,master,14+,14.7,dx,maimai,False,17,0.8235
+16000-16499,Zitronectar__dx__master,13,100.6816,100.6596,1.0,1.0,321.0,321,Zitronectar,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.7647
+16000-16499,雨露霜雪__dx__master,13,100.5843,100.5878,1.0,0.9231,329.0769,330,雨露霜雪,master,14+,14.6,dx,maimai,False,17,0.7647
+16000-16499,ATLAS RUSH__dx__master,13,100.4764,100.5113,1.0,0.6154,325.2308,330,ATLAS RUSH,master,14+,14.7,dx,maimai,False,17,0.7647
+16000-16499,Åntinomiε__dx__master,13,100.4963,100.5442,1.0,0.6154,323.3077,328,Åntinomiε,master,14+,14.6,dx,maimai,False,17,0.7647
+16000-16499,Retribution ～ Cycle of Redemption ～__dx__master,12,100.5853,100.5696,1.0,1.0,324.0,324,Retribution ～ Cycle of Redemption ～,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.7059
+16000-16499,Destined Marionette__dx__master,11,100.645,100.6079,1.0,1.0,319.0,319,Destined Marionette,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.6471
+16000-16499,Trick tear__dx__master,10,100.6064,100.5812,1.0,1.0,324.0,324,Trick tear,master,14,14.4,dx,maimai,False,17,0.5882
+16000-16499,殿ッ！？ご乱心！？__dx__master,10,100.622,100.6351,1.0,1.0,319.0,319,殿ッ！？ご乱心！？,master,14,14.2,dx,maimai,False,17,0.5882
+16000-16499,ViRTUS__dx__master,9,100.6003,100.5782,1.0,1.0,328.0,328,ViRTUS,master,14+,14.6,dx,maimai,False,17,0.5294
+16000-16499,MarbleBlue.__dx__master,9,100.558,100.5557,1.0,1.0,326.0,326,MarbleBlue.,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.5294
+16000-16499,SUPER AMBULANCE__dx__master,9,100.7469,100.748,1.0,1.0,321.1111,322,SUPER AMBULANCE,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.5294
+16000-16499,Hainuwele__dx__master,9,100.7024,100.6615,1.0,1.0,321.0,321,Hainuwele,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.5294
+16000-16499,Dazzle hop__dx__master,9,100.64,100.622,1.0,1.0,319.0,319,Dazzle hop,master,14,14.2,dx,オンゲキ＆CHUNITHM,False,17,0.5294
+16000-16499,Falsum Atlantis.__dx__master,8,100.6317,100.642,1.0,1.0,326.0,326,Falsum Atlantis.,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.4706
+16000-16499,QUATTUORUX__dx__master,8,100.6583,100.6403,1.0,1.0,326.0,326,QUATTUORUX,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.4706
+16000-16499,#狂った民族２ PRAVARGYAZOOQA__dx__master,8,100.5724,100.5453,1.0,1.0,324.0,324,#狂った民族２ PRAVARGYAZOOQA,master,14,14.4,dx,maimai,False,17,0.4706
+16000-16499,Energizing Flame__dx__master,8,100.6772,100.6772,1.0,1.0,324.0,324,Energizing Flame,master,14,14.4,dx,maimai,False,17,0.4706
+16000-16499,GEOMETRIC DANCE__dx__master,8,100.6091,100.6078,1.0,1.0,324.0,324,GEOMETRIC DANCE,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4706
+16000-16499,天使光輪__dx__master,8,100.5636,100.5416,1.0,1.0,324.0,324,天使光輪,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.4706
+16000-16499,LAMIA__dx__master,8,100.6463,100.6126,1.0,0.875,328.5,330,LAMIA,master,14+,14.7,dx,オンゲキ＆CHUNITHM,False,17,0.4706
+16000-16499,FLΛME/FRΦST__dx__master,8,100.3066,100.2438,1.0,0.375,324.75,333,FLΛME/FRΦST,master,14+,14.8,dx,maimai,False,17,0.4706
+16000-16499,Customized Justice__dx__master,8,100.3458,100.3375,1.0,0.25,323.0,333,Customized Justice,master,14+,14.8,dx,maimai,False,17,0.4706
+16000-16499,mystique as iris__dx__master,7,100.6231,100.5825,1.0,1.0,328.0,328,mystique as iris,master,14+,14.6,dx,maimai,False,17,0.4118
+16000-16499,Λzure Vixen__dx__master,7,100.5569,100.5432,1.0,1.0,328.0,328,Λzure Vixen,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.4118
 16000-16499,神威__dx__master,7,100.6099,100.5792,1.0,1.0,328.0,328,神威,master,14+,14.6,dx,ゲーム＆バラエティ,False,17,0.4118
-16000-16499,脳天直撃__dx__master,7,100.6085,100.5582,1.0,1.0,328.0,328,脳天直撃,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.4118
-16000-16499,Raven Emperor__dx__master,7,100.6271,100.6515,1.0,1.0,326.0,326,Raven Emperor,master,14,14.5,dx,maimai,False,17,0.4118
+16000-16499,超熊猫的周遊記（ワンダーパンダートラベラー）__dx__master,7,100.5827,100.5556,1.0,1.0,328.0,328,超熊猫的周遊記（ワンダーパンダートラベラー）,master,14+,14.6,dx,maimai,False,17,0.4118
+16000-16499,QuiQ__dx__master,7,100.6289,100.6107,1.0,1.0,324.0,324,QuiQ,master,14,14.4,dx,maimai,False,17,0.4118
+16000-16499,Revive The Rave__std__remaster,7,100.6071,100.634,1.0,1.0,324.0,324,Revive The Rave,remaster,14,14.4,std,maimai,False,17,0.4118
 16000-16499,Re：End of a Dream__dx__master,7,100.5871,100.5756,1.0,1.0,324.0,324,Re：End of a Dream,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.4118
-16000-16499,YURUSHITE__dx__master,7,100.5689,100.5402,1.0,1.0,324.0,324,YURUSHITE,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4118
-16000-16499,ほしぞらスペクタクル__dx__master,7,100.6216,100.5705,1.0,1.0,324.0,324,ほしぞらスペクタクル,master,14,14.4,dx,maimai,False,17,0.4118
-16000-16499,Galaxy Blaster__dx__master,7,100.6593,100.6338,1.0,1.0,321.0,321,Galaxy Blaster,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.4118
-16000-16499,Synthesis.__dx__master,7,100.7439,100.7611,1.0,1.0,317.0,317,Synthesis.,master,14,14.1,dx,ゲーム＆バラエティ,False,17,0.4118
-16000-16499,ラストピースに祝福と栄光を__dx__master,7,100.5399,100.5281,1.0,0.7143,324.5714,328,ラストピースに祝福と栄光を,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.4118
+16000-16499,YURUSHITE__dx__master,7,100.5745,100.5402,1.0,1.0,324.0,324,YURUSHITE,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4118
+16000-16499,スピカの天秤__dx__master,7,100.6082,100.6203,1.0,1.0,324.0,324,スピカの天秤,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.4118
+16000-16499,ニルヴの心臓__dx__master,7,100.5711,100.5447,1.0,1.0,321.0,321,ニルヴの心臓,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.4118
+16000-16499,マツヨイナイトバグ__dx__remaster,7,100.5867,100.5934,1.0,1.0,321.0,321,マツヨイナイトバグ,remaster,14,14.3,dx,東方Project,False,17,0.4118
+16000-16499,Synthesis.__dx__master,7,100.7073,100.6557,1.0,1.0,317.0,317,Synthesis.,master,14,14.1,dx,ゲーム＆バラエティ,False,17,0.4118
 16000-16499,WiPE OUT MEMORIES__dx__master,7,100.4259,100.5302,1.0,0.5714,327.4286,333,WiPE OUT MEMORIES,master,14+,14.8,dx,maimai,False,17,0.4118
-16000-16499,Xaleid◆scopiX__dx__master,7,100.1572,100.1057,1.0,0.0,321.7143,323,Xaleid◆scopiX,master,14+,14.9,dx,maimai,False,17,0.4118
-16000-16499,BLACK SWAN__dx__master,6,100.5945,100.5675,1.0,1.0,328.0,328,BLACK SWAN,master,14+,14.6,dx,maimai,False,17,0.3529
-16000-16499,Credits__std__master,6,100.6429,100.6505,1.0,1.0,328.0,328,Credits,master,14+,14.6,std,ゲーム＆バラエティ,False,17,0.3529
-16000-16499,Get U ♭ack__dx__master,6,100.639,100.6277,1.0,1.0,326.0,326,Get U ♭ack,master,14+,14.6,dx,maimai,False,17,0.3529
-16000-16499,VIIIbit Explorer__std__master,6,100.5641,100.5524,1.0,1.0,326.0,326,VIIIbit Explorer,master,14,14.5,std,maimai,False,17,0.3529
+16000-16499,BLACK SWAN__dx__master,6,100.5946,100.5675,1.0,1.0,328.0,328,BLACK SWAN,master,14+,14.6,dx,maimai,False,17,0.3529
+16000-16499,VERTeX (rintaro soma deconstructed remix)__dx__master,6,100.5864,100.5666,1.0,1.0,328.0,328,VERTeX (rintaro soma deconstructed remix),master,14+,14.6,dx,maimai,False,17,0.3529
+16000-16499,源平大戦絵巻テーマソング__std__remaster,6,100.6187,100.6091,1.0,1.0,328.0,328,源平大戦絵巻テーマソング,remaster,14+,14.6,std,ゲーム＆バラエティ,False,17,0.3529
+16000-16499,脳天直撃__dx__master,6,100.5901,100.5573,1.0,1.0,328.0,328,脳天直撃,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.3529
+16000-16499,Raven Emperor__dx__master,6,100.6154,100.6296,1.0,1.0,326.0,326,Raven Emperor,master,14,14.5,dx,maimai,False,17,0.3529
 16000-16499,最強STRONGER__dx__master,6,100.616,100.6136,1.0,1.0,326.0,326,最強STRONGER,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.3529
-16000-16499,Alea jacta est!__std__master,6,100.5912,100.5867,1.0,1.0,324.0,324,Alea jacta est!,master,14,14.4,std,maimai,False,17,0.3529
-16000-16499,Contrapasso -paradiso-__std__master,6,100.5773,100.5467,1.0,1.0,324.0,324,Contrapasso -paradiso-,master,14,14.4,std,maimai,False,17,0.3529
-16000-16499,QuiQ__dx__master,6,100.6439,100.6398,1.0,1.0,324.0,324,QuiQ,master,14,14.4,dx,maimai,False,17,0.3529
-16000-16499,マツヨイナイトバグ__dx__remaster,6,100.5855,100.5944,1.0,1.0,321.0,321,マツヨイナイトバグ,remaster,14,14.3,dx,東方Project,False,17,0.3529
-16000-16499,忙シー日__dx__master,6,100.6593,100.6759,1.0,1.0,319.0,319,忙シー日,master,14,14.2,dx,maimai,False,17,0.3529
+16000-16499,ほしぞらスペクタクル__dx__master,6,100.5968,100.549,1.0,1.0,324.0,324,ほしぞらスペクタクル,master,14,14.4,dx,maimai,False,17,0.3529
+16000-16499,"""411Ψ892""__dx__master",6,100.6586,100.6582,1.0,1.0,321.0,321,"""411Ψ892""",master,14,14.3,dx,maimai,False,17,0.3529
+16000-16499,忙シー日__dx__master,6,100.6265,100.6334,1.0,1.0,319.0,319,忙シー日,master,14,14.2,dx,maimai,False,17,0.3529
 16000-16499,Cryptarithm__dx__master,6,100.569,100.631,1.0,0.8333,327.8333,330,Cryptarithm,master,14+,14.6,dx,maimai,False,17,0.3529
-16000-16499,SILENT BLUE__std__master,5,100.587,100.5681,1.0,1.0,333.0,333,SILENT BLUE,master,14+,14.8,std,maimai,False,17,0.2941
-16000-16499,Aegleseeker__dx__master,5,100.5575,100.5534,1.0,1.0,326.0,326,Aegleseeker,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.2941
-16000-16499,BIRTH__dx__master,5,100.6521,100.6384,1.0,1.0,326.0,326,BIRTH,master,14,14.5,dx,maimai,False,17,0.2941
-16000-16499,FUJIN Rumble__std__master,5,100.5856,100.5761,1.0,1.0,326.0,326,FUJIN Rumble,master,14,14.5,std,ゲーム＆バラエティ,False,17,0.2941
-16000-16499,アポカリプスに反逆の焔を焚べろ__dx__master,5,100.5759,100.5483,1.0,1.0,326.0,326,アポカリプスに反逆の焔を焚べろ,master,14,14.5,dx,maimai,False,17,0.2941
-16000-16499,ヤミナベ!!!!__dx__master,5,100.594,100.5789,1.0,1.0,326.0,326,ヤミナベ!!!!,master,14,14.5,dx,niconico＆ボーカロイド,False,17,0.2941
+16000-16499,ラストピースに祝福と栄光を__dx__master,6,100.5393,100.521,1.0,0.6667,324.0,328,ラストピースに祝福と栄光を,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.3529
+16000-16499,Xaleid◆scopiX__dx__master,6,100.1658,100.0868,1.0,0.0,321.6667,323,Xaleid◆scopiX,master,14+,14.9,dx,maimai,False,17,0.3529
+16000-16499,Credits__std__master,5,100.664,100.6843,1.0,1.0,328.0,328,Credits,master,14+,14.6,std,ゲーム＆バラエティ,False,17,0.2941
+16000-16499,Get U ♭ack__dx__master,5,100.6651,100.6337,1.0,1.0,326.0,326,Get U ♭ack,master,14+,14.6,dx,maimai,False,17,0.2941
+16000-16499,VIIIbit Explorer__std__master,5,100.556,100.5264,1.0,1.0,326.0,326,VIIIbit Explorer,master,14,14.5,std,maimai,False,17,0.2941
+16000-16499,ヤミナベ!!!!__dx__master,5,100.6112,100.5842,1.0,1.0,326.0,326,ヤミナベ!!!!,master,14,14.5,dx,niconico＆ボーカロイド,False,17,0.2941
+16000-16499,初音ミクの消失__dx__master,5,100.6271,100.574,1.0,1.0,326.0,326,初音ミクの消失,master,14,14.5,dx,niconico＆ボーカロイド,False,17,0.2941
+16000-16499,Alea jacta est!__std__master,5,100.5873,100.5629,1.0,1.0,324.0,324,Alea jacta est!,master,14,14.4,std,maimai,False,17,0.2941
+16000-16499,Contrapasso -paradiso-__std__master,5,100.5882,100.5628,1.0,1.0,324.0,324,Contrapasso -paradiso-,master,14,14.4,std,maimai,False,17,0.2941
 16000-16499,FLUFFY FLASH__dx__master,5,100.5967,100.5717,1.0,1.0,324.0,324,FLUFFY FLASH,master,14,14.4,dx,オンゲキ＆CHUNITHM,False,17,0.2941
-16000-16499,PUPA__dx__master,5,100.5761,100.5289,1.0,1.0,324.0,324,PUPA,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.2941
 16000-16499,華天月兎__dx__master,5,100.7007,100.7355,1.0,1.0,324.0,324,華天月兎,master,14,14.4,dx,maimai,False,17,0.2941
-16000-16499,"""411Ψ892""__dx__master",5,100.6794,100.6718,1.0,1.0,321.0,321,"""411Ψ892""",master,14,14.3,dx,maimai,False,17,0.2941
 16000-16499,DEVOTION__dx__master,5,100.6468,100.6284,1.0,1.0,321.0,321,DEVOTION,master,14,14.3,dx,maimai,False,17,0.2941
-16000-16499,MEGATON BLAST__dx__master,5,100.5863,100.6333,1.0,1.0,321.0,321,MEGATON BLAST,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.2941
-16000-16499,IMBRUED:FLUX__dx__master,5,100.5929,100.6099,1.0,1.0,317.0,317,IMBRUED:FLUX,master,14,14.1,dx,maimai,False,17,0.2941
-16000-16499,BREaK! BREaK! BREaK!__dx__master,4,100.568,100.5594,1.0,1.0,328.0,328,BREaK! BREaK! BREaK!,master,14+,14.6,dx,maimai,False,17,0.2353
+16000-16499,Galaxy Blaster__dx__master,5,100.6414,100.586,1.0,1.0,321.0,321,Galaxy Blaster,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.2941
+16000-16499,IMBRUED:FLUX__dx__master,5,100.5857,100.5899,1.0,1.0,317.0,317,IMBRUED:FLUX,master,14,14.1,dx,maimai,False,17,0.2941
+16000-16499,SILENT BLUE__std__master,4,100.5648,100.5524,1.0,1.0,333.0,333,SILENT BLUE,master,14+,14.8,std,maimai,False,17,0.2353
 16000-16499,IF:U__dx__master,4,100.6324,100.6209,1.0,1.0,328.0,328,IF:U,master,14+,14.6,dx,maimai,False,17,0.2353
-16000-16499,BATTLE NO.1__dx__master,4,100.608,100.5959,1.0,1.0,326.0,326,BATTLE NO.1,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.2353
-16000-16499,Sage__dx__master,4,100.6229,100.6348,1.0,1.0,326.0,326,Sage,master,14,14.5,dx,maimai,False,17,0.2353
+16000-16499,Aegleseeker__dx__master,4,100.562,100.5644,1.0,1.0,326.0,326,Aegleseeker,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.2353
+16000-16499,FUJIN Rumble__std__master,4,100.5808,100.5571,1.0,1.0,326.0,326,FUJIN Rumble,master,14,14.5,std,ゲーム＆バラエティ,False,17,0.2353
 16000-16499,ouroboros -twin stroke of the end-__dx__master,4,100.5486,100.5438,1.0,1.0,326.0,326,ouroboros -twin stroke of the end-,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.2353
-16000-16499,初音ミクの消失__dx__master,4,100.644,100.6283,1.0,1.0,326.0,326,初音ミクの消失,master,14,14.5,dx,niconico＆ボーカロイド,False,17,0.2353
-16000-16499,Deicide__dx__master,4,100.6157,100.5988,1.0,1.0,324.0,324,Deicide,master,14,14.4,dx,maimai,False,17,0.2353
-16000-16499,Trrricksters!!__dx__master,4,100.5816,100.5646,1.0,1.0,321.0,321,Trrricksters!!,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.2353
-16000-16499,VSpook!__dx__master,4,100.6084,100.6006,1.0,1.0,321.0,321,VSpook!,master,14,14.3,dx,maimai,False,17,0.2353
+16000-16499,アポカリプスに反逆の焔を焚べろ__dx__master,4,100.5822,100.5414,1.0,1.0,326.0,326,アポカリプスに反逆の焔を焚べろ,master,14,14.5,dx,maimai,False,17,0.2353
+16000-16499,PUPA__dx__master,4,100.5867,100.528,1.0,1.0,324.0,324,PUPA,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.2353
+16000-16499,MEGATON BLAST__dx__master,4,100.57,100.5692,1.0,1.0,321.0,321,MEGATON BLAST,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.2353
+16000-16499,Trrricksters!!__dx__master,4,100.5459,100.5435,1.0,1.0,321.0,321,Trrricksters!!,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.2353
+16000-16499,VSpook!__dx__master,4,100.5806,100.5956,1.0,1.0,321.0,321,VSpook!,master,14,14.3,dx,maimai,False,17,0.2353
 16000-16499,Xenovcipher__dx__master,4,100.5635,100.565,1.0,1.0,321.0,321,Xenovcipher,master,14,14.3,dx,maimai,False,17,0.2353
+16000-16499,るろうらんる__dx__master,4,100.663,100.6539,1.0,1.0,321.0,321,るろうらんる,master,14,14.3,dx,niconico＆ボーカロイド,False,17,0.2353
 16000-16499,チエルカ／エソテリカ__dx__master,4,100.6475,100.6418,1.0,1.0,321.0,321,チエルカ／エソテリカ,master,14,14.3,dx,maimai,False,17,0.2353
-16000-16499,AFTER PANDORA__std__master,4,100.6397,100.6225,1.0,1.0,319.0,319,AFTER PANDORA,master,14,14.2,std,maimai,False,17,0.2353
+16000-16499,AFTER PANDORA__std__master,4,100.7058,100.708,1.0,1.0,319.0,319,AFTER PANDORA,master,14,14.2,std,maimai,False,17,0.2353
+16000-16499,BULK UP (GAME EXCLUSIVE EDIT)__dx__master,4,100.6532,100.6588,1.0,1.0,319.0,319,BULK UP (GAME EXCLUSIVE EDIT),master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.2353
 16000-16499,JINGLE DEATH__dx__master,4,100.6047,100.5954,1.0,1.0,317.0,317,JINGLE DEATH,master,14,14.1,dx,ゲーム＆バラエティ,False,17,0.2353
-16000-16499,Overjoy ★ OVERDOSE!!__dx__master,4,100.571,100.5795,1.0,1.0,317.0,317,Overjoy ★ OVERDOSE!!,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.2353
-16000-16499,Apollo__dx__master,4,100.4408,100.5454,1.0,0.75,326.75,330,Apollo,master,14+,14.7,dx,オンゲキ＆CHUNITHM,False,17,0.2353
-16000-16499,VERTeX__std__master,4,100.4686,100.5798,1.0,0.75,326.75,330,VERTeX,master,14+,14.7,std,maimai,False,17,0.2353
+16000-16499,Overjoy ★ OVERDOSE!!__dx__master,4,100.5946,100.5996,1.0,1.0,317.0,317,Overjoy ★ OVERDOSE!!,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.2353
 16000-16499,Heavenly Blast__dx__master,4,100.386,100.395,1.0,0.5,326.25,333,Heavenly Blast,master,14+,14.8,dx,maimai,False,17,0.2353
 16000-16499,VeRForTe αRtE:VEiN__dx__master,4,100.3348,100.3195,1.0,0.5,326.25,333,VeRForTe αRtE:VEiN,master,14+,14.8,dx,maimai,False,17,0.2353
 16000-16499,GIGANTØMAKHIA__dx__master,3,100.5877,100.5476,1.0,1.0,330.0,330,GIGANTØMAKHIA,master,14+,14.7,dx,maimai,False,17,0.1765
 16000-16499,Re:Unknown X__dx__master,3,100.5935,100.6111,1.0,1.0,330.0,330,Re:Unknown X,master,14+,14.7,dx,東方Project,False,17,0.1765
 16000-16499,VIIIbit Explorer__dx__master,3,100.5638,100.5323,1.0,1.0,330.0,330,VIIIbit Explorer,master,14+,14.7,dx,maimai,False,17,0.1765
-16000-16499,Valsqotch__dx__master,3,100.5609,100.5499,1.0,1.0,330.0,330,Valsqotch,master,14+,14.7,dx,maimai,False,17,0.1765
-16000-16499,Titania__dx__master,3,100.5511,100.5668,1.0,1.0,328.0,328,Titania,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.1765
-16000-16499,渦状銀河のシンフォニエッタ__dx__master,3,100.6475,100.6556,1.0,1.0,328.0,328,渦状銀河のシンフォニエッタ,master,14+,14.6,dx,maimai,False,17,0.1765
-16000-16499,CITRUS MONSTER__std__master,3,100.5835,100.5831,1.0,1.0,326.0,326,CITRUS MONSTER,master,14,14.5,std,maimai,False,17,0.1765
-16000-16499,Ignis Danse__std__master,3,100.5741,100.569,1.0,1.0,326.0,326,Ignis Danse,master,14,14.5,std,ゲーム＆バラエティ,False,17,0.1765
-16000-16499,Oshama Scramble!__std__master,3,100.5557,100.5449,1.0,1.0,326.0,326,Oshama Scramble!,master,14,14.5,std,maimai,False,17,0.1765
+16000-16499,BREaK! BREaK! BREaK!__dx__master,3,100.583,100.5955,1.0,1.0,328.0,328,BREaK! BREaK! BREaK!,master,14+,14.6,dx,maimai,False,17,0.1765
+16000-16499,BATTLE NO.1__dx__master,3,100.5792,100.5812,1.0,1.0,326.0,326,BATTLE NO.1,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.1765
+16000-16499,BIRTH__dx__master,3,100.5911,100.6042,1.0,1.0,326.0,326,BIRTH,master,14,14.5,dx,maimai,False,17,0.1765
 16000-16499,RondeauX of RagnaroQ__dx__master,3,100.7026,100.7448,1.0,1.0,326.0,326,RondeauX of RagnaroQ,master,14,14.5,dx,maimai,False,17,0.1765
-16000-16499,"Sqlupp (Camellia's ""Sqleipd*Hiytex"" Remix)__dx__master",3,100.5137,100.5116,1.0,1.0,326.0,326,"Sqlupp (Camellia's ""Sqleipd*Hiytex"" Remix)",master,14,14.5,dx,maimai,False,17,0.1765
-16000-16499,otorii INNOVATED -[i]3-__dx__master,3,100.6064,100.5749,1.0,1.0,326.0,326,otorii INNOVATED -[i]3-,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.1765
-16000-16499,CO5M1C R4ILR0AD__dx__master,3,100.5841,100.5331,1.0,1.0,324.0,324,CO5M1C R4ILR0AD,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.1765
+16000-16499,Sage__dx__master,3,100.6111,100.6114,1.0,1.0,326.0,326,Sage,master,14,14.5,dx,maimai,False,17,0.1765
+16000-16499,"Sqlupp (Camellia's ""Sqleipd*Hiytex"" Remix)__dx__master",3,100.5086,100.5094,1.0,1.0,326.0,326,"Sqlupp (Camellia's ""Sqleipd*Hiytex"" Remix)",master,14,14.5,dx,maimai,False,17,0.1765
+16000-16499,Deicide__dx__master,3,100.6171,100.586,1.0,1.0,324.0,324,Deicide,master,14,14.4,dx,maimai,False,17,0.1765
 16000-16499,Rising on the horizon__dx__master,3,100.5329,100.5439,1.0,1.0,324.0,324,Rising on the horizon,master,14,14.4,dx,maimai,False,17,0.1765
-16000-16499,UniTas__dx__master,3,100.5579,100.5481,1.0,1.0,324.0,324,UniTas,master,14,14.4,dx,maimai,False,17,0.1765
 16000-16499,"≠彡""/了→__dx__master",3,100.5768,100.5632,1.0,1.0,324.0,324,"≠彡""/了→",master,14,14.4,dx,maimai,False,17,0.1765
 16000-16499,極圏__std__master,3,100.6384,100.6773,1.0,1.0,324.0,324,極圏,master,14,14.4,std,ゲーム＆バラエティ,False,17,0.1765
-16000-16499,N3V3R G3T OV3R__dx__master,3,100.6552,100.679,1.0,1.0,321.0,321,N3V3R G3T OV3R,master,14,14.3,dx,maimai,False,17,0.1765
-16000-16499,SQUAD-Phvntom-__dx__master,3,100.7531,100.8364,1.0,1.0,321.0,321,SQUAD-Phvntom-,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.1765
+16000-16499,SQUAD-Phvntom-__dx__master,3,100.6697,100.5862,1.0,1.0,321.0,321,SQUAD-Phvntom-,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.1765
 16000-16499,STEEL TRANSONIC__dx__master,3,100.6027,100.5901,1.0,1.0,321.0,321,STEEL TRANSONIC,master,14,14.3,dx,maimai,False,17,0.1765
-16000-16499,Swift Swing__dx__master,3,100.6569,100.6985,1.0,1.0,321.0,321,Swift Swing,master,14,14.3,dx,maimai,False,17,0.1765
-16000-16499,るろうらんる__dx__master,3,100.6909,100.7285,1.0,1.0,321.0,321,るろうらんる,master,14,14.3,dx,niconico＆ボーカロイド,False,17,0.1765
-16000-16499,BULK UP (GAME EXCLUSIVE EDIT)__dx__master,3,100.6809,100.6854,1.0,1.0,319.0,319,BULK UP (GAME EXCLUSIVE EDIT),master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.1765
+16000-16499,Swift Swing__dx__master,3,100.6007,100.5676,1.0,1.0,321.0,321,Swift Swing,master,14,14.3,dx,maimai,False,17,0.1765
+16000-16499,電光石火__dx__master,3,100.667,100.6333,1.0,1.0,321.0,321,電光石火,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.1765
 16000-16499,Cthugha__dx__master,3,100.6921,100.6599,1.0,1.0,319.0,319,Cthugha,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.1765
-16000-16499,おべんきょうたいむ__dx__master,3,100.6175,100.6259,1.0,1.0,317.0,317,おべんきょうたいむ,master,14,14.1,dx,niconico＆ボーカロイド,False,17,0.1765
-16000-16499,DATAERR0R__dx__master,3,100.5802,100.5751,1.0,1.0,315.0,315,DATAERR0R,master,14,14.0,dx,ゲーム＆バラエティ,False,17,0.1765
+16000-16499,デッドマンズバラッド__dx__master,3,100.5874,100.5889,1.0,1.0,319.0,319,デッドマンズバラッド,master,14,14.2,dx,niconico＆ボーカロイド,False,17,0.1765
+16000-16499,美夜月鏡__dx__master,3,100.715,100.7243,1.0,1.0,319.0,319,美夜月鏡,master,14,14.1,dx,オンゲキ＆CHUNITHM,False,17,0.1765
+16000-16499,おべんきょうたいむ__dx__master,3,100.6715,100.6522,1.0,1.0,317.0,317,おべんきょうたいむ,master,14,14.1,dx,niconico＆ボーカロイド,False,17,0.1765
 16000-16499,Ref:rain (for 7th Heaven)__dx__master,3,100.6741,100.5869,1.0,1.0,315.0,315,Ref:rain (for 7th Heaven),master,14,14.0,dx,maimai,False,17,0.1765
 16000-16499,QZKago Requiem__std__master,3,100.482,100.5617,1.0,0.6667,328.6667,333,QZKago Requiem,master,14+,14.8,std,maimai,False,17,0.1765
 16000-16499,Divide et impera!__dx__master,3,100.3881,100.5102,1.0,0.6667,328.3333,333,Divide et impera!,master,14+,14.8,dx,maimai,False,17,0.1765
 16000-16499,康莊大道__dx__master,3,100.4656,100.5021,1.0,0.6667,326.0,330,康莊大道,master,14+,14.7,dx,maimai,False,17,0.1765
+16000-16499,Apollo__dx__master,3,100.3983,100.5226,1.0,0.6667,325.6667,330,Apollo,master,14+,14.7,dx,オンゲキ＆CHUNITHM,False,17,0.1765
 16000-16499,Lia=Fail__dx__master,3,100.3499,100.5116,1.0,0.6667,325.6667,330,Lia=Fail,master,14+,14.7,dx,maimai,False,17,0.1765
+16000-16499,VERTeX__std__master,3,100.4433,100.6153,1.0,0.6667,325.6667,330,VERTeX,master,14+,14.7,std,maimai,False,17,0.1765
 16000-16499,Glorious Crown__std__master,3,100.4152,100.492,1.0,0.3333,324.6667,333,Glorious Crown,master,14+,14.8,std,maimai,False,17,0.1765
-16000-16499,7 Wonders__dx__master,3,100.2196,100.2483,1.0,0.0,322.0,322,7 Wonders,master,14+,14.9,dx,maimai,False,17,0.1765
+16000-16499,封焔の135秒__dx__master,3,100.2628,100.1807,1.0,0.3333,324.0,333,封焔の135秒,master,14+,14.8,dx,maimai,False,17,0.1765
 16000-16499,TEmPTaTiON__dx__master,2,100.523,100.523,1.0,1.0,330.0,330,TEmPTaTiON,master,14+,14.7,dx,maimai,False,17,0.1176
+16000-16499,Valsqotch__dx__master,2,100.5702,100.5702,1.0,1.0,330.0,330,Valsqotch,master,14+,14.7,dx,maimai,False,17,0.1176
 16000-16499,ガラテアの螺旋__std__remaster,2,100.581,100.581,1.0,1.0,330.0,330,ガラテアの螺旋,remaster,14+,14.7,std,maimai,False,17,0.1176
 16000-16499,系ぎて__dx__master,2,100.5664,100.5664,1.0,1.0,330.0,330,系ぎて,master,14+,14.7,dx,maimai,False,17,0.1176
-16000-16499,ガラテアの螺旋__std__master,2,100.6232,100.6232,1.0,1.0,328.0,328,ガラテアの螺旋,master,14+,14.6,std,maimai,False,17,0.1176
+16000-16499,Titania__dx__master,2,100.5426,100.5426,1.0,1.0,328.0,328,Titania,master,14+,14.6,dx,オンゲキ＆CHUNITHM,False,17,0.1176
+16000-16499,渦状銀河のシンフォニエッタ__dx__master,2,100.6879,100.6879,1.0,1.0,328.0,328,渦状銀河のシンフォニエッタ,master,14+,14.6,dx,maimai,False,17,0.1176
 16000-16499,零號車輛__dx__master,2,100.5875,100.5875,1.0,1.0,328.0,328,零號車輛,master,14+,14.6,dx,ゲーム＆バラエティ,False,17,0.1176
-16000-16499,Axeria__std__master,2,100.5432,100.5432,1.0,1.0,326.0,326,Axeria,master,14,14.5,std,maimai,False,17,0.1176
-16000-16499,Dragoon__std__remaster,2,100.5766,100.5766,1.0,1.0,326.0,326,Dragoon,remaster,14,14.5,std,maimai,False,17,0.1176
+16000-16499,CITRUS MONSTER__std__master,2,100.5714,100.5714,1.0,1.0,326.0,326,CITRUS MONSTER,master,14,14.5,std,maimai,False,17,0.1176
 16000-16499,Hurtling Boys__dx__master,2,100.6058,100.6058,1.0,1.0,326.0,326,Hurtling Boys,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.1176
+16000-16499,Ignis Danse__std__master,2,100.5766,100.5766,1.0,1.0,326.0,326,Ignis Danse,master,14,14.5,std,ゲーム＆バラエティ,False,17,0.1176
+16000-16499,Oshama Scramble!__std__master,2,100.5638,100.5638,1.0,1.0,326.0,326,Oshama Scramble!,master,14,14.5,std,maimai,False,17,0.1176
 16000-16499,Strive against fate__dx__master,2,100.5204,100.5204,1.0,1.0,326.0,326,Strive against fate,master,14,14.5,dx,maimai,False,17,0.1176
-16000-16499,Abstruse Dilemma__dx__master,2,100.5575,100.5575,1.0,1.0,324.0,324,Abstruse Dilemma,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.1176
-16000-16499,Mjölnir__dx__master,2,100.6098,100.6098,1.0,1.0,324.0,324,Mjölnir,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.1176
+16000-16499,otorii INNOVATED -[i]3-__dx__master,2,100.6457,100.6457,1.0,1.0,326.0,326,otorii INNOVATED -[i]3-,master,14,14.5,dx,オンゲキ＆CHUNITHM,False,17,0.1176
+16000-16499,CO5M1C R4ILR0AD__dx__master,2,100.5287,100.5287,1.0,1.0,324.0,324,CO5M1C R4ILR0AD,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,Panopticon__std__master,2,100.6188,100.6188,1.0,1.0,324.0,324,Panopticon,master,14,14.4,std,maimai,False,17,0.1176
+16000-16499,UniTas__dx__master,2,100.5628,100.5628,1.0,1.0,324.0,324,UniTas,master,14,14.4,dx,maimai,False,17,0.1176
 16000-16499,バーチャルダム　ネーション__dx__remaster,2,100.5881,100.5881,1.0,1.0,324.0,324,バーチャルダム　ネーション,remaster,14,14.4,dx,maimai,False,17,0.1176
 16000-16499,Blows Up Everything__dx__remaster,2,100.5215,100.5215,1.0,1.0,321.0,321,Blows Up Everything,remaster,14,14.3,dx,maimai,False,17,0.1176
-16000-16499,Party☆People☆Princess__dx__master,2,100.6596,100.6596,1.0,1.0,321.0,321,Party☆People☆Princess,master,14,14.3,dx,maimai,False,17,0.1176
+16000-16499,Climax__dx__master,2,100.5548,100.5548,1.0,1.0,321.0,321,Climax,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.1176
+16000-16499,HERA__std__master,2,100.5859,100.5859,1.0,1.0,321.0,321,HERA,master,14,14.3,std,maimai,False,17,0.1176
+16000-16499,N3V3R G3T OV3R__dx__master,2,100.612,100.612,1.0,1.0,321.0,321,N3V3R G3T OV3R,master,14,14.3,dx,maimai,False,17,0.1176
 16000-16499,Schwarzschild__std__master,2,100.593,100.593,1.0,1.0,321.0,321,Schwarzschild,master,14,14.3,std,maimai,False,17,0.1176
-16000-16499,電光石火__dx__master,2,100.631,100.631,1.0,1.0,321.0,321,電光石火,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.1176
+16000-16499,Chronomia__dx__master,2,100.6766,100.6766,1.0,1.0,319.0,319,Chronomia,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,Grievous Lady__dx__master,2,100.705,100.705,1.0,1.0,319.0,319,Grievous Lady,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,∀__dx__master,2,100.6476,100.6476,1.0,1.0,319.0,319,∀,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,きたさいたま2000__std__master,2,100.5625,100.5625,1.0,1.0,319.0,319,きたさいたま2000,master,14,14.2,std,ゲーム＆バラエティ,False,17,0.1176
-16000-16499,デッドマンズバラッド__dx__master,2,100.5606,100.5606,1.0,1.0,319.0,319,デッドマンズバラッド,master,14,14.2,dx,niconico＆ボーカロイド,False,17,0.1176
 16000-16499,ミラクルポップ☆アドベンチャー!!!!!__dx__master,2,100.5936,100.5936,1.0,1.0,319.0,319,ミラクルポップ☆アドベンチャー!!!!!,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.1176
-16000-16499,美夜月鏡__dx__master,2,100.7349,100.7349,1.0,1.0,319.0,319,美夜月鏡,master,14,14.1,dx,オンゲキ＆CHUNITHM,False,17,0.1176
+16000-16499,勦滅__dx__master,2,100.5795,100.5795,1.0,1.0,319.0,319,勦滅,master,14,14.2,dx,maimai,False,17,0.1176
+16000-16499,DATAERR0R__dx__master,2,100.5889,100.5889,1.0,1.0,315.0,315,DATAERR0R,master,14,14.0,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,Unwelcome School__dx__remaster,2,100.6308,100.6308,1.0,1.0,315.0,315,Unwelcome School,remaster,14,14.1,dx,ゲーム＆バラエティ,False,17,0.1176
 16000-16499,World's end BLACKBOX__dx__master,2,100.325,100.325,1.0,0.5,328.5,335,World's end BLACKBOX,master,14+,14.9,dx,maimai,False,17,0.1176
 16000-16499,躯樹の墓守__dx__master,2,100.4148,100.4148,1.0,0.5,328.5,335,躯樹の墓守,master,14+,14.9,dx,maimai,False,17,0.1176
 16000-16499,PANDORA PARADOXXX__std__master,2,100.2719,100.2719,1.0,0.5,328.0,335,PANDORA PARADOXXX,master,14+,14.9,std,maimai,False,17,0.1176
 16000-16499,ℝ∈Χ LUNATiCA__dx__master,2,100.3081,100.3081,1.0,0.5,326.5,333,ℝ∈Χ LUNATiCA,master,14+,14.8,dx,maimai,False,17,0.1176
 16000-16499,チューリングの跡__dx__master,2,100.3647,100.3647,1.0,0.5,326.5,333,チューリングの跡,master,14+,14.8,dx,maimai,False,17,0.1176
-16000-16499,封焔の135秒__dx__master,2,100.3852,100.3852,1.0,0.5,326.5,333,封焔の135秒,master,14+,14.8,dx,maimai,False,17,0.1176
 16000-16499,氷滅の135小節__dx__master,2,100.384,100.384,1.0,0.5,326.5,333,氷滅の135小節,master,14+,14.8,dx,maimai,False,17,0.1176
 16000-16499,"False Amber (from the Black Bazaar, Or by A Kervan Trader from the Lands Afar, Or Buried Beneath the Shifting Sands That Lead Everywhere but Nowhere)__dx__master",2,100.2748,100.2748,1.0,0.5,326.0,333,"False Amber (from the Black Bazaar, Or by A Kervan Trader from the Lands Afar, Or Buried Beneath the Shifting Sands That Lead Everywhere but Nowhere)",master,14+,14.8,dx,maimai,False,17,0.1176
+16000-16499,7 Wonders__dx__master,2,100.2898,100.2898,1.0,0.0,322.0,322,7 Wonders,master,14+,14.9,dx,maimai,False,17,0.1176
 16000-16499,Garakuta Doll Play__std__remaster,1,100.5194,100.5194,1.0,1.0,333.0,333,Garakuta Doll Play,remaster,14+,14.8,std,maimai,False,17,0.0588
 16000-16499,雷切-RAIKIRI-__std__remaster,1,100.6916,100.6916,1.0,1.0,333.0,333,雷切-RAIKIRI-,remaster,14+,14.8,std,maimai,False,17,0.0588
 16000-16499,AMAZING MIGHTYYYY!!!!__std__master,1,100.5415,100.5415,1.0,1.0,330.0,330,AMAZING MIGHTYYYY!!!!,master,14+,14.7,std,maimai,False,17,0.0588
@@ -981,25 +964,29 @@
 16000-16499,Prophesy One__std__master,1,100.5849,100.5849,1.0,1.0,328.0,328,Prophesy One,master,14+,14.6,std,maimai,False,17,0.0588
 16000-16499,TiamaT:F minor__std__master,1,100.6711,100.6711,1.0,1.0,328.0,328,TiamaT:F minor,master,14+,14.6,std,オンゲキ＆CHUNITHM,False,17,0.0588
 16000-16499,Yorugao__dx__master,1,100.6346,100.6346,1.0,1.0,328.0,328,Yorugao,master,14+,14.6,dx,maimai,False,17,0.0588
+16000-16499,ガラテアの螺旋__std__master,1,100.7426,100.7426,1.0,1.0,328.0,328,ガラテアの螺旋,master,14+,14.6,std,maimai,False,17,0.0588
+16000-16499,Axeria__std__master,1,100.5308,100.5308,1.0,1.0,326.0,326,Axeria,master,14,14.5,std,maimai,False,17,0.0588
 16000-16499,Beat of getting entangled__std__remaster,1,100.514,100.514,1.0,1.0,326.0,326,Beat of getting entangled,remaster,14,14.5,std,maimai,False,17,0.0588
 16000-16499,Bloody Trail__dx__master,1,100.5263,100.5263,1.0,1.0,326.0,326,Bloody Trail,master,14,14.5,dx,maimai,False,17,0.0588
+16000-16499,Dragoon__std__remaster,1,100.5472,100.5472,1.0,1.0,326.0,326,Dragoon,remaster,14,14.5,std,maimai,False,17,0.0588
 16000-16499,FFT__std__remaster,1,100.5129,100.5129,1.0,1.0,326.0,326,FFT,remaster,14,14.5,std,maimai,False,17,0.0588
 16000-16499,初音ミクの激唱__std__master,1,100.6542,100.6542,1.0,1.0,326.0,326,初音ミクの激唱,master,14,14.5,std,niconico＆ボーカロイド,False,17,0.0588
 16000-16499,ARAIS__dx__master,1,100.515,100.515,1.0,1.0,324.0,324,ARAIS,master,14,14.4,dx,maimai,False,17,0.0588
+16000-16499,Abstruse Dilemma__dx__master,1,100.5573,100.5573,1.0,1.0,324.0,324,Abstruse Dilemma,master,14,14.5,dx,ゲーム＆バラエティ,False,17,0.0588
+16000-16499,Mjölnir__dx__master,1,100.6558,100.6558,1.0,1.0,324.0,324,Mjölnir,master,14,14.4,dx,ゲーム＆バラエティ,False,17,0.0588
 16000-16499,Moon of Noon__std__master,1,100.6229,100.6229,1.0,1.0,324.0,324,Moon of Noon,master,14,14.4,std,maimai,False,17,0.0588
-16000-16499,ナイト・オブ・ナイツ__std__remaster,1,100.5395,100.5395,1.0,1.0,324.0,324,ナイト・オブ・ナイツ,remaster,14,14.4,std,東方Project,False,17,0.0588
+16000-16499,YA･DA･YO [Reborn]__std__remaster,1,100.7967,100.7967,1.0,1.0,324.0,324,YA･DA･YO [Reborn],remaster,14,14.4,std,ゲーム＆バラエティ,False,17,0.0588
 16000-16499,有明/Ariake__dx__master,1,100.5212,100.5212,1.0,1.0,324.0,324,有明/Ariake,master,14,14.4,dx,maimai,False,17,0.0588
-16000-16499,Climax__dx__master,1,100.6028,100.6028,1.0,1.0,321.0,321,Climax,master,14,14.3,dx,オンゲキ＆CHUNITHM,False,17,0.0588
-16000-16499,HERA__std__master,1,100.5279,100.5279,1.0,1.0,321.0,321,HERA,master,14,14.3,std,maimai,False,17,0.0588
+16000-16499,Party☆People☆Princess__dx__master,1,100.6278,100.6278,1.0,1.0,321.0,321,Party☆People☆Princess,master,14,14.3,dx,maimai,False,17,0.0588
+16000-16499,World Vanquisher__std__master,1,100.529,100.529,1.0,1.0,321.0,321,World Vanquisher,master,14,14.3,std,オンゲキ＆CHUNITHM,False,17,0.0588
 16000-16499,地球__dx__master,1,100.6187,100.6187,1.0,1.0,321.0,321,地球,master,14,14.3,dx,maimai,False,17,0.0588
 16000-16499,田中__dx__master,1,100.6774,100.6774,1.0,1.0,321.0,321,田中,master,14,14.3,dx,ゲーム＆バラエティ,False,17,0.0588
-16000-16499,記憶、記録__std__remaster,1,100.683,100.683,1.0,1.0,321.0,321,記憶、記録,remaster,14,14.3,std,maimai,False,17,0.0588
-16000-16499,Chronomia__dx__master,1,100.7776,100.7776,1.0,1.0,319.0,319,Chronomia,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.0588
-16000-16499,勦滅__dx__master,1,100.5996,100.5996,1.0,1.0,319.0,319,勦滅,master,14,14.2,dx,maimai,False,17,0.0588
+16000-16499,Destr0yer__std__master,1,100.5593,100.5593,1.0,1.0,319.0,319,Destr0yer,master,14,14.2,std,ゲーム＆バラエティ,False,17,0.0588
+16000-16499,インパアフェクシオン・ホワイトガアル__dx__master,1,100.6648,100.6648,1.0,1.0,319.0,319,インパアフェクシオン・ホワイトガアル,master,14,14.2,dx,オンゲキ＆CHUNITHM,False,17,0.0588
+16000-16499,ロストワンの号哭__std__remaster,1,100.5887,100.5887,1.0,1.0,319.0,319,ロストワンの号哭,remaster,14,14.2,std,niconico＆ボーカロイド,False,17,0.0588
 16000-16499,竹__dx__master,1,100.7376,100.7376,1.0,1.0,319.0,319,竹,master,14,14.2,dx,ゲーム＆バラエティ,False,17,0.0588
 16000-16499,蜘蛛の糸__dx__master,1,100.5607,100.5607,1.0,1.0,319.0,319,蜘蛛の糸,master,14,14.2,dx,オンゲキ＆CHUNITHM,False,17,0.0588
-16000-16499,Eureka__dx__master,1,100.6479,100.6479,1.0,1.0,317.0,317,Eureka,master,14,14.1,dx,ゲーム＆バラエティ,False,17,0.0588
-16000-16499,R'N'R Monsta__dx__master,1,100.5192,100.5192,1.0,1.0,317.0,317,R'N'R Monsta,master,14,14.1,dx,オンゲキ＆CHUNITHM,False,17,0.0588
+16000-16499,Eureka__dx__master,1,100.5797,100.5797,1.0,1.0,317.0,317,Eureka,master,14,14.1,dx,ゲーム＆バラエティ,False,17,0.0588
 16000-16499,カゲロウデイズ__std__remaster,1,100.9002,100.9002,1.0,1.0,317.0,317,カゲロウデイズ,remaster,14,14.1,std,niconico＆ボーカロイド,False,17,0.0588
 16000-16499,火炎地獄__std__master,1,100.7942,100.7942,1.0,1.0,317.0,317,火炎地獄,master,14,14.1,std,maimai,False,17,0.0588
 16000-16499,脳漿炸裂ガール__std__master,1,100.5861,100.5861,1.0,1.0,317.0,317,脳漿炸裂ガール,master,14,14.1,std,niconico＆ボーカロイド,False,17,0.0588

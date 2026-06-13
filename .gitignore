@@ -4,7 +4,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.pyc
 # ------------------------------------------------------------
 # Virtual environments
 # ------------------------------------------------------------
@@ -53,6 +53,12 @@ back/data/archive/
 tools/debug/__pycache__/
 tools/archive/
 
+# Debug outputs
+back/data/debug_maishift/
+back/data/maishift_main_debug_links.txt
+back/data/update_log.csv
+back/data/cohort_build_failed_profiles.csv
+back/data/cohort_build_unmatched_records.csv
 # ------------------------------------------------------------
 # Local logs
 # ------------------------------------------------------------
