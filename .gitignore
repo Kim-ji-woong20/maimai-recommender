@@ -1,0 +1,75 @@
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ------------------------------------------------------------
+# Virtual environments
+# ------------------------------------------------------------
+venv/
+.venv/
+back/venv/
+front/venv/
+
+# ------------------------------------------------------------
+# Environment variables
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------
+# IDE / editor
+# ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ------------------------------------------------------------
+# OS files
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# ------------------------------------------------------------
+# Streamlit
+# ------------------------------------------------------------
+.streamlit/secrets.toml
+
+# ------------------------------------------------------------
+# Playwright / browser test outputs
+# ------------------------------------------------------------
+test-results/
+playwright-report/
+
+# ------------------------------------------------------------
+# Debug / temporary outputs
+# ------------------------------------------------------------
+back/data/debug/
+back/data/archive/
+tools/debug/__pycache__/
+tools/archive/
+
+# ------------------------------------------------------------
+# Local logs
+# ------------------------------------------------------------
+*.log
+back/data/update_log.csv
+
+# ------------------------------------------------------------
+# Keep service data CSV files
+# ------------------------------------------------------------
+# Do NOT ignore:
+# back/data/maimai_charts_13_15.csv
+# back/data/profile_urls.csv
+# back/data/raw_user_best50.csv
+# back/data/cohort_chart_stats.csv
+# back/data/level_distribution_stats.csv
+
+# Local generated logs
+back/data/update_log.csv
+back/data/cohort_build_failed_profiles.csv
+back/data/cohort_build_unmatched_records.csv
