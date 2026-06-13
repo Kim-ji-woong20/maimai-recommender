@@ -5,7 +5,20 @@ import pandas as pd
 
 
 CHARTS_PATH = Path("data/maimai_charts_13_15.csv")
-DEFAULT_RECORDS_PATH = Path("data/sample_user_records.csv")
+
+USER_RECORD_COLUMNS = [
+    "chart_id",
+    "achievement",
+    "rank",
+    "play_count",
+    "chart_rating",
+    "is_best50",
+    "best50_section",
+    "best50_order",
+    "record_source",
+    "combo",
+    "sync",
+]
 
 COHORT_STATS_PATH = Path("data/cohort_chart_stats.csv")
 LEVEL_STATS_PATH = Path("data/level_distribution_stats.csv")
@@ -126,31 +139,21 @@ def load_charts() -> pd.DataFrame:
 
     return charts
 
-
-def load_default_records() -> pd.DataFrame:
-    if not DEFAULT_RECORDS_PATH.exists():
-        return pd.DataFrame(
-            columns=[
-                "chart_id",
-                "achievement",
-                "rank",
-                "play_count",
-                "chart_rating",
-                "is_best50",
-                "best50_section",
-                "best50_order",
-                "record_source",
-                "combo",
-                "sync",
-            ]
-        )
-
-    return pd.read_csv(DEFAULT_RECORDS_PATH)
-
+def make_empty_user_records() -> pd.DataFrame:
+    """
+    유저 기록이 없는 경우 사용하는 빈 기록 DataFrame.
+    """
+    return pd.DataFrame(columns=USER_RECORD_COLUMNS)
 
 def prepare_user_records(user_records_df: pd.DataFrame | None = None) -> pd.DataFrame:
+    """
+    추천 로직에서 사용할 유저 기록 DataFrame을 표준화한다.
+
+    user_records_df가 None이면 더미 CSV를 읽지 않고 빈 기록을 사용한다.
+    이 경우 추천은 cohort 통계 기반 후보 중심으로 생성된다.
+    """
     if user_records_df is None:
-        records = load_default_records()
+        records = make_empty_user_records()
     else:
         records = user_records_df.copy()
 
@@ -441,21 +444,22 @@ def estimate_best50_cutoffs(df: pd.DataFrame) -> dict:
 # ------------------------------------------------------------
 
 def filter_by_main_level(df: pd.DataFrame, main_level: str, goal: str) -> pd.DataFrame:
+    """
+    사용자가 선택한 주력 레벨 범위로 후보를 필터링한다.
+
+    이전 버전에서는 skill_up 모드에서 상위 0.3 내부상수를 자동으로 추가 허용했지만,
+    UI에서 '13+'를 선택했는데 14레벨 곡이 노출되는 혼란이 있었다.
+    따라서 현재 버전에서는 모든 추천 목표에서 선택 레벨 범위를 엄격하게 적용한다.
+    """
     if main_level not in LEVEL_BOUNDS:
         return df
 
     low, high = LEVEL_BOUNDS[main_level]
 
-    if goal == "skill_up":
-        high = min(99.0, high + 0.3)
-
     filtered = df[
         (df["internal_level"] >= low)
         & (df["internal_level"] <= high)
     ].copy()
-
-    if filtered.empty:
-        return df
 
     return filtered
 

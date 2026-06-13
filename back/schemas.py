@@ -22,3 +22,8 @@ class ProfileUrlRecommendRequest(RecommendRequest):
         ...,
         description="maishift profile URL. Example: https://maimai.shiftpsh.com/profile/kong3171/home",
     )
+
+    force_refresh: bool = Field(
+        default=False,
+        description="If true, ignore cached profile parse result and parse maishift again.",
+    )

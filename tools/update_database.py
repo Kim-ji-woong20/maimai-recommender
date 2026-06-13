@@ -20,7 +20,8 @@ COHORT_STATS_PATH = DATA_DIR / "cohort_chart_stats.csv"
 LEVEL_STATS_PATH = DATA_DIR / "level_distribution_stats.csv"
 UPDATE_LOG_PATH = DATA_DIR / "update_log.csv"
 
-COLLECT_SCRIPT = TOOLS_DIR / "collect_maishift_profiles.py"
+COLLECT_URLS_SCRIPT = TOOLS_DIR / "collect_profile_urls.py"
+COLLECT_PROFILES_SCRIPT = TOOLS_DIR / "collect_maishift_profiles.py"
 BUILD_SCRIPT = TOOLS_DIR / "build_cohort_stats.py"
 
 
@@ -48,13 +49,13 @@ def print_section(title: str) -> None:
     print("=" * 70, flush=True)
 
 
-def run_script_realtime(script_path: Path, label: str) -> tuple[bool, str, float]:
+def run_script_realtime(
+    script_path: Path,
+    label: str,
+    extra_args: list[str] | None = None,
+) -> tuple[bool, str, float]:
     """
     하위 Python 스크립트를 실행하고 stdout/stderr를 실시간으로 출력한다.
-
-    기존 subprocess.run(capture_output=True)는 하위 스크립트가 끝난 뒤에만 로그를 보여주므로
-    장시간 수집 작업에서 멈춘 것처럼 보일 수 있다.
-    이 함수는 Popen + -u 옵션을 사용해 출력 버퍼링을 줄이고, 줄 단위로 즉시 출력한다.
     """
     if not script_path.exists():
         message = f"{label} script not found: {script_path}"
@@ -71,11 +72,15 @@ def run_script_realtime(script_path: Path, label: str) -> tuple[bool, str, float
         str(script_path),
     ]
 
+    if extra_args:
+        command.extend(extra_args)
+
     print_section(f"[{now_text()}] START: {label}")
     print("Command:", " ".join(command), flush=True)
     print("Working directory:", PROJECT_ROOT, flush=True)
 
     start_time = time.time()
+    process = None
 
     try:
         process = subprocess.Popen(
@@ -113,10 +118,11 @@ def run_script_realtime(script_path: Path, label: str) -> tuple[bool, str, float
     except KeyboardInterrupt:
         elapsed = time.time() - start_time
 
-        try:
-            process.terminate()
-        except Exception:
-            pass
+        if process is not None:
+            try:
+                process.terminate()
+            except Exception:
+                pass
 
         message = f"{label} interrupted by user after {format_elapsed(elapsed)}"
         print(f"\n[{now_text()}] INTERRUPTED: {message}", flush=True)
@@ -166,6 +172,7 @@ def print_file_statuses() -> None:
 
     for path in paths:
         status = file_status(path)
+
         print(
             f"- {status['path']}: "
             f"exists={status['exists']}, "
@@ -186,6 +193,9 @@ def print_profile_url_summary() -> None:
         print_section("PROFILE URL SUMMARY")
         print(f"Total profile URL rows: {len(df)}", flush=True)
 
+        if "profile_id" in df.columns:
+            print(f"Unique profile_id: {df['profile_id'].dropna().nunique()}", flush=True)
+
         for col in ["profile_url", "url"]:
             if col in df.columns:
                 print(f"Unique URLs in '{col}': {df[col].dropna().nunique()}", flush=True)
@@ -193,6 +203,18 @@ def print_profile_url_summary() -> None:
         if "rating_band" in df.columns:
             print("\nProfile URL rating_band distribution:", flush=True)
             print(df["rating_band"].value_counts().sort_index().to_string(), flush=True)
+
+        if "first_seen_at" in df.columns:
+            print("\nFirst seen latest values:", flush=True)
+            print(
+                df["first_seen_at"]
+                .dropna()
+                .astype(str)
+                .sort_values(ascending=False)
+                .head(5)
+                .to_string(index=False),
+                flush=True,
+            )
 
     except Exception as e:
         print(f"\nFailed to summarize profile_urls.csv: {e}", flush=True)
@@ -250,8 +272,10 @@ def print_cohort_summary() -> None:
 def append_update_log(
     started_at: str,
     finished_at: str,
+    url_collect_ok: bool | None,
     collect_ok: bool | None,
     build_ok: bool | None,
+    url_collect_elapsed: float | None,
     collect_elapsed: float | None,
     build_elapsed: float | None,
     note: str,
@@ -261,8 +285,10 @@ def append_update_log(
     fieldnames = [
         "started_at",
         "finished_at",
+        "url_collect_ok",
         "collect_ok",
         "build_ok",
+        "url_collect_elapsed_seconds",
         "collect_elapsed_seconds",
         "build_elapsed_seconds",
         "note",
@@ -279,8 +305,12 @@ def append_update_log(
         writer.writerow({
             "started_at": started_at,
             "finished_at": finished_at,
+            "url_collect_ok": url_collect_ok,
             "collect_ok": collect_ok,
             "build_ok": build_ok,
+            "url_collect_elapsed_seconds": round(url_collect_elapsed, 2)
+            if url_collect_elapsed is not None
+            else "",
             "collect_elapsed_seconds": round(collect_elapsed, 2)
             if collect_elapsed is not None
             else "",
@@ -294,6 +324,12 @@ def append_update_log(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Update maimai recommender data pipeline."
+    )
+
+    parser.add_argument(
+        "--skip-url-collect",
+        action="store_true",
+        help="Skip collect_profile_urls.py.",
     )
 
     parser.add_argument(
@@ -315,6 +351,12 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--url-dry-run",
+        action="store_true",
+        help="Run collect_profile_urls.py in dry-run mode.",
+    )
+
+    parser.add_argument(
         "--no-before-summary",
         action="store_true",
         help="Do not print data summaries before running scripts.",
@@ -333,10 +375,15 @@ def main() -> None:
     args = parse_args()
 
     started_at = now_text()
+
+    url_collect_ok = None
     collect_ok = None
     build_ok = None
+
+    url_collect_elapsed = None
     collect_elapsed = None
     build_elapsed = None
+
     notes = []
 
     print_section("MAIMAI RECOMMENDER DB UPDATE")
@@ -356,9 +403,27 @@ def main() -> None:
 
     pipeline_start = time.time()
 
+    if not args.skip_url_collect:
+        url_args = []
+
+        if args.url_dry_run:
+            url_args.append("--dry-run")
+
+        url_collect_ok, url_collect_msg, url_collect_elapsed = run_script_realtime(
+            COLLECT_URLS_SCRIPT,
+            "collect_profile_urls.py",
+            extra_args=url_args,
+        )
+        notes.append(url_collect_msg)
+    else:
+        print_section("SKIP: collect_profile_urls.py")
+        url_collect_ok = None
+        url_collect_elapsed = None
+        notes.append("url collect skipped")
+
     if not args.skip_collect:
         collect_ok, collect_msg, collect_elapsed = run_script_realtime(
-            COLLECT_SCRIPT,
+            COLLECT_PROFILES_SCRIPT,
             "collect_maishift_profiles.py",
         )
         notes.append(collect_msg)
@@ -366,7 +431,7 @@ def main() -> None:
         print_section("SKIP: collect_maishift_profiles.py")
         collect_ok = None
         collect_elapsed = None
-        notes.append("collect skipped")
+        notes.append("profile collect skipped")
 
     if not args.skip_build:
         build_ok, build_msg, build_elapsed = run_script_realtime(
@@ -392,8 +457,10 @@ def main() -> None:
     append_update_log(
         started_at=started_at,
         finished_at=finished_at,
+        url_collect_ok=url_collect_ok,
         collect_ok=collect_ok,
         build_ok=build_ok,
+        url_collect_elapsed=url_collect_elapsed,
         collect_elapsed=collect_elapsed,
         build_elapsed=build_elapsed,
         note=" | ".join(notes),

@@ -203,6 +203,17 @@ def render_debug_info(result: dict[str, Any], developer_mode: bool = False) -> N
     with st.expander("개발자용 추천 기준 디버그 정보", expanded=False):
         st.json(debug)
 
+def render_cache_info(result: dict[str, Any], developer_mode: bool = False) -> None:
+    if not developer_mode:
+        return
+
+    cache_info = result.get("profile_cache")
+
+    if not cache_info:
+        return
+
+    with st.expander("개발자용 프로필 캐시 정보", expanded=False):
+        st.json(cache_info)
 
 def render_raw_response(result: dict[str, Any], developer_mode: bool = False) -> None:
     if not developer_mode:
@@ -354,6 +365,15 @@ def main() -> None:
                 placeholder="https://maimai.shiftpsh.com/profile/사용자ID/home",
             )
 
+            force_refresh = st.checkbox(
+                "프로필 캐시 무시하고 새로 파싱",
+                value=False,
+                help=(
+                    "같은 프로필 URL은 기본적으로 백엔드 캐시를 사용합니다. "
+                    "최신 기록을 강제로 다시 가져오고 싶을 때만 체크하세요."
+                ),
+            )
+
             goal_label = st.selectbox(
                 "추천 목표",
                 list(GOAL_OPTIONS.keys()),
@@ -400,6 +420,7 @@ def main() -> None:
             "chart_type": CHART_TYPE_OPTIONS[chart_type_label],
             "bpm_preference": BPM_OPTIONS[bpm_label],
             "top_n": top_n,
+            "force_refresh": force_refresh,
         }
 
         try:
@@ -442,6 +463,7 @@ def main() -> None:
 
     render_profile_info(result, developer_mode=developer_mode)
     render_recommendations(result, developer_mode=developer_mode)
+    render_cache_info(result, developer_mode=developer_mode)
     render_debug_info(result, developer_mode=developer_mode)
     render_raw_response(result, developer_mode=developer_mode)
 
