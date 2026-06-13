@@ -117,6 +117,15 @@ def safe_float(value, default: float = 0.0) -> float:
     except Exception:
         return default
 
+def safe_str(value, default: str = "") -> str:
+    try:
+        if pd.isna(value):
+            return default
+
+        return str(value)
+
+    except Exception:
+        return default
 
 def safe_int(value, default: int = 0) -> int:
     try:
@@ -136,6 +145,23 @@ def safe_int(value, default: int = 0) -> int:
 def load_charts() -> pd.DataFrame:
     charts = pd.read_csv(CHARTS_PATH)
     charts["is_new"] = charts["is_new"].apply(normalize_is_new)
+
+    optional_columns = {
+        "artist": "",
+        "category": "",
+        "version": "",
+        "sheet_version": "",
+        "release_date": "",
+        "image_name": "",
+        "thumbnail_url": "",
+        "display_level": "",
+    }
+
+    for col, default_value in optional_columns.items():
+        if col not in charts.columns:
+            charts[col] = default_value
+
+        charts[col] = charts[col].fillna(default_value).astype(str)
 
     return charts
 
@@ -1150,6 +1176,14 @@ def recommend(
             "reverse_border_gap": float(safe_float(row.get("reverse_border_gap", 0.0))),
             "reason": reason,
             "target": target,
+            "artist": safe_str(row.get("artist", "")),
+            "category": safe_str(row.get("category", "")),
+            "version": safe_str(row.get("version", "")),
+            "sheet_version": safe_str(row.get("sheet_version", "")),
+            "release_date": safe_str(row.get("release_date", "")),
+            "image_name": safe_str(row.get("image_name", "")),
+            "thumbnail_url": safe_str(row.get("thumbnail_url", "")),
+            "display_level": safe_str(row.get("display_level", row.get("level", "")))
         })
 
     return {

@@ -226,10 +226,18 @@ def render_raw_response(result: dict[str, Any], developer_mode: bool = False) ->
 def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False) -> None:
     rank = rec.get("rank")
     title = rec.get("title")
+    artist = rec.get("artist", "")
+
     difficulty = rec.get("difficulty")
-    level = rec.get("level")
+    level = rec.get("display_level") or rec.get("level")
     internal_level = rec.get("internal_level")
     chart_type = rec.get("chart_type")
+
+    version = rec.get("sheet_version") or rec.get("version") or "-"
+    song_version = rec.get("version") or "-"
+    category = rec.get("category") or "-"
+    release_date = rec.get("release_date") or "-"
+    thumbnail_url = rec.get("thumbnail_url") or ""
 
     played = bool(rec.get("played", False))
     is_best50 = bool(rec.get("is_best50", False))
@@ -239,50 +247,69 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
     reverse_border_gap = rec.get("reverse_border_gap", 0.0)
 
     with st.container(border=True):
-        title_text = f"### {rank}. {title}"
+        image_col, info_col = st.columns([1, 6])
 
-        if reverse_border:
-            title_text += "  \n`역보더`"
+        with image_col:
+            if thumbnail_url:
+                st.image(thumbnail_url, width=130)
+            else:
+                st.caption("No image")
 
-        st.markdown(title_text)
+        with info_col:
+            title_text = f"### {rank}. {title}"
 
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
+            if reverse_border:
+                title_text += "  \n`역보더`"
 
-        with col1:
-            st.metric("채보", str(difficulty).upper())
+            st.markdown(title_text)
 
-        with col2:
-            st.metric("레벨", level)
+            if artist:
+                st.caption(artist)
 
-        with col3:
-            st.metric("내부상수", internal_level)
+            st.caption(
+                f"{version} · {str(chart_type).upper()} · "
+                f"{str(difficulty).upper()} · {category}"
+            )
 
-        with col4:
-            st.metric("타입", str(chart_type).upper())
+            col1, col2, col3, col4, col5 = st.columns(5)
 
-        with col5:
-            st.metric("현재 달성률", format_score(achievement, played))
+            with col1:
+                st.metric("레벨", level)
 
-        with col6:
-            st.metric("Best 50 포함", bool_to_text(is_best50))
+            with col2:
+                st.metric("내부상수", internal_level)
 
-        if reverse_border:
-            try:
-                st.caption(f"100.5%까지 부족한 차이: {float(reverse_border_gap):.4f}%")
-            except Exception:
-                pass
+            with col3:
+                st.metric("타입", str(chart_type).upper())
 
-        if developer_mode:
-            with st.expander("개발자용 추천 상세", expanded=False):
-                st.write(f"Chart ID: {rec.get('chart_id')}")
-                st.write(f"BPM: {rec.get('bpm')}")
-                st.write(f"추천점수: {rec.get('recommend_score')}")
-                st.write(f"후보 유형: {rec.get('candidate_label')}")
-                st.write(f"현재 곡별 레이팅: {rec.get('current_rating')}")
-                st.write(f"100.5% 기준 최대 레이팅: {rec.get('max_rating')}")
-                st.write(f"레이팅 상승 여지: {rec.get('rating_gain')}")
-                st.write(f"목표: {rec.get('target')}")
-                st.write(f"추천 이유: {rec.get('reason')}")
+            with col4:
+                st.metric("현재 달성률", format_score(achievement, played))
+
+            with col5:
+                st.metric("Best 50 포함", bool_to_text(is_best50))
+
+            if reverse_border:
+                try:
+                    st.caption(f"100.5%까지 부족한 차이: {float(reverse_border_gap):.4f}%")
+                except Exception:
+                    pass
+
+            if developer_mode:
+                with st.expander("개발자용 추천 상세", expanded=False):
+                    st.write(f"Chart ID: {rec.get('chart_id')}")
+                    st.write(f"BPM: {rec.get('bpm')}")
+                    st.write(f"곡 최초 수록 버전: {song_version}")
+                    st.write(f"채보 버전: {version}")
+                    st.write(f"발매일: {release_date}")
+                    st.write(f"카테고리: {category}")
+                    st.write(f"이미지 URL: {thumbnail_url}")
+                    st.write(f"추천점수: {rec.get('recommend_score')}")
+                    st.write(f"후보 유형: {rec.get('candidate_label')}")
+                    st.write(f"현재 곡별 레이팅: {rec.get('current_rating')}")
+                    st.write(f"100.5% 기준 최대 레이팅: {rec.get('max_rating')}")
+                    st.write(f"레이팅 상승 여지: {rec.get('rating_gain')}")
+                    st.write(f"목표: {rec.get('target')}")
+                    st.write(f"추천 이유: {rec.get('reason')}")
 
 
 def render_recommendations(result: dict[str, Any], developer_mode: bool = False) -> None:
