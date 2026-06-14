@@ -1,6 +1,7 @@
 import os
 import time
 from typing import Any
+
 import pandas as pd
 
 from fastapi import FastAPI, HTTPException
@@ -38,10 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def normalize_profile_cache_key(profile_url: str) -> str:
-    return str(profile_url).strip().rstrip("/")
 
 
 def get_cache_age_seconds(created_at: float) -> int:
@@ -196,6 +193,7 @@ def make_cache_quality_info(
         "min_matched_count": PROFILE_CACHE_MIN_MATCHED_COUNT,
     }
 
+
 def get_profile_parse_result(
     profile_url: str,
     force_refresh: bool = False,
@@ -203,10 +201,8 @@ def get_profile_parse_result(
     """
     maishift 프로필 파싱 결과를 캐시한다.
 
-    개선 사항:
-    - profile_id 기준 캐시 key 사용
-    - low-quality parse 결과는 캐시하지 않음
-    - 기존 good cache가 있고 새 파싱 결과가 low-quality이면 기존 cache를 fallback으로 사용
+    profile_id 기준 캐시 key를 사용하고, 품질 기준을 통과한 파싱 결과만 저장한다.
+    새 파싱 결과가 낮은 품질이면 기존 acceptable 캐시를 fallback으로 사용할 수 있다.
     """
     now = time.time()
 
@@ -274,7 +270,7 @@ def get_profile_parse_result(
 
     # force refresh 또는 TTL 만료 후 새 파싱이 low-quality인 경우,
     # 기존 캐시가 acceptable이면 기존 캐시를 fallback으로 사용한다.
-    if not should_store_cache and cached is not None:
+    if not force_refresh and not should_store_cache and cached is not None:
         cached_user_records_df = cached.get("user_records_df")
         cached_profile_info = cached.get("profile_info", {})
 
@@ -364,7 +360,7 @@ def health_check():
             "profile_cache_size": len(profile_parse_cache),
             "profile_cache_ttl_seconds": PROFILE_CACHE_TTL_SECONDS,
             "profile_cache_min_extracted_count": PROFILE_CACHE_MIN_EXTRACTED_COUNT,
-            "profile_cache_min_matched_count": PROFILE_CACHE_MIN_MATCHED_COUNT
+            "profile_cache_min_matched_count": PROFILE_CACHE_MIN_MATCHED_COUNT,
         }
 
     except Exception as e:
@@ -450,13 +446,20 @@ def recommend_by_url(req: ProfileUrlRecommendRequest):
         )
 
 
-def make_profile_parse_warning(profile_info: dict) -> str | None:
-    extracted_count = int(profile_info.get("extracted_count", 0) or 0)
-    matched_count = int(profile_info.get("matched_count", 0) or 0)
+def make_profile_parse_warning(profile_info: dict[str, Any]) -> str | None:
+    counts = get_profile_parse_counts(profile_info)
+    extracted_count = counts["extracted_count"]
+    matched_count = counts["matched_count"]
+    unmatched_count = counts["unmatched_count"]
 
-    records_extracted_count = int(profile_info.get("records_extracted_count", 0) or 0)
-    records_matched_count = int(profile_info.get("records_matched_count", 0) or 0)
-    records_unmatched_count = int(profile_info.get("records_unmatched_count", 0) or 0)
+    records_counts = get_profile_parse_counts(
+        {
+            "records_extracted_count": profile_info.get("records_extracted_count"),
+            "records_matched_count": profile_info.get("records_matched_count"),
+        }
+    )
+    records_extracted_count = records_counts["extracted_count"]
+    records_matched_count = records_counts["matched_count"]
 
     if extracted_count == 0:
         return (
@@ -476,10 +479,10 @@ def make_profile_parse_warning(profile_info: dict) -> str | None:
             "Best 50 기록 위주로 추천이 생성되었을 수 있습니다."
         )
 
-    if records_unmatched_count > 0:
+    if unmatched_count > 0:
         return (
             f"일부 기록은 곡 DB와 매칭되지 않았습니다. "
-            f"매칭 실패 records 수: {records_unmatched_count}개. "
+            f"매칭 실패 records 수: {unmatched_count}개. "
             f"주된 원인은 13 미만 채보, 곡명 표기 차이, 또는 DB 범위 밖 채보일 수 있습니다."
         )
 

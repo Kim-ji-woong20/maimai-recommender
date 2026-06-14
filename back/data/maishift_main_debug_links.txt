@@ -1,15 +1,15 @@
 link	/img/flag-ko.svg	
 link	/img/logo.jpg	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/16920ae93de68f82.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/04f52f010ec3bf29.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/be8f9c599c7c713b.png	
 link	https://maimaidx-eng.com/maimai-mobile/img/Icon/34f0363f4ce86d07.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/ef7fdfa456bb117b.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/556b62b29d87dcd1.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/30da4cdbe6205e2a.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/f389def02353340f.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/f0ba6730fdafc8d9.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/74b08181d1437b4b.png	
-link	https://maimaidx-eng.com/maimai-mobile/img/Icon/d1f2166a39f42eb9.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/3f4e4f3f4aa69f9b.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/e3a90ded3990e093.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/ecb4d32f6046b6a7.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/e3290ef1dfc2d0a4.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/fe525007567bf1b5.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/68cc51f08da38fc2.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/699a53edb218fc7e.png	
+link	https://maimaidx-eng.com/maimai-mobile/img/Icon/e46b31622e0ef857.png	
 link	/assets/main-DzqrFMqt.js	
 link	/assets/_-_locale_-BBOmK4YZ.js	
 link	/assets/link-BofimtSe.js	
@@ -34,16 +34,16 @@ a	/profile/shiftpsh	샘플 프로필
 a	/songs	채보 목록
 a	/level-distribution	레벨별 달성률 분포
 a	/stats	사이트 통계
-button	/profile/saeyan	J JU# 16,322
-button	/profile/patlau126	P PAT 14,456
-button	/profile/jjokparis	J JOKPARIS 15,919
-button	/profile/hanelloa	L LAK∀N∀_T 15,606
-button	/profile/gachi	Y Y☆θωθ♪ 14,681
-button	/profile/wani	K KIRARING 15,819
-button	/profile/eagle_1026	E EaGle 15,226
-button	/profile/lia_0715	L LLiAA!☆ 15,983
-button	/profile/taotsai	Y YS†Rena♪ 15,724
-button	/profile/simon115	S Simon 15,464
+button	/profile/hs2565	h hs2565 14,342
+button	/profile/rion_0122	R RIθN♪ 15,810
+button	/profile/iseul_12	I ISEUL♪ 15,122
+button	/profile/ruchiru	R RUCHIRU 14,675
+button	/profile/blueberry	B Bluebery 15,541
+button	/profile/cocacola	C COCACOLA 15,209
+button	/profile/vhck	v vhck 16,318
+button	/profile/hibiya	S S/Noah 15,503
+button	/profile/theonstar	S STAR・∀・♪ 15,659
+button	/profile/ferb0822	F Ferb0822 15,463
 a	https://github.com/shiftpsh	
 a	https://github.com/havana723	
 a	https://x.com/maiLv_Chihooooo	maimai譜面定数ちほー

@@ -50,20 +50,17 @@ playwright-report/
 # ------------------------------------------------------------
 back/data/debug/
 back/data/archive/
-tools/debug/__pycache__/
-tools/archive/
-
-# Debug outputs
-back/data/debug_maishift/
 back/data/maishift_main_debug_links.txt
 back/data/update_log.csv
 back/data/cohort_build_failed_profiles.csv
 back/data/cohort_build_unmatched_records.csv
+tools/debug/__pycache__/
+tools/archive/
+
 # ------------------------------------------------------------
 # Local logs
 # ------------------------------------------------------------
 *.log
-back/data/update_log.csv
 
 # ------------------------------------------------------------
 # Keep service data CSV files
@@ -74,8 +71,3 @@ back/data/update_log.csv
 # back/data/raw_user_best50.csv
 # back/data/cohort_chart_stats.csv
 # back/data/level_distribution_stats.csv
-
-# Local generated logs
-back/data/update_log.csv
-back/data/cohort_build_failed_profiles.csv
-back/data/cohort_build_unmatched_records.csv

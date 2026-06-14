@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import math
 import os
 from io import BytesIO
@@ -38,6 +39,360 @@ MAIN_LEVEL_OPTIONS = [
     "14+",
     "15",
 ]
+
+
+def escape_html(value: Any) -> str:
+    return html.escape(str(value or ""), quote=True)
+
+
+def inject_global_styles() -> None:
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap');
+
+        :root {
+            --mg-bg: #050814;
+            --mg-panel: rgba(17, 24, 39, 0.92);
+            --mg-panel-2: rgba(21, 32, 52, 0.84);
+            --mg-border: rgba(125, 159, 255, 0.26);
+            --mg-cyan: #5ce1ff;
+            --mg-blue: #4f8cff;
+            --mg-purple: #9d72ff;
+            --mg-text: #edf4ff;
+            --mg-muted: #9fb0c8;
+            --mg-dim: #738199;
+        }
+
+        html, body, [class*="css"] {
+            font-family: "Inter", "Noto Sans KR", "Noto Sans JP", system-ui, sans-serif;
+        }
+
+        .stApp {
+            background:
+                linear-gradient(135deg, rgba(14, 32, 66, 0.88) 0%, rgba(5, 8, 20, 1) 38%, rgba(22, 14, 46, 0.96) 100%);
+            color: var(--mg-text);
+        }
+
+        .block-container {
+            max-width: 1180px;
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        header[data-testid="stHeader"] {
+            background: transparent;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #070b19 0%, #0b1427 52%, #100c24 100%);
+            border-right: 1px solid rgba(120, 160, 255, 0.18);
+        }
+
+        section[data-testid="stSidebar"] > div {
+            padding-top: 1.5rem;
+        }
+
+        .sidebar-brand {
+            border: 1px solid rgba(92, 225, 255, 0.22);
+            border-radius: 14px;
+            padding: 16px 16px 14px;
+            background: linear-gradient(135deg, rgba(79, 140, 255, 0.16), rgba(157, 114, 255, 0.14));
+            margin-bottom: 18px;
+        }
+
+        .sidebar-brand strong {
+            display: block;
+            color: var(--mg-text);
+            font-size: 1.15rem;
+            letter-spacing: 0;
+        }
+
+        .sidebar-brand span {
+            color: var(--mg-cyan);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .maigym-hero {
+            border: 1px solid var(--mg-border);
+            border-radius: 18px;
+            background:
+                linear-gradient(135deg, rgba(21, 34, 60, 0.94), rgba(18, 20, 43, 0.92));
+            padding: 30px 32px;
+            margin-bottom: 22px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+        }
+
+        .hero-kicker,
+        .section-kicker {
+            color: var(--mg-cyan);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .maigym-hero h1 {
+            margin: 6px 0 8px;
+            color: var(--mg-text);
+            font-size: 3.8rem;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .maigym-hero p {
+            max-width: 760px;
+            color: var(--mg-muted);
+            margin: 0;
+            font-size: 1.04rem;
+            line-height: 1.65;
+        }
+
+        .hero-chip-row,
+        .stat-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .hero-chip,
+        .stat-chip {
+            border: 1px solid rgba(125, 159, 255, 0.26);
+            border-radius: 999px;
+            background: rgba(8, 14, 30, 0.62);
+            color: #dce8ff;
+            padding: 7px 11px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .hero-chip.is-cyan {
+            border-color: rgba(92, 225, 255, 0.36);
+            color: #bff5ff;
+        }
+
+        .hero-chip.is-purple {
+            border-color: rgba(157, 114, 255, 0.44);
+            color: #dfd3ff;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 24px 0 12px;
+        }
+
+        .section-heading h2 {
+            color: var(--mg-text);
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin: 2px 0 0;
+            letter-spacing: 0;
+        }
+
+        .section-count {
+            color: var(--mg-dim);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .profile-panel,
+        .empty-panel {
+            border: 1px solid var(--mg-border);
+            border-radius: 14px;
+            background: rgba(12, 19, 36, 0.74);
+            padding: 18px 18px 16px;
+            margin: 14px 0 12px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .profile-stat {
+            border-left: 2px solid rgba(92, 225, 255, 0.55);
+            background: rgba(255, 255, 255, 0.035);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .profile-stat span,
+        .stat-chip span {
+            display: block;
+            color: var(--mg-dim);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .profile-stat strong,
+        .stat-chip strong {
+            color: var(--mg-text);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border-color: rgba(125, 159, 255, 0.26);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(22, 31, 50, 0.92), rgba(18, 24, 39, 0.94));
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+        }
+
+        div[data-testid="stImage"] img {
+            border-radius: 10px;
+            border: 1px solid rgba(125, 159, 255, 0.22);
+        }
+
+        .song-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 2px 0 4px;
+        }
+
+        .song-rank {
+            color: var(--mg-purple);
+            font-size: 1.4rem;
+            font-weight: 800;
+            min-width: 38px;
+        }
+
+        .song-title strong {
+            color: var(--mg-text);
+            font-size: 1.24rem;
+            line-height: 1.3;
+            font-weight: 800;
+        }
+
+        .song-artist,
+        .song-meta {
+            color: var(--mg-muted);
+            font-size: 0.9rem;
+            margin-left: 48px;
+        }
+
+        .song-meta {
+            color: var(--mg-dim);
+            margin-top: 2px;
+        }
+
+        .song-reason {
+            border-left: 2px solid rgba(92, 225, 255, 0.7);
+            background: rgba(92, 225, 255, 0.06);
+            border-radius: 10px;
+            color: #c9d8ef;
+            margin-top: 12px;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .song-reason strong {
+            color: #dff8ff;
+        }
+
+        div[data-testid="stMetric"] {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(125, 159, 255, 0.18);
+            border-radius: 12px;
+            padding: 8px 10px;
+        }
+
+        div[data-testid="stExpander"] details {
+            border-color: rgba(125, 159, 255, 0.24);
+            background: rgba(8, 14, 30, 0.58);
+            border-radius: 12px;
+        }
+
+        .stButton button,
+        .stDownloadButton button,
+        div[data-testid="stFormSubmitButton"] button {
+            border: 1px solid rgba(92, 225, 255, 0.35);
+            background: linear-gradient(135deg, var(--mg-blue), var(--mg-purple));
+            color: white;
+            border-radius: 10px;
+            font-weight: 800;
+        }
+
+        .stButton button:focus,
+        .stDownloadButton button:focus,
+        div[data-testid="stFormSubmitButton"] button:focus {
+            border-color: rgba(92, 225, 255, 0.72);
+            box-shadow: 0 0 0 2px rgba(92, 225, 255, 0.18);
+            outline: none;
+        }
+
+        .stTextInput input,
+        .stSelectbox div[data-baseweb="select"] > div {
+            background: rgba(8, 14, 30, 0.78);
+            border-color: rgba(125, 159, 255, 0.28);
+            color: var(--mg-text);
+        }
+
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p,
+        section[data-testid="stSidebar"] .stCheckbox p {
+            color: var(--mg-muted);
+            font-weight: 700;
+        }
+
+        .stTextInput input::placeholder {
+            color: rgba(159, 176, 200, 0.55);
+            opacity: 1;
+        }
+
+        div[data-testid="stSlider"] [data-testid="stThumbValue"] {
+            color: var(--mg-cyan) !important;
+            font-weight: 800;
+        }
+
+        div[data-testid="stSlider"] div[role="slider"] {
+            background-color: var(--mg-cyan) !important;
+            border-color: var(--mg-cyan) !important;
+            box-shadow: 0 0 0 4px rgba(92, 225, 255, 0.14) !important;
+        }
+
+        div[data-testid="stSlider"] div[data-baseweb="slider"] div[style*="rgb(255, 75, 75)"],
+        div[data-testid="stSlider"] div[data-baseweb="slider"] div[style*="#ff4b4b"] {
+            background-color: var(--mg-cyan) !important;
+            color: var(--mg-cyan) !important;
+            border-color: var(--mg-cyan) !important;
+        }
+
+        div[data-testid="stAlert"] {
+            border: 1px solid rgba(251, 191, 36, 0.24);
+            border-radius: 12px;
+            background: rgba(251, 191, 36, 0.10);
+            color: #f8d98a;
+        }
+
+        div[data-testid="stAlert"] p {
+            color: #f8d98a;
+        }
+
+        @media (max-width: 820px) {
+            .maigym-hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .profile-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def call_recommend_by_url(payload: dict[str, Any]) -> dict[str, Any]:
@@ -171,6 +526,57 @@ def goal_empty_message(goal: str) -> str:
     )
 
 
+def render_section_heading(title: str, kicker: str, count_text: str = "") -> None:
+    count_html = (
+        f'<div class="section-count">{escape_html(count_text)}</div>'
+        if count_text
+        else ""
+    )
+    st.markdown(
+        f"""
+        <div class="section-heading">
+            <div>
+                <div class="section-kicker">{escape_html(kicker)}</div>
+                <h2>{escape_html(title)}</h2>
+            </div>
+            {count_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_stat_strip(items: list[tuple[str, Any]]) -> None:
+    chips = "".join(
+        (
+            '<div class="stat-chip">'
+            f"<span>{escape_html(label)}</span>"
+            f"<strong>{escape_html(value)}</strong>"
+            "</div>"
+        )
+        for label, value in items
+    )
+    st.markdown(
+        f'<div class="stat-strip">{chips}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_empty_state() -> None:
+    st.markdown(
+        """
+        <div class="empty-panel">
+            <div class="section-kicker">READY</div>
+            <h2 style="margin: 4px 0 6px; color: var(--mg-text);">Maigym console</h2>
+            <p style="margin: 0; color: var(--mg-muted);">
+                maishift 프로필 기반 추천 결과가 이곳에 표시됩니다.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_profile_info(result: dict[str, Any], developer_mode: bool = False) -> None:
     profile = result.get("input_profile") or {}
 
@@ -224,21 +630,31 @@ def render_profile_info(result: dict[str, Any], developer_mode: bool = False) ->
         or 0
     )
 
-    st.subheader("입력 프로필")
+    render_section_heading("입력 프로필", "Profile")
 
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.metric("프로필", nickname)
-
-    with col2:
-        st.metric("Rating", rating)
-
-    with col3:
-        st.metric("추출 기록 수", extracted_count)
-
-    with col4:
-        st.metric("매칭 기록 수", matched_count)
+    stats = [
+        ("프로필", nickname),
+        ("Rating", rating),
+        ("추출 기록", extracted_count),
+        ("매칭 기록", matched_count),
+    ]
+    stat_cards = "".join(
+        (
+            '<div class="profile-stat">'
+            f"<span>{escape_html(label)}</span>"
+            f"<strong>{escape_html(value)}</strong>"
+            "</div>"
+        )
+        for label, value in stats
+    )
+    st.markdown(
+        f"""
+        <div class="profile-panel">
+            <div class="profile-grid">{stat_cards}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     warning = result.get("profile_parse_warning")
 
@@ -260,21 +676,13 @@ def render_applied_conditions(result: dict[str, Any]) -> None:
     current_band = debug.get("current_band", "-")
     target_band = debug.get("target_band", "-")
 
-    st.subheader("적용된 추천 조건")
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.metric("추천 목표", goal)
-
-    with col2:
-        st.metric("주력 레벨", main_level)
-
-    with col3:
-        st.metric("채보 타입", str(chart_type).upper())
-
-    with col4:
-        st.metric("레이팅 구간", f"{current_band} → {target_band}")
+    render_section_heading("적용된 추천 조건", "Conditions")
+    render_stat_strip([
+        ("추천 목표", get_goal_display_label(goal)),
+        ("주력 레벨", main_level),
+        ("채보 타입", str(chart_type).upper()),
+        ("레이팅 구간", f"{current_band} → {target_band}"),
+    ])
 
 
 def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False) -> None:
@@ -308,48 +716,74 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
 
         with image_col:
             if thumbnail_url:
-                st.image(thumbnail_url, width=130)
+                st.image(thumbnail_url, width=140)
             else:
                 st.caption("No image")
 
         with info_col:
-            title_text = f"### {rank}. {title}"
-
-            if reverse_border:
-                title_text += "  \n`역보더`"
-
-            st.markdown(title_text)
-
-            if artist:
-                st.caption(artist)
-
-            st.caption(
-                f"{version} · {str(chart_type).upper()} · "
-                f"{str(difficulty).upper()} · {category}"
+            reverse_badge = (
+                '<span class="hero-chip is-purple">역보더</span>'
+                if reverse_border
+                else ""
+            )
+            st.markdown(
+                f"""
+                <div class="song-title">
+                    <span class="song-rank">{escape_html(rank)}.</span>
+                    <strong>{escape_html(title)}</strong>
+                    {reverse_badge}
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
-            col1, col2, col3, col4, col5 = st.columns(5)
+            if artist:
+                st.markdown(
+                    f'<div class="song-artist">{escape_html(artist)}</div>',
+                    unsafe_allow_html=True,
+                )
 
-            with col1:
-                st.metric("레벨", level)
+            st.markdown(
+                (
+                    '<div class="song-meta">'
+                    f"{escape_html(version)} · {escape_html(str(chart_type).upper())} · "
+                    f"{escape_html(str(difficulty).upper())} · {escape_html(category)}"
+                    "</div>"
+                ),
+                unsafe_allow_html=True,
+            )
 
-            with col2:
-                st.metric("내부상수", internal_level)
-
-            with col3:
-                st.metric("타입", str(chart_type).upper())
-
-            with col4:
-                st.metric("현재 달성률", format_score(achievement, played))
-
-            with col5:
-                st.metric("Best 50 포함", bool_to_text(is_best50))
+            render_stat_strip([
+                ("레벨", level),
+                ("내부상수", internal_level),
+                ("타입", str(chart_type).upper()),
+                ("달성률", format_score(achievement, played)),
+                ("Best 50", bool_to_text(is_best50)),
+            ])
 
             if reverse_border:
                 try:
-                    st.caption(f"100.5%까지 부족한 차이: {float(reverse_border_gap):.4f}%")
+                    st.markdown(
+                        (
+                            '<div class="song-reason">'
+                            f"<strong>100.5%까지</strong> {float(reverse_border_gap):.4f}% 남았습니다."
+                            "</div>"
+                        ),
+                        unsafe_allow_html=True,
+                    )
                 except Exception:
                     pass
+
+            if reason:
+                target_text = f"<strong>{escape_html(target)}</strong> · " if target else ""
+                st.markdown(
+                    (
+                        '<div class="song-reason">'
+                        f"{target_text}{escape_html(reason)}"
+                        "</div>"
+                    ),
+                    unsafe_allow_html=True,
+                )
 
             if developer_mode:
                 with st.expander("개발자용 추천 상세", expanded=False):
@@ -382,7 +816,11 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
 def render_recommendations(result: dict[str, Any], developer_mode: bool = False) -> None:
     recommendations = result.get("recommendations", [])
 
-    st.subheader("추천 결과")
+    render_section_heading(
+        "추천 결과",
+        "Recommendations",
+        f"{len(recommendations)} charts" if recommendations else "",
+    )
 
     summary = result.get("summary", "")
 
@@ -399,79 +837,130 @@ def render_recommendations(result: dict[str, Any], developer_mode: bool = False)
             developer_mode=developer_mode,
         )
 
-def find_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    """
-    PNG 이미지 생성용 폰트 선택 함수.
 
-    Pillow는 브라우저처럼 자동 폰트 fallback을 잘 하지 않으므로,
-    일본어/한글을 모두 포함할 가능성이 높은 CJK 폰트를 우선 사용한다.
+FONT_PATHS = {
+    "korean_bold": [
+        "C:/Windows/Fonts/malgunbd.ttf",
+        "C:/Windows/Fonts/NotoSansKR-VF.ttf",
+    ],
+    "korean_regular": [
+        "C:/Windows/Fonts/malgun.ttf",
+        "C:/Windows/Fonts/NotoSansKR-VF.ttf",
+    ],
+    "japanese_bold": [
+        "C:/Windows/Fonts/NotoSansJP-VF.ttf",
+        "C:/Windows/Fonts/meiryob.ttc",
+        "C:/Windows/Fonts/YuGothB.ttc",
+        "C:/Windows/Fonts/msgothic.ttc",
+    ],
+    "japanese_regular": [
+        "C:/Windows/Fonts/NotoSansJP-VF.ttf",
+        "C:/Windows/Fonts/meiryo.ttc",
+        "C:/Windows/Fonts/YuGothR.ttc",
+        "C:/Windows/Fonts/msgothic.ttc",
+    ],
+    "linux_bold": [
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Bold.otf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKkr-Bold.otf",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansJP-Bold.otf",
+        "/usr/share/fonts/truetype/noto/NotoSansKR-Bold.otf",
+    ],
+    "linux_regular": [
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKkr-Regular.otf",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansJP-Regular.otf",
+        "/usr/share/fonts/truetype/noto/NotoSansKR-Regular.otf",
+    ],
+    "common_bold": [
+        "C:/Windows/Fonts/Arialbd.ttf",
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    ],
+    "common_regular": [
+        "C:/Windows/Fonts/arial.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ],
+}
 
-    우선순위:
-    1. 환경변수로 직접 지정한 폰트
-    2. Noto Sans CJK 계열
-    3. Windows 일본어 폰트: Meiryo, Yu Gothic
-    4. Windows 한글 폰트: Malgun Gothic
-    5. DejaVu fallback
-    """
+
+def apply_variable_font_weight(
+    font: ImageFont.FreeTypeFont,
+    bold: bool,
+) -> ImageFont.FreeTypeFont:
+    try:
+        axes = font.get_variation_axes()
+    except Exception:
+        return font
+
+    values = []
+    has_weight_axis = False
+
+    for axis in axes or []:
+        name = axis.get("name", b"")
+        if isinstance(name, bytes):
+            name = name.decode("utf-8", errors="ignore")
+        name = str(name).lower()
+
+        axis_value = axis.get("default", axis.get("minimum", 0))
+        if "weight" in name or "wght" in name:
+            minimum = axis.get("minimum", axis_value)
+            maximum = axis.get("maximum", axis_value)
+            axis_value = max(minimum, min(maximum, 700 if bold else 400))
+            has_weight_axis = True
+
+        values.append(axis_value)
+
+    if has_weight_axis:
+        try:
+            font.set_variation_by_axes(values)
+        except Exception:
+            return font
+
+    return font
+
+
+def iter_font_candidates(bold: bool, prefer_japanese: bool) -> list[str]:
+    weight = "bold" if bold else "regular"
     env_key = "MAIGYM_FONT_BOLD" if bold else "MAIGYM_FONT_REGULAR"
+
+    ordered_groups = (
+        ["japanese", "linux", "korean", "common"]
+        if prefer_japanese
+        else ["korean", "linux", "japanese", "common"]
+    )
+
+    candidates = []
     env_font_path = os.getenv(env_key)
-
-    font_candidates = []
-
     if env_font_path:
-        font_candidates.append(env_font_path)
+        candidates.append(env_font_path)
 
-    if bold:
-        font_candidates.extend([
-            # Linux / Docker / EC2에서 Noto CJK가 설치된 경우
-            "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
-            "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Bold.otf",
-            "/usr/share/fonts/opentype/noto/NotoSansCJKkr-Bold.otf",
-            "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
-            "/usr/share/fonts/truetype/noto/NotoSansJP-Bold.otf",
-            "/usr/share/fonts/truetype/noto/NotoSansKR-Bold.otf",
+    for group in ordered_groups:
+        candidates.extend(FONT_PATHS[f"{group}_{weight}"])
 
-            # Windows 일본어 폰트
-            "C:/Windows/Fonts/meiryob.ttc",
-            "C:/Windows/Fonts/YuGothB.ttc",
-            "C:/Windows/Fonts/msgothic.ttc",
+    return candidates
 
-            # Windows 한글 폰트
-            "C:/Windows/Fonts/malgunbd.ttf",
 
-            # 일반 fallback
-            "C:/Windows/Fonts/Arialbd.ttf",
-            "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        ])
-    else:
-        font_candidates.extend([
-            # Linux / Docker / EC2에서 Noto CJK가 설치된 경우
-            "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-            "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
-            "/usr/share/fonts/opentype/noto/NotoSansCJKkr-Regular.otf",
-            "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-            "/usr/share/fonts/truetype/noto/NotoSansJP-Regular.otf",
-            "/usr/share/fonts/truetype/noto/NotoSansKR-Regular.otf",
+def find_font(
+    size: int,
+    bold: bool = False,
+    prefer_japanese: bool = False,
+) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    """
+    PNG 렌더링용 폰트를 고른다.
 
-            # Windows 일본어 폰트
-            "C:/Windows/Fonts/meiryo.ttc",
-            "C:/Windows/Fonts/YuGothR.ttc",
-            "C:/Windows/Fonts/msgothic.ttc",
-
-            # Windows 한글 폰트
-            "C:/Windows/Fonts/malgun.ttf",
-
-            # 일반 fallback
-            "C:/Windows/Fonts/arial.ttf",
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        ])
-
-    for path in font_candidates:
+    Pillow는 브라우저처럼 글자별 fallback을 하지 않으므로, UI 문구는 한글
+    폰트를 우선하고 악곡 정보는 일본어 CJK 폰트를 우선한다.
+    """
+    for path in iter_font_candidates(bold=bold, prefer_japanese=prefer_japanese):
         try:
             if path and os.path.exists(path):
-                return ImageFont.truetype(path, size=size)
+                font = ImageFont.truetype(path, size=size)
+                return apply_variable_font_weight(font, bold)
         except Exception:
             continue
 
@@ -639,8 +1128,8 @@ def build_result_image(result: dict[str, Any]) -> bytes:
     subtitle_font = find_font(24, bold=False)
     section_font = find_font(25, bold=True)
     rank_font = find_font(27, bold=True)
-    song_font = find_font(20, bold=True)
-    meta_font = find_font(15, bold=False)
+    song_font = find_font(20, bold=True, prefer_japanese=True)
+    meta_font = find_font(15, bold=False, prefer_japanese=True)
     small_font = find_font(14, bold=False)
 
     nickname = get_profile_display_name_for_image(result)
@@ -678,7 +1167,9 @@ def build_result_image(result: dict[str, Any]) -> bytes:
     badge_text = f"{goal_label} · Lv {main_level} · {chart_type}"
     badge_font = find_font(18, bold=True)
     badge_bbox = draw.textbbox((0, 0), badge_text, font=badge_font)
-    badge_w = badge_bbox[2] - badge_bbox[0] + 28
+    badge_text_max_w = max(180, min(360, header_w - 480))
+    badge_text_w = min(badge_bbox[2] - badge_bbox[0], badge_text_max_w)
+    badge_w = badge_text_w + 28
     badge_h = 38
     badge_x = header_x + header_w - badge_w - 28
     badge_y = header_y + 32
@@ -689,11 +1180,13 @@ def build_result_image(result: dict[str, Any]) -> bytes:
         fill=accent_soft,
     )
 
-    draw.text(
-        (badge_x + 14, badge_y + 8),
-        badge_text,
+    draw_text_ellipsis(
+        draw=draw,
+        position=(badge_x + 14, badge_y + 8),
+        text=badge_text,
         font=badge_font,
         fill=(232, 226, 255),
+        max_width=badge_w - 28,
     )
 
     section_y = header_y + header_height + 22
@@ -905,7 +1398,15 @@ def render_raw_response(result: dict[str, Any], developer_mode: bool = False) ->
 
 
 def render_sidebar_form() -> dict[str, Any] | None:
-    st.sidebar.header("추천 조건")
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-brand">
+            <span>maimai DX</span>
+            <strong>Maigym</strong>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     with st.sidebar.form("recommend_form"):
         profile_url = st.text_input(
@@ -954,7 +1455,11 @@ def render_sidebar_form() -> dict[str, Any] | None:
             help="payload, 파싱 정보, 디버그 정보, 원본 응답을 표시합니다.",
         )
 
-        submitted = st.form_submit_button("추천 생성")
+        submitted = st.form_submit_button(
+            "추천 생성",
+            type="primary",
+            use_container_width=True,
+        )
 
     if not submitted:
         return None
@@ -979,7 +1484,24 @@ def render_sidebar_form() -> dict[str, Any] | None:
 
 
 def render_intro() -> None:
-    st.title(APP_TITLE)
+    st.markdown(
+        f"""
+        <div class="maigym-hero">
+            <div class="hero-kicker">maimai DX recommender</div>
+            <h1>{APP_TITLE}</h1>
+            <p>
+                maishift 프로필 기록과 cohort 통계를 조합해 지금 고를 만한 채보를
+                빠르게 정리합니다.
+            </p>
+            <div class="hero-chip-row">
+                <span class="hero-chip is-cyan">maishift profile</span>
+                <span class="hero-chip">rating cohort</span>
+                <span class="hero-chip is-purple">PNG export</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def main() -> None:
@@ -989,12 +1511,13 @@ def main() -> None:
         layout="wide",
     )
 
+    inject_global_styles()
     render_intro()
 
     form_result = render_sidebar_form()
 
     if form_result is None:
-        st.info("왼쪽 사이드바에서 maishift 프로필 URL과 추천 조건을 입력한 뒤 추천을 생성하세요.")
+        render_empty_state()
         return
 
     payload = form_result["payload"]

@@ -1,5 +1,7 @@
 ﻿from __future__ import annotations
 
+import json
+import os
 import re
 import time
 import unicodedata
@@ -12,8 +14,13 @@ from bs4 import BeautifulSoup
 
 
 MAISHIFT_BASE_URL = "https://maimai.shiftpsh.com"
+MAISHIFT_PROFILE_SERVER_FN_ID = (
+    os.getenv("MAISHIFT_PROFILE_SERVER_FN_ID")
+    or "8cc17f2a26e01e823beaeca45b578af6db3bd0bc627a603a0add3b0772a33301"
+)
 
 REQUEST_TIMEOUT_SECONDS = 15
+SERVER_FUNCTION_TIMEOUT_SECONDS = 35
 
 # maishift records가 50개 근처에서 고정되면 부분 렌더링 실패로 본다.
 PARTIAL_RENDER_RECORDS = 50
@@ -29,8 +36,7 @@ MIN_ACCEPTABLE_MATCHED_RECORDS = 50
 # 정상 판정 기준이 아니라 불필요한 추가 스크롤 방지용 목표값이다.
 BROWSER_COLLECTION_TARGET_COUNT = 1000
 
-# 전체 parser 호출은 1회로 두고, 내부에서 브라우저 세션을 여러 번 새로 연다.
-# 사용자가 수동으로 "캐시 무시 후 재실행"을 여러 번 눌렀을 때 정상 로딩되던 현상을 코드 내부에서 재현한다.
+# 전체 parser 호출은 1회로 두고, 내부 fallback 단계에서 여러 브라우저 세션을 시도한다.
 PROFILE_PARSE_MAX_ATTEMPTS = 1
 PROFILE_PARSE_RETRY_WAIT_SECONDS = 0.8
 PROFILE_PARSE_HARD_TIMEOUT_SECONDS = 420.0
@@ -42,6 +48,9 @@ BROWSER_PARTIAL_50_STABLE_LIMIT = 7
 MIN_SCROLLS_BEFORE_PARTIAL_50_BREAK = 22
 MIN_SECONDS_BEFORE_PARTIAL_50_BREAK = 24.0
 EMPTY_PAGE_STABLE_LIMIT = 3
+LAZY_LOAD_EVENT_ROUNDS = 2
+LAZY_LOAD_EVENT_WAIT_MS = 150
+MIN_SCROLLS_BEFORE_HYDRATION_MISSING_BREAK = 2
 
 RECORD_WAIT_SECONDS = 2.0
 SCROLL_WAIT_SECONDS = 0.65
@@ -112,11 +121,40 @@ SYNC_TOKENS = {
 }
 
 
-# 핵심 변경:
-# 한 페이지에서 4개 전략을 길게 도는 방식이 아니라,
-# 브라우저/컨텍스트/페이지를 새로 열어 여러 번 재시도한다.
-# natural 계열을 우선하고, blocked는 보조 전략으로 둔다.
+SERVER_COMBO_ALIASES = {
+    "PLAYED": "",
+    "FULL_COMBO": "FC",
+    "FULL_COMBO_PLUS": "FC+",
+    "ALL_PERFECT": "AP",
+    "ALL_PERFECT_PLUS": "AP+",
+}
+
+
+SERVER_SYNC_ALIASES = {
+    "PLAYED": "",
+    "SYNC_PLAY": "SYNC",
+    "FULL_SYNC": "FS",
+    "FULL_SYNC_PLUS": "FS+",
+    "FULL_SYNC_DX": "FDX",
+    "FULL_SYNC_DX_PLUS": "FDX+",
+}
+
+
+# 브라우저 fallback은 natural 계열 세션을 먼저 시도하고, resource-blocking 세션은 보조로 사용한다.
 BROWSER_SESSION_PROFILES = [
+    {
+        "name": "warm_home_then_records",
+        "block_images": False,
+        "block_fonts": True,
+        "warm_home_first": True,
+        "initial_wait_seconds": 3.0,
+        "scroll_wait_seconds": 0.55,
+        "max_scrolls": 42,
+        "max_seconds": 46.0,
+        "parse_every_n_scrolls": 2,
+        "viewport_height": 1900,
+        "cache_bust": True,
+    },
     {
         "name": "natural_session_1",
         "block_images": False,
@@ -374,6 +412,428 @@ def to_float(value: Any, default: float = 0.0) -> float:
         return default
 
 
+def build_server_function_payload(profile_id: str) -> str:
+    """
+    TanStack Start server function 호출에 필요한 Seroval 입력 payload를 만든다.
+    """
+    payload = {
+        "t": {
+            "t": 10,
+            "i": 0,
+            "p": {
+                "k": ["data"],
+                "v": [
+                    {
+                        "t": 1,
+                        "s": profile_id,
+                    }
+                ],
+            },
+            "o": 0,
+        },
+        "f": 0,
+        "m": [],
+    }
+
+    return json.dumps(payload, separators=(",", ":"))
+
+
+def decode_seroval_payload(payload: Any) -> Any:
+    """
+    maishift server function 응답의 Seroval JSON 구조를 Python 객체로 복원한다.
+    """
+    refs: dict[int, Any] = {}
+
+    def decode(node: Any) -> Any:
+        if isinstance(node, list):
+            return [decode(item) for item in node]
+
+        if not isinstance(node, dict) or "t" not in node:
+            return node
+
+        tag = node.get("t")
+
+        if tag in {0, 1}:
+            return node.get("s")
+
+        if tag == 2:
+            return None
+
+        if tag == 3:
+            return bool(node.get("s"))
+
+        if tag == 4:
+            return refs.get(to_int(node.get("i"), -1))
+
+        if tag == 5:
+            return node.get("s")
+
+        if tag == 9:
+            decoded_list: list[Any] = []
+            refs[to_int(node.get("i"), -1)] = decoded_list
+            decoded_list.extend(decode(item) for item in node.get("a", []))
+            return decoded_list
+
+        if tag in {10, 11}:
+            decoded_object: dict[str, Any] = {}
+            refs[to_int(node.get("i"), -1)] = decoded_object
+
+            props = node.get("p") or {}
+            keys = props.get("k") or []
+            values = props.get("v") or []
+
+            for key, value in zip(keys, values):
+                decoded_object[str(key)] = decode(value)
+
+            return decoded_object
+
+        if tag == 25:
+            decoded_error: dict[str, Any] = {"__error__": True}
+            refs[to_int(node.get("i"), -1)] = decoded_error
+
+            for key, value in node.items():
+                if key not in {"t", "i"}:
+                    decoded_error[str(key)] = decode(value)
+
+            return decoded_error
+
+        return {
+            "__seroval_tag__": tag,
+            **{
+                str(key): decode(value)
+                for key, value in node.items()
+                if key != "t"
+            },
+        }
+
+    return decode(payload)
+
+
+def fetch_profile_server_function_data(
+    profile_url: str,
+) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+    profile_id = extract_profile_id_from_url(profile_url)
+    info: dict[str, Any] = {
+        "mode": "server_function",
+        "server_function_available": False,
+        "server_function_error": "",
+        "profile_id": profile_id,
+        "status_code": 0,
+        "track_count": 0,
+        "record_track_count": 0,
+        "elapsed_seconds": 0.0,
+    }
+
+    if not profile_id:
+        info["server_function_error"] = "profile id not found"
+        return None, info
+
+    started_at = time.monotonic()
+    endpoint_url = f"{MAISHIFT_BASE_URL}/_serverFn/{MAISHIFT_PROFILE_SERVER_FN_ID}"
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0 Safari/537.36"
+        ),
+        "Accept": "application/json, application/x-ndjson, text/plain, */*",
+        "Accept-Language": "ko-KR,ko;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "x-tsr-serverFn": "true",
+    }
+
+    try:
+        response = requests.get(
+            endpoint_url,
+            params={"payload": build_server_function_payload(profile_id)},
+            headers=headers,
+            timeout=SERVER_FUNCTION_TIMEOUT_SECONDS,
+        )
+        info["status_code"] = response.status_code
+        response.raise_for_status()
+
+        decoded = decode_seroval_payload(response.json())
+
+        if not isinstance(decoded, dict):
+            info["server_function_error"] = "unexpected server function response"
+            return None, info
+
+        error = decoded.get("error")
+
+        if error:
+            info["server_function_error"] = str(error)
+            return None, info
+
+        result = decoded.get("result") or {}
+
+        if not isinstance(result, dict):
+            info["server_function_error"] = "server function result is not an object"
+            return None, info
+
+        user_record = result.get("userRecord") or {}
+
+        if not isinstance(user_record, dict):
+            info["server_function_error"] = "userRecord is not an object"
+            return None, info
+
+        tracks = user_record.get("tracks") or []
+        info["server_function_available"] = True
+        info["track_count"] = len(tracks) if isinstance(tracks, list) else 0
+        info["record_track_count"] = (
+            sum(1 for track in tracks if isinstance(track, dict) and track.get("record"))
+            if isinstance(tracks, list)
+            else 0
+        )
+
+        return user_record, info
+
+    except Exception as exc:
+        info["server_function_error"] = str(exc)
+        return None, info
+
+    finally:
+        info["elapsed_seconds"] = round(time.monotonic() - started_at, 2)
+
+
+def normalize_server_achievement(value: Any) -> float:
+    achievement = to_float(value, 0.0)
+
+    if achievement > 1000:
+        return achievement / 10000.0
+
+    return achievement
+
+
+def normalize_server_internal_level(value: Any) -> float:
+    internal_level = to_float(value, 0.0)
+
+    if internal_level > 20:
+        return internal_level / 10.0
+
+    return internal_level
+
+
+def normalize_server_display_level(value: Any) -> str:
+    text = normalize_spaces(value)
+
+    if text.startswith("LEVEL_"):
+        text = text.removeprefix("LEVEL_")
+
+    return text.replace("_PLUS", "+").replace("_", ".")
+
+
+def normalize_server_combo(value: Any) -> str:
+    text = normalize_spaces(value).upper()
+
+    return SERVER_COMBO_ALIASES.get(text, text if text in COMBO_TOKENS else "")
+
+
+def normalize_server_sync(value: Any) -> str:
+    text = normalize_spaces(value).upper()
+
+    return SERVER_SYNC_ALIASES.get(text, text if text in SYNC_TOKENS else "")
+
+
+def get_server_title_candidates(track: dict[str, Any]) -> list[str]:
+    candidates: list[str] = []
+    seen: set[str] = set()
+
+    def add(value: Any) -> None:
+        title = normalize_spaces(value)
+        key = normalize_compact_title(title)
+
+        if title and key not in seen:
+            candidates.append(title)
+            seen.add(key)
+
+    add(track.get("title"))
+
+    translations = track.get("titleTranslations") or []
+
+    if isinstance(translations, list):
+        for translation in translations:
+            if isinstance(translation, dict):
+                add(translation.get("title"))
+
+    return candidates
+
+def estimate_chart_rating_for_consistency(
+    internal_level: Any,
+    achievement: Any,
+) -> int:
+    ds = to_float(internal_level, 0.0)
+    ach = to_float(achievement, 0.0)
+
+    if ds <= 0 or ach <= 0:
+        return 0
+
+    ach = min(ach, 100.5)
+
+    coefficient_table = [
+        (100.5, 22.4),
+        (100.0, 21.6),
+        (99.5, 21.1),
+        (99.0, 20.8),
+        (98.0, 20.3),
+        (97.0, 20.0),
+        (94.0, 16.8),
+        (90.0, 15.2),
+        (80.0, 13.6),
+        (75.0, 12.0),
+        (70.0, 11.2),
+        (60.0, 9.6),
+        (50.0, 8.0),
+        (40.0, 6.4),
+        (30.0, 4.8),
+        (20.0, 3.2),
+        (10.0, 1.6),
+        (0.0, 0.0),
+    ]
+
+    coefficient = 0.0
+
+    for threshold, candidate_coefficient in coefficient_table:
+        if ach >= threshold:
+            coefficient = candidate_coefficient
+            break
+
+    return int(ds * ach * coefficient / 100.0)
+
+
+def is_record_rating_consistent(
+    internal_level: Any,
+    achievement: Any,
+    chart_rating: Any,
+) -> bool:
+    rating = to_int(chart_rating, 0)
+
+    # rating 정보가 없으면 이 검사로는 판단하지 않는다.
+    if rating <= 0:
+        return True
+
+    expected = estimate_chart_rating_for_consistency(
+        internal_level=internal_level,
+        achievement=achievement,
+    )
+
+    if expected <= 0:
+        return True
+
+    # 실제 게임 공식/반올림 차이를 감안해 여유를 둔다.
+    # 다만 13.8 + 100.4801%인데 rating 227처럼 큰 차이는 제거한다.
+    tolerance = max(18, int(expected * 0.08))
+
+    return abs(expected - rating) <= tolerance
+
+def raw_record_from_server_track(
+    track: dict[str, Any],
+    title: str,
+) -> RawRecord | None:
+    record = track.get("record")
+
+    if not isinstance(record, dict):
+        return None
+
+    chart_type = normalize_chart_type(track.get("type"))
+
+    if chart_type not in {"dx", "std"}:
+        return None
+
+    achievement = normalize_server_achievement(record.get("achievement"))
+
+    if achievement <= 0:
+        return None
+
+    internal_level = normalize_server_internal_level(track.get("internalLevel"))
+
+    # 현재 추천 DB는 13~15 채보만 대상으로 한다.
+    if internal_level < 13.0:
+        return None
+
+    chart_rating = int(to_float(record.get("rating"), 0.0))
+
+    # 핵심 방어:
+    # internal_level / achievement / chart_rating 조합이 말이 안 되면
+    # 다른 난이도의 record가 현재 track에 붙은 것으로 보고 버린다.
+    if not is_record_rating_consistent(
+        internal_level=internal_level,
+        achievement=achievement,
+        chart_rating=chart_rating,
+    ):
+        return None
+
+    return RawRecord(
+        title=title,
+        artist=normalize_spaces(track.get("artist")),
+        chart_type=chart_type,
+        internal_level=internal_level,
+        level_label=normalize_server_display_level(track.get("displayLevel")),
+        achievement=achievement,
+        rank=normalize_spaces(record.get("rank")),
+        chart_rating=chart_rating,
+        combo=normalize_server_combo(record.get("combo")),
+        sync=normalize_server_sync(record.get("sync")),
+        record_source="server_function",
+    )
+
+
+def server_track_to_raw_record(
+    track: dict[str, Any],
+    chart_lookup: dict[str, list[dict[str, Any]]],
+) -> RawRecord | None:
+    for title in get_server_title_candidates(track):
+        raw_record = raw_record_from_server_track(track, title)
+
+        if raw_record is None:
+            continue
+
+        if match_raw_record_to_chart(raw_record, chart_lookup) is not None:
+            return raw_record
+
+    return None
+
+
+def server_tracks_to_raw_records(
+    tracks: list[Any],
+    charts: pd.DataFrame,
+) -> list[RawRecord]:
+    chart_lookup = build_chart_lookup(charts)
+    records: list[RawRecord] = []
+
+    for track in tracks:
+        if not isinstance(track, dict):
+            continue
+
+        raw_record = server_track_to_raw_record(track, chart_lookup)
+
+        if raw_record is not None:
+            records.append(raw_record)
+
+    return deduplicate_raw_records(records)
+
+
+def fetch_records_with_server_function(
+    profile_url: str,
+    charts: pd.DataFrame,
+) -> tuple[list[RawRecord], dict[str, Any]]:
+    user_record, info = fetch_profile_server_function_data(profile_url)
+
+    if not user_record:
+        return [], info
+
+    tracks = user_record.get("tracks") or []
+
+    if not isinstance(tracks, list):
+        info["server_function_error"] = "tracks is not a list"
+        return [], info
+
+    records = server_tracks_to_raw_records(tracks, charts)
+    info["parsed_record_count"] = len(records)
+
+    return records, info
+
+
 def parse_level_at(lines: list[str], index: int) -> tuple[float, str, int] | None:
     if index >= len(lines):
         return None
@@ -551,6 +1011,9 @@ def parse_home_best50_records(lines: list[str]) -> list[RawRecord]:
 
         internal_level, level_label, after_level = parsed_level
 
+        if internal_level < 13.0:
+            continue
+
         if after_level >= len(lines):
             continue
 
@@ -611,7 +1074,10 @@ def parse_records_page_records(lines: list[str]) -> list[RawRecord]:
             continue
 
         internal_level, level_label, after_level = parsed_level
-
+        
+        if internal_level < 13.0:
+            continue
+    
         if after_level >= len(lines):
             continue
 
@@ -721,7 +1187,25 @@ def deduplicate_raw_records(records: list[RawRecord]) -> list[RawRecord]:
         if old is None:
             best_by_key[key] = record
             continue
+        
+        record_consistent = is_record_rating_consistent(
+            record.internal_level,
+            record.achievement,
+            record.chart_rating,
+        )
+        old_consistent = is_record_rating_consistent(
+            old.internal_level,
+            old.achievement,
+            old.chart_rating,
+        )
 
+        if record_consistent and not old_consistent:
+            best_by_key[key] = record
+            continue
+
+        if old_consistent and not record_consistent:
+            continue        
+        
         if record.is_best50 and not old.is_best50:
             best_by_key[key] = record
             continue
@@ -832,7 +1316,7 @@ def match_raw_record_to_chart(
     ]
 
     if not filtered:
-        filtered = candidates
+        return None
 
     level_filtered = [
         candidate
@@ -840,10 +1324,7 @@ def match_raw_record_to_chart(
         if abs(candidate["internal_level"] - record.internal_level) <= 0.11
     ]
 
-    if level_filtered:
-        filtered = level_filtered
-
-    if not filtered:
+    if not level_filtered:
         return None
 
     def sort_key(candidate: dict[str, Any]) -> tuple[float, int]:
@@ -858,7 +1339,7 @@ def match_raw_record_to_chart(
 
         return diff, difficulty_priority
 
-    return sorted(filtered, key=sort_key)[0]
+    return sorted(level_filtered, key=sort_key)[0]
 
 
 def raw_records_to_dataframe(
@@ -871,6 +1352,14 @@ def raw_records_to_dataframe(
     unmatched = []
 
     for record in records:
+        if not is_record_rating_consistent(
+            internal_level=record.internal_level,
+            achievement=record.achievement,
+            chart_rating=record.chart_rating,
+        ):
+            unmatched.append(record)
+            continue
+
         matched = match_raw_record_to_chart(record, chart_lookup)
 
         if matched is None:
@@ -1045,6 +1534,143 @@ def advance_records_page_scroll(page: Any, scroll_index: int) -> None:
         pass
 
 
+def get_page_runtime_metrics(page: Any) -> dict[str, Any]:
+    try:
+        metrics = page.evaluate(
+            """
+            () => {
+                const root = document.scrollingElement || document.documentElement || document.body;
+                const doc = document.documentElement;
+                const body = document.body;
+                const scrollHeight = Math.max(
+                    root?.scrollHeight || 0,
+                    doc?.scrollHeight || 0,
+                    body?.scrollHeight || 0
+                );
+                const scrollY = window.scrollY || root?.scrollTop || doc?.scrollTop || body?.scrollTop || 0;
+                const innerHeight = window.innerHeight || doc?.clientHeight || 0;
+                const scripts = Array.from(document.scripts || []);
+
+                return {
+                    scroll_y: Math.round(scrollY),
+                    inner_height: Math.round(innerHeight),
+                    scroll_height: Math.round(scrollHeight),
+                    bottom_gap: Math.round(scrollHeight - innerHeight - scrollY),
+                    script_count: scripts.length,
+                    module_script_count: scripts.filter((script) => {
+                        const src = script.getAttribute("src") || "";
+                        return script.type === "module" || src.includes("/assets/");
+                    }).length,
+                    modulepreload_count: document.querySelectorAll('link[rel="modulepreload"]').length,
+                };
+            }
+            """
+        )
+
+        return metrics if isinstance(metrics, dict) else {}
+
+    except Exception:
+        return {}
+
+
+def update_browser_scroll_metrics(
+    info: dict[str, Any],
+    metrics: dict[str, Any],
+) -> None:
+    def safe_int(value: Any) -> int | None:
+        try:
+            return int(value)
+        except Exception:
+            return None
+
+    scroll_height = safe_int(metrics.get("scroll_height"))
+
+    if scroll_height is not None:
+        info["scroll_height_max"] = max(
+            int(info.get("scroll_height_max") or 0),
+            scroll_height,
+        )
+
+    scroll_y = safe_int(metrics.get("scroll_y"))
+
+    if scroll_y is not None:
+        info["scroll_y_max"] = max(
+            int(info.get("scroll_y_max") or 0),
+            scroll_y,
+        )
+
+    bottom_gap = safe_int(metrics.get("bottom_gap"))
+
+    if bottom_gap is not None:
+        current_gap = info.get("bottom_gap_min")
+        info["bottom_gap_min"] = (
+            bottom_gap
+            if current_gap is None
+            else min(int(current_gap), bottom_gap)
+        )
+
+    for key in ("script_count", "module_script_count", "modulepreload_count"):
+        value = safe_int(metrics.get(key))
+
+        if value is not None:
+            info[key] = max(int(info.get(key) or 0), value)
+
+
+def trigger_records_lazy_load(
+    page: Any,
+    rounds: int = LAZY_LOAD_EVENT_ROUNDS,
+    wait_ms: int = LAZY_LOAD_EVENT_WAIT_MS,
+) -> None:
+    try:
+        page.evaluate(
+            """
+            async ({ rounds, waitMs }) => {
+                const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+                for (let index = 0; index < rounds; index += 1) {
+                    const root = document.scrollingElement || document.documentElement || document.body;
+                    const doc = document.documentElement;
+                    const body = document.body;
+                    const maxY = Math.max(
+                        root?.scrollHeight || 0,
+                        doc?.scrollHeight || 0,
+                        body?.scrollHeight || 0
+                    );
+
+                    try {
+                        window.scrollTo(0, maxY);
+                    } catch (e) {}
+
+                    for (const element of [root, doc, body]) {
+                        if (!element) continue;
+
+                        try {
+                            element.scrollTop = maxY;
+                        } catch (e) {}
+
+                        try {
+                            element.dispatchEvent(new Event("scroll", { bubbles: true }));
+                        } catch (e) {}
+                    }
+
+                    try {
+                        window.dispatchEvent(new Event("scroll"));
+                    } catch (e) {}
+
+                    await sleep(waitMs);
+                }
+            }
+            """,
+            {
+                "rounds": max(1, int(rounds)),
+                "waitMs": max(50, int(wait_ms)),
+            },
+        )
+
+    except Exception:
+        pass
+
+
 def click_possible_load_more(page: Any) -> None:
     button_texts = [
         "더 보기",
@@ -1088,13 +1714,23 @@ def fetch_records_with_browser_session(
         "session_index": session_index,
         "block_images": bool(session_profile.get("block_images", False)),
         "block_fonts": bool(session_profile.get("block_fonts", False)),
+        "warm_home_first": bool(session_profile.get("warm_home_first", False)),
         "scrolls": 0,
+        "lazy_load_event_rounds": 0,
         "snapshot_max_count": 0,
         "unique_record_count": 0,
         "visible_line_max_count": 0,
+        "scroll_height_max": 0,
+        "scroll_y_max": 0,
+        "bottom_gap_min": None,
+        "script_count": 0,
+        "module_script_count": 0,
+        "modulepreload_count": 0,
+        "records_initial_metrics": {},
         "elapsed_seconds": 0.0,
         "time_limited": False,
         "partial_50_stable": False,
+        "hydration_script_missing": False,
         "empty_page_stable": False,
         "final_url": "",
     }
@@ -1106,12 +1742,18 @@ def fetch_records_with_browser_session(
         return [], info
 
     records_url = normalize_profile_url(profile_url, "records")
+    home_url = normalize_profile_url(profile_url, "home")
 
     if session_profile.get("cache_bust", False):
         records_url = build_cache_busted_url(
             url=records_url,
             attempt=session_index,
             profile_name=str(session_profile.get("name", "session")),
+        )
+        home_url = build_cache_busted_url(
+            url=home_url,
+            attempt=session_index,
+            profile_name=f"{session_profile.get('name', 'session')}_home",
         )
 
     all_records: list[RawRecord] = []
@@ -1143,10 +1785,16 @@ def fetch_records_with_browser_session(
             if session_profile.get("block_images", False):
                 launch_args.append("--blink-settings=imagesEnabled=false")
 
-            browser = p.chromium.launch(
-                headless=True,
-                args=launch_args,
-            )
+            launch_options: dict[str, Any] = {
+                "headless": bool(session_profile.get("headless", True)),
+                "args": launch_args,
+            }
+            browser_channel = session_profile.get("channel")
+
+            if browser_channel:
+                launch_options["channel"] = str(browser_channel)
+
+            browser = p.chromium.launch(**launch_options)
 
             context = None
 
@@ -1175,11 +1823,64 @@ def fetch_records_with_browser_session(
 
                 page = context.new_page()
 
-                page.goto(
-                    records_url,
-                    wait_until="domcontentloaded",
-                    timeout=45000,
-                )
+                if session_profile.get("warm_home_first", False):
+                    page.goto(
+                        home_url,
+                        wait_until="domcontentloaded",
+                        timeout=45000,
+                    )
+                    page.wait_for_timeout(1200)
+                    update_browser_scroll_metrics(info, get_page_runtime_metrics(page))
+
+                    try:
+                        clicked_records_link = page.evaluate(
+                            """
+                            (recordsUrl) => {
+                                const links = Array.from(document.querySelectorAll("a[href]"));
+                                const recordsLink = links.find((link) => {
+                                    try {
+                                        const url = new URL(link.href, window.location.href);
+                                        return /\\/profile\\/[^/]+\\/records\\/?$/.test(url.pathname);
+                                    } catch (e) {
+                                        return false;
+                                    }
+                                });
+
+                                if (recordsLink) {
+                                    recordsLink.click();
+                                    return true;
+                                }
+
+                                window.location.href = recordsUrl;
+                                return false;
+                            }
+                            """,
+                            records_url,
+                        )
+                        info["warm_home_records_link_clicked"] = bool(clicked_records_link)
+                        page.wait_for_timeout(1800)
+
+                        try:
+                            page.wait_for_load_state("domcontentloaded", timeout=10000)
+                        except Exception:
+                            pass
+
+                    except Exception as exc:
+                        info["warm_home_navigation_error"] = str(exc)
+
+                    if "/records" not in page.url:
+                        page.goto(
+                            records_url,
+                            wait_until="domcontentloaded",
+                            timeout=45000,
+                        )
+
+                else:
+                    page.goto(
+                        records_url,
+                        wait_until="domcontentloaded",
+                        timeout=45000,
+                    )
 
                 page.wait_for_timeout(int(initial_wait_seconds * 1000))
 
@@ -1189,6 +1890,14 @@ def fetch_records_with_browser_session(
                 except Exception:
                     pass
 
+                records_initial_metrics = get_page_runtime_metrics(page)
+                info["records_initial_metrics"] = records_initial_metrics
+                update_browser_scroll_metrics(info, records_initial_metrics)
+
+                trigger_records_lazy_load(page)
+                info["lazy_load_event_rounds"] += LAZY_LOAD_EVENT_ROUNDS
+                update_browser_scroll_metrics(info, get_page_runtime_metrics(page))
+
                 for scroll_index in range(max_scrolls + 1):
                     elapsed = time.monotonic() - start_time
 
@@ -1197,6 +1906,9 @@ def fetch_records_with_browser_session(
                         break
 
                     click_possible_load_more(page)
+                    trigger_records_lazy_load(page, rounds=1, wait_ms=120)
+                    info["lazy_load_event_rounds"] += 1
+                    update_browser_scroll_metrics(info, get_page_runtime_metrics(page))
 
                     should_snapshot = (
                         scroll_index == 0
@@ -1233,6 +1945,15 @@ def fetch_records_with_browser_session(
                         else:
                             empty_page_stable_count = 0
 
+                        if (
+                            int(info.get("modulepreload_count") or 0) > 0
+                            and int(info.get("module_script_count") or 0) <= 0
+                            and is_count_near_partial_50(unique_count)
+                            and scroll_index >= MIN_SCROLLS_BEFORE_HYDRATION_MISSING_BREAK
+                        ):
+                            info["hydration_script_missing"] = True
+                            break
+
                         # 수집 목표치 도달 시 조기 종료.
                         # 이 값은 정상 판정 기준이 아니라 불필요한 추가 스크롤 방지용이다.
                         if unique_count >= target_count:
@@ -1262,8 +1983,13 @@ def fetch_records_with_browser_session(
 
                     advance_records_page_scroll(page, scroll_index)
                     page.wait_for_timeout(int(scroll_wait_seconds * 1000))
+                    update_browser_scroll_metrics(info, get_page_runtime_metrics(page))
 
                     info["scrolls"] = scroll_index + 1
+
+                trigger_records_lazy_load(page, rounds=1, wait_ms=120)
+                info["lazy_load_event_rounds"] += 1
+                update_browser_scroll_metrics(info, get_page_runtime_metrics(page))
 
                 final_records, final_line_count = snapshot_records_from_page(page)
 
@@ -1511,9 +2237,15 @@ def parse_maishift_profile_to_records_once(
 
     static_records_count = len(static_records)
 
+    server_function_attempted = False
+    server_function_fallback_used = False
+    server_records_count = 0
+    server_info: dict[str, Any] = {}
+
     browser_attempted = False
     browser_fallback_used = False
     browser_records_count = 0
+    playwright_records_count = 0
     browser_info: dict[str, Any] = {}
 
     selected_records = static_records
@@ -1524,18 +2256,41 @@ def parse_maishift_profile_to_records_once(
     )
 
     if should_use_browser:
-        browser_attempted = True
+        server_function_attempted = True
 
-        browser_records, browser_info = fetch_records_with_browser_retry(
+        server_records, server_info = fetch_records_with_server_function(
             profile_url=records_url,
-            remaining_seconds=remaining_seconds,
+            charts=charts,
         )
 
-        browser_records_count = len(browser_records)
+        server_records_count = len(server_records)
+        browser_records_count = server_records_count
 
-        if browser_records_count > static_records_count:
-            selected_records = browser_records
+        if server_records_count > static_records_count:
+            selected_records = server_records
             browser_fallback_used = True
+            server_function_fallback_used = True
+
+        should_use_playwright = (
+            server_records_count < MIN_ACCEPTABLE_EXTRACTED_RECORDS
+            or is_count_near_partial_50(server_records_count)
+        )
+
+        if should_use_playwright:
+            browser_attempted = True
+
+            browser_records, browser_info = fetch_records_with_browser_retry(
+                profile_url=records_url,
+                remaining_seconds=remaining_seconds,
+            )
+
+            playwright_records_count = len(browser_records)
+            browser_records_count = max(browser_records_count, playwright_records_count)
+
+            if playwright_records_count > max(static_records_count, server_records_count):
+                selected_records = browser_records
+                browser_fallback_used = True
+                server_function_fallback_used = False
 
     merged_records = merge_best50_flags(
         records=selected_records,
@@ -1580,7 +2335,11 @@ def parse_maishift_profile_to_records_once(
         "records_unmatched_count": unmatched_count,
         "home_best50_count": len(best50_records),
         "static_records_count": static_records_count,
+        "server_function_attempted": server_function_attempted,
+        "server_function_fallback_used": server_function_fallback_used,
+        "server_records_count": server_records_count,
         "browser_records_count": browser_records_count,
+        "playwright_records_count": playwright_records_count,
         "browser_attempted": browser_attempted,
         "browser_fallback_used": browser_fallback_used,
         "partial_50_failure": partial_50_failure,
@@ -1600,6 +2359,9 @@ def parse_maishift_profile_to_records_once(
 
     if browser_info:
         profile_info["browser_parse_info"] = browser_info
+
+    if server_info:
+        profile_info["server_function_parse_info"] = server_info
 
     profile_info["unmatched_samples"] = [
         {
