@@ -5,6 +5,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
+*.pyo
+*.pyd
+
 # ------------------------------------------------------------
 # Virtual environments
 # ------------------------------------------------------------
@@ -14,11 +17,13 @@ back/venv/
 front/venv/
 
 # ------------------------------------------------------------
-# Environment variables
+# Environment variables / secrets
 # ------------------------------------------------------------
 .env
 .env.*
 !.env.example
+*.pem
+*.key
 
 # ------------------------------------------------------------
 # IDE / editor
@@ -63,11 +68,26 @@ tools/archive/
 *.log
 
 # ------------------------------------------------------------
-# Keep service data CSV files
+# Local backup files
+# ------------------------------------------------------------
+*_backup_*.py
+*_final_verified.py
+recommender_backup_*.py
+app_backup_*.py
+
+# ------------------------------------------------------------
+# maishift local cache / collected user records
+# ------------------------------------------------------------
+back/data/profile_urls.csv
+back/data/raw_user_best50.csv
+back/data/raw_user_records.csv
+back/data/collect_maishift_profiles_failed.csv
+
+# ------------------------------------------------------------
+# Project base data to keep
 # ------------------------------------------------------------
 # Do NOT ignore:
 # back/data/maimai_charts_13_15.csv
-# back/data/profile_urls.csv
-# back/data/raw_user_best50.csv
 # back/data/cohort_chart_stats.csv
 # back/data/level_distribution_stats.csv
+# back/data/new_versions.json

@@ -18,10 +18,17 @@ APP_TITLE = "Maigym"
 
 GOAL_OPTIONS = {
     "레이팅 상승": "rating_up",
-    "실력 향상": "skill_up",
     "약점 보완": "weakness",
     "역보더 탐색": "reverse_border",
     "나와 비슷한 유저 추천": "similar_user",
+}
+
+
+GOAL_DESCRIPTIONS = {
+    "레이팅 상승": "NEW/OLD Best50 바닥 레이팅을 실제로 넘길 수 있는 곡을 우선합니다.",
+    "약점 보완": "이미 플레이한 곡 중 스코어가 낮거나 안정화 가치가 큰 곡을 우선합니다.",
+    "역보더 탐색": "100.5%에 근접했지만 아직 넘기지 못한 곡을 찾습니다.",
+    "나와 비슷한 유저 추천": "유사 레이팅·Best50 패턴의 유저/cohort 근거가 있는 미플레이 곡을 우선합니다.",
 }
 
 
@@ -450,6 +457,68 @@ def format_number(value: Any, digits: int = 2) -> str:
         return "-"
 
 
+def format_rating_value(value: Any, digits: int = 0) -> str:
+    try:
+        if value is None or value == "":
+            return "-"
+
+        if isinstance(value, float) and math.isnan(value):
+            return "-"
+
+        numeric = float(value)
+
+        if digits <= 0:
+            return str(int(round(numeric)))
+
+        return f"{numeric:.{digits}f}"
+
+    except Exception:
+        return "-"
+
+
+def format_floor_gain(value: Any) -> str:
+    try:
+        if value is None or value == "":
+            return "-"
+
+        numeric = float(value)
+
+        if math.isnan(numeric):
+            return "-"
+
+        if numeric > 0:
+            return f"+{numeric:.0f}"
+
+        return f"{numeric:.0f}"
+
+    except Exception:
+        return "-"
+
+
+def format_data_source(value: Any) -> str:
+    text = str(value or "").strip()
+
+    labels = {
+        "local_user_records_cache": "로컬 전체 기록 캐시",
+        "local_csv_cache": "로컬 Best50 캐시",
+        "live_maishift": "maishift 실시간 파싱",
+        "live_maishift_hybrid_best50": "실시간 파싱 + 로컬 Best50 보정",
+        "memory_cache": "메모리 캐시",
+    }
+
+    return labels.get(text, text or "-")
+
+
+def get_user_floor_summary(result: dict[str, Any]) -> dict[str, Any]:
+    debug = result.get("debug") or {}
+    summary = debug.get("user_floor_summary") or {}
+
+    if isinstance(summary, dict):
+        return summary
+
+    return {}
+
+
 def bool_to_text(value: Any) -> str:
     return "예" if bool(value) else "아니오"
 
@@ -630,13 +699,31 @@ def render_profile_info(result: dict[str, Any], developer_mode: bool = False) ->
         or 0
     )
 
+    floor_summary = get_user_floor_summary(result)
+    cache_data_source = (
+        result.get("profile_data_source")
+        or cache_info.get("data_source")
+        or profile.get("data_source")
+        or profile.get("profile_data_source")
+    )
+
+    new_floor = floor_summary.get("new_floor")
+    old_floor = floor_summary.get("old_floor")
+    total_best50_count = (
+        floor_summary.get("total_best50_count")
+        or profile.get("local_best50_count")
+        or profile.get("best50_count")
+        or profile.get("total_best50_count")
+    )
+
     render_section_heading("입력 프로필", "Profile")
 
     stats = [
         ("프로필", nickname),
-        ("Rating", rating),
-        ("추출 기록", extracted_count),
-        ("매칭 기록", matched_count),
+        ("RATING", rating),
+        ("NEW 바닥 레이팅", format_rating_value(new_floor)),
+        ("OLD 바닥 레이팅", format_rating_value(old_floor)),
+        ("BEST50", total_best50_count if total_best50_count not in [None, ""] else "-"),
     ]
     stat_cards = "".join(
         (
@@ -664,6 +751,10 @@ def render_profile_info(result: dict[str, Any], developer_mode: bool = False) ->
     if developer_mode:
         with st.expander("개발자용 프로필 파싱 정보", expanded=False):
             st.write(f"미매칭 기록 수: {unmatched_count}")
+            st.write(f"데이터 출처: {format_data_source(cache_data_source)}")
+            st.write(f"NEW floor: {format_rating_value(new_floor)}")
+            st.write(f"OLD floor: {format_rating_value(old_floor)}")
+            st.write(f"Best50 count: {total_best50_count}")
             st.json(profile)
 
 
@@ -675,6 +766,9 @@ def render_applied_conditions(result: dict[str, Any]) -> None:
     chart_type = debug.get("selected_chart_type", "-")
     current_band = debug.get("current_band", "-")
     target_band = debug.get("target_band", "-")
+    current_bands_used = debug.get("current_bands_used") or [current_band]
+    target_bands_used = debug.get("target_bands_used") or [target_band]
+    profile_data_source = result.get("profile_data_source") or (result.get("profile_cache") or {}).get("data_source")
 
     render_section_heading("적용된 추천 조건", "Conditions")
     render_stat_strip([
@@ -682,6 +776,9 @@ def render_applied_conditions(result: dict[str, Any]) -> None:
         ("주력 레벨", main_level),
         ("채보 타입", str(chart_type).upper()),
         ("레이팅 구간", f"{current_band} → {target_band}"),
+        ("현재 band 사용", ", ".join(map(str, current_bands_used))),
+        ("목표 band 사용", ", ".join(map(str, target_bands_used))),
+        ("프로필 출처", format_data_source(profile_data_source)),
     ])
 
 
@@ -707,6 +804,11 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
 
     reverse_border = bool(rec.get("reverse_border", False))
     reverse_border_gap = rec.get("reverse_border_gap", 0.0)
+
+    expected_rating_100_5 = rec.get("expected_rating_100_5")
+    floor_section = rec.get("floor_section") or "-"
+    applicable_floor = rec.get("applicable_floor")
+    floor_gain = rec.get("floor_gain")
 
     reason = rec.get("reason", "")
     target = rec.get("target", "")
@@ -753,37 +855,56 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
                 unsafe_allow_html=True,
             )
 
-            render_stat_strip([
+            stat_items = [
                 ("레벨", level),
-                ("내부상수", internal_level),
+                ("보면상수", internal_level),
                 ("타입", str(chart_type).upper()),
-                ("달성률", format_score(achievement, played)),
-                ("Best 50", bool_to_text(is_best50)),
-            ])
+                ("스코어", format_score(achievement, played)),
+                ("BEST50", bool_to_text(is_best50)),
+            ]
+
+            if expected_rating_100_5 not in [None, ""]:
+                stat_items.append(("100.5% 레이팅", format_rating_value(expected_rating_100_5)))
+
+            if applicable_floor not in [None, ""]:
+                stat_items.append(("바닥 레이팅", format_rating_value(applicable_floor)))
+
+            if floor_gain not in [None, ""]:
+                stat_items.append(("얻는 레이팅", format_floor_gain(floor_gain)))
+
+            render_stat_strip(stat_items)
+
+            reason_blocks: list[str] = []
 
             if reverse_border:
                 try:
-                    st.markdown(
+                    reason_blocks.append(
                         (
-                            '<div class="song-reason">'
-                            f"<strong>100.5%까지</strong> {float(reverse_border_gap):.4f}% 남았습니다."
-                            "</div>"
-                        ),
-                        unsafe_allow_html=True,
+                            f"<strong>100.5%까지</strong> "
+                            f"{float(reverse_border_gap):.4f}% 남았습니다."
+                        )
                     )
                 except Exception:
                     pass
 
+            floor_gain_label = rec.get("floor_gain_label")
+
+            if floor_gain_label:
+                reason_blocks.append(
+                    f"<strong>바닥 레이팅</strong> · {escape_html(floor_gain_label)}"
+                )
+
             if reason:
                 target_text = f"<strong>{escape_html(target)}</strong> · " if target else ""
-                st.markdown(
-                    (
-                        '<div class="song-reason">'
-                        f"{target_text}{escape_html(reason)}"
-                        "</div>"
-                    ),
-                    unsafe_allow_html=True,
-                )
+                reason_blocks.append(f"{target_text}{escape_html(reason)}")
+
+            if reason_blocks:
+                with st.expander("추천 이유 보기", expanded=False):
+                    for block in reason_blocks:
+                        st.markdown(
+                            f'<div class="song-reason">{block}</div>',
+                            unsafe_allow_html=True,
+                        )
 
             if developer_mode:
                 with st.expander("개발자용 추천 상세", expanded=False):
@@ -799,7 +920,12 @@ def render_recommendation_card(rec: dict[str, Any], developer_mode: bool = False
                     st.write(f"후보 유형: {rec.get('candidate_label')}")
                     st.write(f"현재 곡별 레이팅: {rec.get('current_rating')}")
                     st.write(f"100.5% 기준 최대 레이팅: {rec.get('max_rating')}")
+                    st.write(f"100.5% 예상 레이팅: {rec.get('expected_rating_100_5')}")
                     st.write(f"레이팅 상승 여지: {rec.get('rating_gain')}")
+                    st.write(f"floor 구분: {rec.get('floor_section')}")
+                    st.write(f"바닥 레이팅: {rec.get('applicable_floor')}")
+                    st.write(f"얻는 레이팅: {rec.get('floor_gain')}")
+                    st.write(f"floor_gain_label: {rec.get('floor_gain_label')}")
                     st.write(f"현재 레이팅 구간 Best50 등장률: {rec.get('current_best50_rate')}")
                     st.write(f"상위 레이팅 구간 Best50 등장률: {rec.get('target_best50_rate')}")
                     st.write(f"현재 레이팅 구간 평균 달성률: {rec.get('current_avg_achievement')}")
@@ -823,8 +949,16 @@ def render_recommendations(result: dict[str, Any], developer_mode: bool = False)
     )
 
     summary = result.get("summary", "")
+    debug = result.get("debug") or {}
+    selected_main_level = str(debug.get("selected_main_level", ""))
+    limited_level_15_pool = bool(debug.get("limited_level_15_pool", False))
+    hide_summary_for_level_15 = (
+        result.get("goal") == "rating_up"
+        and selected_main_level == "15"
+        and limited_level_15_pool
+    )
 
-    if developer_mode and summary:
+    if developer_mode and summary and not hide_summary_for_level_15:
         st.info(summary)
 
     if not recommendations:
@@ -1418,7 +1552,14 @@ def render_sidebar_form() -> dict[str, Any] | None:
             "추천 목표",
             list(GOAL_OPTIONS.keys()),
             index=0,
+            help=(
+                "레이팅 상승은 NEW/OLD Best50 바닥 레이팅을 실제로 넘길 수 있는 곡을 우선합니다. "
+                "약점 보완은 현재 기록이 낮거나 안정화가 필요한 곡을 우선합니다. "
+                "역보더 탐색은 100.5%에 근접한 곡을 찾습니다. "
+                "나와 비슷한 유저 추천은 유사 유저/cohort 근거가 있는 미플레이 곡을 우선합니다."
+            ),
         )
+        st.caption(GOAL_DESCRIPTIONS.get(goal_label, ""))
 
         main_level = st.selectbox(
             "주력 레벨",
@@ -1490,8 +1631,8 @@ def render_intro() -> None:
             <div class="hero-kicker">maimai DX recommender</div>
             <h1>{APP_TITLE}</h1>
             <p>
-                maishift 프로필 기록과 cohort 통계를 조합해 지금 고를 만한 채보를
-                빠르게 정리합니다.
+                maishift 프로필 기록, NEW/OLD Best50 바닥 레이팅, cohort 통계를 조합해
+                레이팅 상승, 약점 보완, 역보더, 유사 유저 기반 후보를 정리합니다.
             </p>
             <div class="hero-chip-row">
                 <span class="hero-chip is-cyan">maishift profile</span>
@@ -1527,7 +1668,7 @@ def main() -> None:
         with st.expander("개발자용 요청 payload", expanded=False):
             st.json(payload)
 
-    with st.spinner("maishift 프로필을 파싱하고 추천을 생성하는 중입니다..."):
+    with st.spinner("프로필 캐시 또는 maishift 기록을 확인하고 추천을 생성하는 중입니다..."):
         try:
             result = call_recommend_by_url(payload)
         except Exception as exc:

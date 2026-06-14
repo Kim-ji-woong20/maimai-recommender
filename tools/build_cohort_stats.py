@@ -1,5 +1,8 @@
-﻿import math
+﻿from __future__ import annotations
+
+import math
 import re
+import sys
 import time
 import unicodedata
 from pathlib import Path
@@ -20,7 +23,14 @@ if CURRENT_FILE.parent.name == "tools":
 else:
     PROJECT_ROOT = CURRENT_FILE.parent
 
-DATA_DIR = PROJECT_ROOT / "back" / "data"
+BACK_DIR = PROJECT_ROOT / "back"
+DATA_DIR = BACK_DIR / "data"
+
+if str(BACK_DIR) not in sys.path:
+    sys.path.insert(0, str(BACK_DIR))
+
+from rating_bands import get_ordered_bands, parse_rating_band_low, rating_to_band
+
 
 PROFILE_URLS_PATH = DATA_DIR / "profile_urls.csv"
 CHARTS_PATH = DATA_DIR / "maimai_charts_13_15.csv"
@@ -56,6 +66,7 @@ def get_rating_factor(achievement: float) -> float:
     for threshold, factor in RATING_FACTORS:
         if achievement >= threshold:
             return factor
+
     return 0.0
 
 
@@ -76,6 +87,7 @@ def calculate_chart_rating(internal_level: float, achievement: float) -> int:
 def normalize_line(text: str) -> str:
     text = unicodedata.normalize("NFKC", str(text))
     text = text.replace("\u200b", "")
+
     return text.strip()
 
 
@@ -110,6 +122,7 @@ def html_to_visible_lines(html: str) -> list[str]:
 
     for img in soup.find_all("img"):
         alt = img.get("alt")
+
         if alt:
             img.replace_with(f"\n{alt}\n")
 
@@ -158,7 +171,10 @@ def is_stop_header(line: str) -> bool:
     }
 
 
-def parse_level_from_fragments(lines: list[str], start_idx: int) -> tuple[float | None, int]:
+def parse_level_from_fragments(
+    lines: list[str],
+    start_idx: int,
+) -> tuple[float | None, int]:
     """
     Examples:
     14 . 2      -> 14.2
@@ -205,7 +221,10 @@ def parse_achievement_start(lines: list[str], start_idx: int) -> int | None:
     return None
 
 
-def parse_achievement_from_index(lines: list[str], achievement_idx: int) -> tuple[float, str, int]:
+def parse_achievement_from_index(
+    lines: list[str],
+    achievement_idx: int,
+) -> tuple[float, str, int]:
     achievement = float(lines[achievement_idx])
     rank = lines[achievement_idx + 2] if achievement_idx + 2 < len(lines) else ""
 
@@ -260,7 +279,10 @@ def extract_best50_records_from_lines(lines: list[str]) -> list[dict]:
             displayed_rank = "".join(lines[i + 1:rating_idx])
             chart_rating = int(lines[rating_idx])
 
-            internal_level, title_start_idx = parse_level_from_fragments(lines, rating_idx + 1)
+            internal_level, title_start_idx = parse_level_from_fragments(
+                lines,
+                rating_idx + 1,
+            )
 
             if internal_level is None:
                 i += 1
@@ -275,7 +297,10 @@ def extract_best50_records_from_lines(lines: list[str]) -> list[dict]:
             title_parts = lines[title_start_idx:achievement_idx]
             title = " ".join(title_parts).strip()
 
-            achievement, rank, end_idx = parse_achievement_from_index(lines, achievement_idx)
+            achievement, rank, end_idx = parse_achievement_from_index(
+                lines,
+                achievement_idx,
+            )
 
             records.append({
                 "title": title,
@@ -299,7 +324,10 @@ def extract_best50_records_from_lines(lines: list[str]) -> list[dict]:
 # Matching with base chart DB
 # ------------------------------------------------------------
 
-def match_chart_ids(records: list[dict], charts: pd.DataFrame) -> tuple[list[dict], list[dict]]:
+def match_chart_ids(
+    records: list[dict],
+    charts: pd.DataFrame,
+) -> tuple[list[dict], list[dict]]:
     charts = charts.copy()
     charts["title_norm"] = charts["title"].apply(normalize_title)
 
@@ -366,7 +394,7 @@ def match_chart_ids(records: list[dict], charts: pd.DataFrame) -> tuple[list[dic
 
         chosen = candidates.sort_values(
             ["level_diff", "difficulty_priority"],
-            ascending=[True, False]
+            ascending=[True, False],
         ).iloc[0]
 
         matched_record = {
@@ -378,8 +406,8 @@ def match_chart_ids(records: list[dict], charts: pd.DataFrame) -> tuple[list[dic
             "level": chosen["level"],
             "base_internal_level": float(chosen["internal_level"]),
             "category": chosen.get("category", ""),
-            "song_version": chosen.get("song_version", ""),
-            "chart_version": chosen.get("chart_version", ""),
+            "song_version": chosen.get("version", chosen.get("song_version", "")),
+            "chart_version": chosen.get("sheet_version", chosen.get("chart_version", "")),
             "is_new": bool(chosen.get("is_new", False)),
         }
 
@@ -396,13 +424,50 @@ def add_rank_flags(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
     df["is_sss_or_higher"] = df["achievement"] >= 100.0
-    df["is_sssplus"] = df["achievement"] >= 100.5
+    df["is_sss_plus"] = df["achievement"] >= 100.5
 
     return df
 
 
-def build_cohort_chart_stats(raw_df: pd.DataFrame, profile_df: pd.DataFrame) -> pd.DataFrame:
-    raw_df = add_rank_flags(raw_df)
+def sort_by_rating_band(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty or "rating_band" not in df.columns:
+        return df
+
+    out = df.copy()
+    out["_rating_band_low"] = out["rating_band"].apply(parse_rating_band_low)
+    out["_rating_band_low"] = out["_rating_band_low"].fillna(999999)
+
+    sort_cols = ["_rating_band_low"]
+    ascending = [True]
+
+    if "best50_rate" in out.columns:
+        sort_cols += ["best50_rate"]
+        ascending += [False]
+
+    if "sss_plus_rate" in out.columns:
+        sort_cols += ["sss_plus_rate"]
+        ascending += [False]
+
+    if "avg_chart_rating" in out.columns:
+        sort_cols += ["avg_chart_rating"]
+        ascending += [False]
+
+    out = out.sort_values(sort_cols, ascending=ascending)
+    out = out.drop(columns=["_rating_band_low"])
+
+    return out.reset_index(drop=True)
+
+
+def build_cohort_chart_stats(
+    raw_df: pd.DataFrame,
+    profile_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    rating_band x chart_id 단위 cohort 통계를 생성한다.
+
+    recommender.py의 extract_band_features()가 찾는 컬럼명을 직접 제공한다.
+    """
+    raw_df = add_rank_flags(raw_df).copy()
 
     band_user_counts = (
         profile_df.groupby("rating_band")["profile_id"]
@@ -413,11 +478,13 @@ def build_cohort_chart_stats(raw_df: pd.DataFrame, profile_df: pd.DataFrame) -> 
     grouped = raw_df.groupby(["rating_band", "chart_id"], as_index=False)
 
     stats = grouped.agg(
+        record_count=("profile_id", "count"),
         player_count=("profile_id", "nunique"),
+        best50_count=("profile_id", "count"),
         avg_achievement=("achievement", "mean"),
         median_achievement=("achievement", "median"),
         sss_rate=("is_sss_or_higher", "mean"),
-        sssplus_rate=("is_sssplus", "mean"),
+        sss_plus_rate=("is_sss_plus", "mean"),
         avg_chart_rating=("chart_rating", "mean"),
         max_chart_rating=("chart_rating", "max"),
         title=("title", "first"),
@@ -427,32 +494,80 @@ def build_cohort_chart_stats(raw_df: pd.DataFrame, profile_df: pd.DataFrame) -> 
         chart_type=("chart_type", "first"),
         category=("category", "first"),
         is_new=("is_new", "first"),
+        best50_section=("best50_section", "first"),
     )
 
-    stats["total_users_in_band"] = stats["rating_band"].map(band_user_counts)
-    stats["best50_rate"] = stats["player_count"] / stats["total_users_in_band"]
+    stats["band_user_count"] = stats["rating_band"].map(band_user_counts).fillna(0).astype(int)
+    stats["total_users_in_band"] = stats["band_user_count"]
+
+    stats["best50_rate"] = 0.0
+    valid_user_mask = stats["band_user_count"] > 0
+    stats.loc[valid_user_mask, "best50_rate"] = (
+        stats.loc[valid_user_mask, "player_count"]
+        / stats.loc[valid_user_mask, "band_user_count"]
+    )
+
+    # recommender.py 호환용 alias
+    stats["user_count"] = stats["band_user_count"]
+    stats["profile_count"] = stats["band_user_count"]
+    stats["best50_user_count"] = stats["best50_count"]
+    stats["sssplus_rate"] = stats["sss_plus_rate"]
 
     numeric_cols = [
         "avg_achievement",
         "median_achievement",
         "sss_rate",
+        "sss_plus_rate",
         "sssplus_rate",
         "avg_chart_rating",
         "best50_rate",
     ]
 
     for col in numeric_cols:
-        stats[col] = stats[col].round(4)
+        stats[col] = pd.to_numeric(stats[col], errors="coerce").fillna(0.0).round(4)
 
-    stats = stats.sort_values(
-        ["rating_band", "best50_rate", "sssplus_rate", "avg_chart_rating"],
-        ascending=[True, False, False, False],
-    )
+    stats = sort_by_rating_band(stats)
 
-    return stats
+    ordered_columns = [
+        "rating_band",
+        "chart_id",
+        "record_count",
+        "player_count",
+        "best50_count",
+        "best50_user_count",
+        "band_user_count",
+        "user_count",
+        "profile_count",
+        "total_users_in_band",
+        "best50_rate",
+        "avg_achievement",
+        "median_achievement",
+        "sss_rate",
+        "sss_plus_rate",
+        "sssplus_rate",
+        "avg_chart_rating",
+        "max_chart_rating",
+        "title",
+        "difficulty",
+        "level",
+        "internal_level",
+        "chart_type",
+        "category",
+        "is_new",
+        "best50_section",
+    ]
+
+    for col in ordered_columns:
+        if col not in stats.columns:
+            stats[col] = ""
+
+    return stats[ordered_columns]
 
 
-def build_level_distribution_stats(raw_df: pd.DataFrame, profile_df: pd.DataFrame) -> pd.DataFrame:
+def build_level_distribution_stats(
+    raw_df: pd.DataFrame,
+    profile_df: pd.DataFrame,
+) -> pd.DataFrame:
     raw_df = add_rank_flags(raw_df).copy()
 
     raw_df["internal_level_rounded"] = raw_df["internal_level"].round(1)
@@ -463,41 +578,60 @@ def build_level_distribution_stats(raw_df: pd.DataFrame, profile_df: pd.DataFram
         .to_dict()
     )
 
-    grouped = raw_df.groupby(["rating_band", "internal_level_rounded"], as_index=False)
+    grouped = raw_df.groupby(
+        ["rating_band", "internal_level_rounded"],
+        as_index=False,
+    )
 
     stats = grouped.agg(
         record_count=("profile_id", "count"),
         player_count=("profile_id", "nunique"),
+        best50_count=("profile_id", "count"),
         avg_achievement=("achievement", "mean"),
         median_achievement=("achievement", "median"),
         sss_rate=("is_sss_or_higher", "mean"),
-        sssplus_rate=("is_sssplus", "mean"),
+        sss_plus_rate=("is_sss_plus", "mean"),
         avg_chart_rating=("chart_rating", "mean"),
     )
 
     stats = stats.rename(columns={"internal_level_rounded": "internal_level"})
 
-    stats["total_users_in_band"] = stats["rating_band"].map(band_user_counts)
-    stats["coverage_rate"] = stats["player_count"] / stats["total_users_in_band"]
+    stats["band_user_count"] = stats["rating_band"].map(band_user_counts).fillna(0).astype(int)
+    stats["total_users_in_band"] = stats["band_user_count"]
+
+    stats["coverage_rate"] = 0.0
+    valid_user_mask = stats["band_user_count"] > 0
+    stats.loc[valid_user_mask, "coverage_rate"] = (
+        stats.loc[valid_user_mask, "player_count"]
+        / stats.loc[valid_user_mask, "band_user_count"]
+    )
+
+    stats["user_count"] = stats["band_user_count"]
+    stats["profile_count"] = stats["band_user_count"]
+    stats["sssplus_rate"] = stats["sss_plus_rate"]
 
     numeric_cols = [
         "avg_achievement",
         "median_achievement",
         "sss_rate",
+        "sss_plus_rate",
         "sssplus_rate",
         "avg_chart_rating",
         "coverage_rate",
     ]
 
     for col in numeric_cols:
-        stats[col] = stats[col].round(4)
+        stats[col] = pd.to_numeric(stats[col], errors="coerce").fillna(0.0).round(4)
+
+    stats["_rating_band_low"] = stats["rating_band"].apply(parse_rating_band_low)
+    stats["_rating_band_low"] = stats["_rating_band_low"].fillna(999999)
 
     stats = stats.sort_values(
-        ["rating_band", "internal_level"],
+        ["_rating_band_low", "internal_level"],
         ascending=[True, True],
-    )
+    ).drop(columns=["_rating_band_low"])
 
-    return stats
+    return stats.reset_index(drop=True)
 
 
 # ------------------------------------------------------------
@@ -510,17 +644,45 @@ def load_profile_urls() -> pd.DataFrame:
 
     df = pd.read_csv(PROFILE_URLS_PATH)
 
-    required_cols = {"profile_id", "profile_url", "rating", "rating_band"}
-
+    required_cols = {"profile_id", "profile_url", "rating"}
     missing = required_cols - set(df.columns)
 
     if missing:
         raise ValueError(f"profile_urls.csv missing columns: {missing}")
 
-    df = df.drop_duplicates(subset=["profile_url"], keep="first")
-    df = df[df["rating_band"].notna()]
+    df = df.drop_duplicates(subset=["profile_url"], keep="first").copy()
 
-    return df
+    df["profile_id"] = df["profile_id"].fillna("").astype(str)
+    df["profile_url"] = df["profile_url"].fillna("").astype(str)
+    df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+
+    df = df[
+        (df["profile_id"].str.len() > 0)
+        & (df["profile_url"].str.len() > 0)
+        & (df["rating"].notna())
+    ].copy()
+
+    df["rating"] = df["rating"].astype(int)
+
+    # 핵심 변경:
+    # profile_urls.csv에 기존 500점 rating_band가 있어도 신뢰하지 않고,
+    # back/rating_bands.py의 custom band 기준으로 항상 재계산한다.
+    df["rating_band"] = df["rating"].apply(rating_to_band)
+
+    df = df[df["rating_band"] != "unknown"].copy()
+
+    return df.reset_index(drop=True)
+
+
+def print_rating_band_counts(profile_df: pd.DataFrame) -> None:
+    available_bands = get_ordered_bands(
+        profile_df["rating_band"].dropna().astype(str).unique().tolist()
+    )
+
+    counts = profile_df["rating_band"].value_counts().to_dict()
+
+    for band in available_bands:
+        print(f"{band}: {counts.get(band, 0)}")
 
 
 def main():
@@ -532,8 +694,15 @@ def main():
     profile_df = load_profile_urls()
     charts_df = pd.read_csv(CHARTS_PATH)
 
-    print("\nprofile count by rating band:")
-    print(profile_df["rating_band"].value_counts())
+    charts_df["chart_type"] = charts_df["chart_type"].fillna("").astype(str)
+    charts_df["title"] = charts_df["title"].fillna("").astype(str)
+    charts_df["internal_level"] = pd.to_numeric(
+        charts_df["internal_level"],
+        errors="coerce",
+    ).fillna(0.0)
+
+    print("\nprofile count by custom rating band:")
+    print_rating_band_counts(profile_df)
 
     all_rows = []
     failed_rows = []
@@ -559,6 +728,8 @@ def main():
                 failed_rows.append({
                     "profile_id": profile_id,
                     "profile_url": profile_url,
+                    "rating": rating,
+                    "rating_band": rating_band,
                     "reason": "no_best50_records",
                 })
                 print("[failed] no best50 records")
@@ -615,14 +786,20 @@ def main():
                     "song_version": rec["song_version"],
                     "chart_version": rec["chart_version"],
                     "is_new": rec["is_new"],
+                    "is_best50": True,
                 })
 
-            print(f"[ok] extracted={len(records)}, matched={len(matched)}, unmatched={len(unmatched)}")
+            print(
+                f"[ok] extracted={len(records)}, "
+                f"matched={len(matched)}, unmatched={len(unmatched)}"
+            )
 
         except Exception as e:
             failed_rows.append({
                 "profile_id": profile_id,
                 "profile_url": profile_url,
+                "rating": rating,
+                "rating_band": rating_band,
                 "reason": str(e),
             })
             print(f"[failed] {e}")
@@ -668,8 +845,11 @@ def main():
     print(f"saved: {OUT_FAILED_PATH}")
     print(f"saved: {OUT_UNMATCHED_PATH}")
 
-    print("\nraw rows by rating band:")
+    print("\nraw rows by custom rating band:")
     print(raw_df["rating_band"].value_counts())
+
+    print("\ncohort stats columns:")
+    print(list(cohort_stats_df.columns))
 
     print("\ncohort stats preview:")
     print(cohort_stats_df.head(10))
