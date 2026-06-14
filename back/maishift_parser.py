@@ -1289,12 +1289,14 @@ def build_chart_lookup(charts: pd.DataFrame) -> dict[str, list[dict[str, Any]]]:
         item = {
             "chart_id": str(row.get("chart_id", "")),
             "title": str(row.get("title", "")),
+            "title_key": key,
             "chart_type": chart_type,
             "internal_level": internal_level,
             "difficulty": str(row.get("difficulty", "")),
         }
 
         lookup.setdefault(key, []).append(item)
+        lookup.setdefault("__all__", []).append(item)
 
     return lookup
 
@@ -1304,28 +1306,6 @@ def match_raw_record_to_chart(
     chart_lookup: dict[str, list[dict[str, Any]]],
 ) -> dict[str, Any] | None:
     title_key = normalize_compact_title(record.title)
-    candidates = chart_lookup.get(title_key, [])
-
-    if not candidates:
-        return None
-
-    filtered = [
-        candidate
-        for candidate in candidates
-        if candidate["chart_type"] == record.chart_type
-    ]
-
-    if not filtered:
-        return None
-
-    level_filtered = [
-        candidate
-        for candidate in filtered
-        if abs(candidate["internal_level"] - record.internal_level) <= 0.11
-    ]
-
-    if not level_filtered:
-        return None
 
     def sort_key(candidate: dict[str, Any]) -> tuple[float, int]:
         diff = abs(candidate["internal_level"] - record.internal_level)
@@ -1339,7 +1319,71 @@ def match_raw_record_to_chart(
 
         return diff, difficulty_priority
 
-    return sorted(level_filtered, key=sort_key)[0]
+    def filter_by_type_and_level(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        typed = [
+            candidate
+            for candidate in candidates
+            if candidate["chart_type"] == record.chart_type
+        ]
+
+        if not typed:
+            return []
+
+        level_filtered = [
+            candidate
+            for candidate in typed
+            if abs(candidate["internal_level"] - record.internal_level) <= 0.11
+        ]
+
+        return level_filtered
+
+    # 1차: 기존 방식. compact title이 완전히 같은 경우.
+    exact_candidates = chart_lookup.get(title_key, [])
+    exact_filtered = filter_by_type_and_level(exact_candidates)
+
+    if exact_filtered:
+        return sorted(exact_filtered, key=sort_key)[0]
+
+    # 2차 fallback:
+    # maishift home Best50에서 일부 곡명이 축약되어 들어오는 경우가 있다.
+    # 예:
+    # - Retribution -> Retribution ～ Cycle of Redemption ～
+    # - ouroboros -> ouroboros -twin stroke of the end-
+    # - Sqlupp -> Sqlupp (Camellia's "Sqleipd*Hiytex" Remix)
+    # - felys -> felys -final remix-
+    #
+    # 단, prefix/contains 매칭은 오매칭 위험이 있으므로
+    # chart_type과 internal_level이 맞고, 후보가 정확히 1개일 때만 인정한다.
+    if not title_key:
+        return None
+
+    all_candidates = chart_lookup.get("__all__", [])
+    type_level_candidates = filter_by_type_and_level(all_candidates)
+
+    if not type_level_candidates:
+        return None
+
+    fallback_candidates = []
+
+    for candidate in type_level_candidates:
+        candidate_key = str(candidate.get("title_key") or normalize_compact_title(candidate.get("title", "")))
+
+        if not candidate_key:
+            continue
+
+        if (
+            candidate_key.startswith(title_key)
+            or title_key.startswith(candidate_key)
+            or (len(title_key) >= 4 and title_key in candidate_key)
+            or (len(candidate_key) >= 4 and candidate_key in title_key)
+        ):
+            fallback_candidates.append(candidate)
+
+    # 안전장치: 후보가 하나로 확정될 때만 fallback 매칭을 허용한다.
+    if len(fallback_candidates) == 1:
+        return fallback_candidates[0]
+
+    return None
 
 
 def raw_records_to_dataframe(
