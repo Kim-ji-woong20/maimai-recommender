@@ -1,44 +1,288 @@
-# Maigym
+# maimai DX 추천 웹 애플리케이션
 
-maishift 공개 프로필 기록을 파싱해서 maimai DX 고레벨 채보를 추천하는 로컬 웹 앱입니다.
+Streamlit, FastAPI, Docker, AWS EC2를 이용해 구현한 maimai DX 채보 추천 웹 애플리케이션입니다.  
+사용자가 maishift 프로필 URL을 입력하면 FastAPI 서버가 플레이 기록을 분석하고, Streamlit 화면에서 추천 결과를 확인할 수 있습니다.
 
-## 구성
+이 프로젝트는 단순한 곡 목록 조회가 아니라, 실제 플레이 기록을 바탕으로 “지금 이 유저에게 어떤 곡을 추천할 수 있는가”를 계산하는 것을 목표로 했습니다.
 
-- `back/`: FastAPI 백엔드입니다. maishift 프로필 파싱, 캐시, 추천 API를 담당합니다.
-- `front/`: Streamlit 프론트엔드입니다. 추천 조건 입력, 결과 카드, PNG 이미지 저장을 담당합니다.
-- `tools/`: 곡 DB와 cohort 통계를 갱신하거나 maishift 데이터를 점검하는 유지보수 스크립트입니다.
-- `back/data/`: 앱 실행에 필요한 CSV/JSON 데이터입니다.
+---
 
-## 로컬 실행
+## 1. 프로젝트 개요
 
-백엔드:
+maimai DX는 SEGA의 아케이드 리듬게임입니다.  
+음악에 맞춰 화면과 버튼을 조작하는 게임이며, 각 곡에는 여러 난이도의 채보가 존재합니다. 사용자는 곡별 달성률을 높이면서 개인 레이팅을 올릴 수 있습니다.
 
-```powershell
-cd C:\maimai-recommender\back
-.\venv\Scripts\python.exe -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+이 프로젝트에서는 maimai DX를 하나의 추천 시스템 도메인으로 보았습니다. 일반적인 음악 추천 서비스가 사용자의 취향을 기준으로 곡을 추천한다면, 이 프로젝트는 리듬게임의 특성에 맞춰 **현재 기록을 갱신할 가능성이 있는 곡**, **레이팅 상승에 도움이 되는 곡**, **약점 보완에 필요한 곡**을 추천하도록 설계했습니다.
+
+사용자는 maishift 프로필 URL을 입력합니다. FastAPI 서버는 해당 프로필의 플레이 기록과 Best50 정보를 가져오고, 내부 채보 데이터베이스와 매칭한 뒤 추천 결과를 계산합니다. Streamlit 프론트엔드는 이 결과를 카드 형태로 보여줍니다.
+
+추천 과정에서는 단순히 많이 플레이되는 인기곡을 보여주는 것이 아니라, 사용자의 현재 기록을 기준으로 “실제로 갱신할 가치가 있는 곡”을 계산합니다. 예를 들어 이미 충분히 높은 점수를 받은 곡은 제외하고, 현재 점수를 조금 더 올렸을 때 개인 레이팅 상승에 도움이 되는 곡을 우선적으로 추천합니다. 또한 비슷한 레이팅 구간의 다른 유저들이 자주 갱신한 곡 통계도 함께 반영했습니다.
+
+즉, 이 서비스는 “인기 있는 곡”보다 “현재 유저에게 연습할 가치가 있는 곡”을 추천하는 데 초점을 둔 웹 애플리케이션입니다.
+
+---
+
+## 2. 과제 요구사항
+
+본 프로젝트는 기말 대체 과제의 요구사항에 맞춰 다음 구조로 구현했습니다.
+
+| 요구사항 | 구현 내용 |
+|---|---|
+| Streamlit 프론트엔드 | `front/app.py`에서 사용자 입력, 추천 옵션, 결과 화면 구현 |
+| FastAPI 백엔드 | `back/main.py`에서 추천 API 제공 |
+| 추천 알고리즘 | `back/recommender.py`에서 레이팅 상승, 약점 보완, 역보더, 유사 유저 추천 구현 |
+| 데이터 처리 | maimai 채보 DB, maishift 프로필 기록, Best50 기록, 레이팅 구간 통계 사용 |
+| Docker | 프론트엔드와 백엔드를 각각 컨테이너로 구성 |
+| Docker Compose | `docker-compose.yml`로 Streamlit + FastAPI 동시 실행 |
+| AWS EC2 배포 | EC2에서 Docker Compose 기반으로 서비스 실행 |
+| API 연동 | Streamlit → FastAPI → JSON 응답 → Streamlit 출력 흐름 구현 |
+
+---
+
+## 3. 주요 기능
+
+### 3.1 maishift 프로필 URL 입력
+
+사용자는 maishift 프로필 URL을 입력하여 자신의 플레이 기록을 불러올 수 있습니다.
+
+예시:
+
+```text
+https://maimai.shiftpsh.com/profile/none/home
 ```
 
-프론트엔드:
+프로필 데이터는 최초 요청 시 FastAPI 서버에서 파싱합니다. 이후에는 캐시를 사용하여 더 빠르게 추천 결과를 확인할 수 있습니다. 최신 기록을 다시 반영하고 싶은 경우에는 “프로필 캐시 무시하고 새로 파싱” 옵션을 사용할 수 있습니다.
 
-```powershell
-cd C:\maimai-recommender\front
-python -m streamlit run app.py --server.address 127.0.0.1 --server.port 8501
+---
+
+### 3.2 추천 모드
+
+현재 구현된 추천 모드는 다음 네 가지입니다.
+
+| 추천 모드 | 설명 |
+|---|---|
+| 레이팅 상승 추천 | 현재 기록에서 레이팅 상승 가능성이 있는 채보 추천 |
+| 약점 보완 추천 | 플레이한 곡 중 달성률이 낮거나 보완 여지가 있는 채보 추천 |
+| 역보더 추천 | 목표 점수에 근접했지만 아직 넘기지 못한 채보 추천 |
+| 유사 유저 추천 | 비슷한 레이팅 구간 유저들의 Best50 통계를 활용한 추천 |
+
+각 모드는 같은 데이터를 사용하지만 추천 목적이 다릅니다.  
+예를 들어 레이팅 상승 추천은 점수를 올렸을 때 개인 레이팅에 반영될 가능성이 높은 곡을 우선하고, 약점 보완 추천은 이미 플레이했지만 아직 기록이 낮은 곡을 중심으로 보여줍니다.
+
+---
+
+### 3.3 필터 기능
+
+추천 결과는 다음 조건으로 필터링할 수 있습니다.
+
+- 추천 목표
+- 메인 레벨
+- 채보 타입
+- 추천 개수
+
+이를 통해 사용자는 자신의 목적에 맞게 추천 결과를 좁혀 볼 수 있습니다.
+
+---
+
+## 4. 도메인 용어 설명
+
+maimai를 모르는 사용자를 위해 프로젝트에서 사용하는 주요 용어를 정리했습니다.
+
+| 용어 | 설명 |
+|---|---|
+| 채보 | 특정 곡의 특정 난이도 패턴입니다. 같은 곡이라도 난이도별로 다른 채보가 존재합니다. |
+| 달성률 | 곡을 플레이한 결과 점수입니다. 본 프로젝트에서는 주로 100.5%를 목표 기준으로 사용합니다. |
+| 레이팅 | 유저의 실력을 나타내는 숫자 지표입니다. 높은 난이도의 곡에서 높은 달성률을 기록할수록 상승합니다. |
+| Best50 | 개인 레이팅에 반영되는 상위 기록 묶음입니다. |
+| NEW / OLD | 최신 버전 곡과 기존 버전 곡을 구분한 Best50 영역입니다. |
+| floor | 현재 Best50에 들어가기 위해 넘어야 하는 최소 기준점입니다. |
+| 역보더 | 목표 점수에 아주 근접했지만 아깝게 넘기지 못한 기록을 의미합니다. |
+
+---
+
+## 5. 추천 로직 요약
+
+### 5.1 레이팅 상승 추천
+
+레이팅 상승 추천은 사용자의 현재 기록을 기준으로, 점수를 더 올렸을 때 개인 레이팅 상승에 도움이 될 가능성이 있는 곡을 찾습니다.
+
+주요 판단 기준은 다음과 같습니다.
+
+- 현재 곡별 달성률
+- 현재 곡별 레이팅
+- 100.5% 달성 시 예상 레이팅
+- 현재 Best50의 기준점
+- 이미 100.5% 이상 달성한 곡 제외
+- 비슷한 레이팅 구간 유저들의 Best50 등장률
+
+이미 100.5% 이상 달성한 곡은 추가 레이팅 상승 여지가 거의 없다고 보고 추천 후보에서 제외합니다.
+
+---
+
+### 5.2 NEW / OLD Best50 기준 반영
+
+maimai DX의 레이팅 구조에서는 최신 버전 곡과 기존 버전 곡이 구분됩니다.  
+이 프로젝트에서는 이를 반영하기 위해 NEW와 OLD 기준을 따로 계산했습니다.
+
+- NEW Best15: 최신 버전 계열 곡
+- OLD Best35: 기존 버전 계열 곡
+
+현재 프로젝트에서는 다음 버전을 NEW 대상으로 설정했습니다.
+
+```json
+{
+  "new_versions": [
+    "PRiSM PLUS",
+    "CiRCLE"
+  ]
+}
 ```
 
-브라우저에서 `http://127.0.0.1:8501`을 열고 maishift 프로필 URL을 입력합니다.
+이 설정은 `back/data/new_versions.json`에서 관리합니다.
 
-## 주요 API
+---
 
-- `GET /health`: 백엔드와 차트 DB 상태 확인
-- `POST /recommend-by-url`: maishift 프로필 URL 기반 추천 생성
-- `POST /recommend`: 내부 테스트용 추천 생성
+### 5.3 유사 유저 기반 추천
 
-## 데이터 갱신
+유사 유저 추천은 입력 유저와 비슷한 레이팅 구간의 유저들이 자주 Best50에 포함한 곡을 참고합니다.
 
-필요할 때 `tools/update_database.py`를 실행해 프로필 URL 수집, Best 50 기록 수집, cohort 통계 생성을 순서대로 수행할 수 있습니다.
+이 방식은 단순히 전체 인기곡을 추천하는 것이 아니라, “현재 유저와 비슷하거나 조금 더 높은 구간의 유저들이 실제로 성과를 낸 곡”을 참고한다는 점에서 차이가 있습니다.
 
-```powershell
-python tools\update_database.py
+---
+
+### 5.4 캐시 정책
+
+maishift 프로필 파싱은 외부 사이트 응답 상태에 영향을 받을 수 있습니다.  
+따라서 서비스 안정성을 위해 캐시를 사용합니다.
+
+- 기본 요청: 캐시 우선 사용
+- 새로 파싱: `force_refresh=true`
+- Streamlit 옵션: “프로필 캐시 무시하고 새로 파싱”
+- 캐시 파일: `raw_user_records.csv`, `raw_user_best50.csv`
+
+시연에서는 보통 캐시를 사용하는 편이 안정적입니다. 추천 요청 자체는 항상 Streamlit에서 FastAPI로 전달되며, FastAPI 내부에서 캐시 또는 새 파싱 결과를 사용합니다.
+
+---
+
+## 6. 사용 데이터
+
+본 프로젝트에서 사용하는 주요 데이터는 다음과 같습니다.
+
+| 데이터 | 설명 |
+|---|---|
+| `maimai_charts_13_15.csv` | 추천 대상 채보 데이터 |
+| `cohort_chart_stats.csv` | 레이팅 구간별 채보 통계 |
+| `level_distribution_stats.csv` | 레벨별 통계 데이터 |
+| `new_versions.json` | NEW 대상 버전 설정 |
+| maishift 프로필 기록 | 입력 유저의 플레이 기록과 Best50 정보 |
+
+일부 maishift 프로필에서는 곡 제목이 축약되어 표시됩니다. 이 경우 내부 채보 DB와 정확히 일치하지 않을 수 있으므로, 제목 정규화와 fallback 매칭을 추가하여 매칭 안정성을 높였습니다.
+
+---
+
+## 7. 프로젝트 구조
+
+```text
+maimai-recommender/
+├─ back/
+│  ├─ main.py
+│  ├─ recommender.py
+│  ├─ maishift_parser.py
+│  ├─ rating_bands.py
+│  ├─ schemas.py
+│  ├─ requirements.txt
+│  ├─ Dockerfile
+│  └─ data/
+│     ├─ maimai_charts_13_15.csv
+│     ├─ cohort_chart_stats.csv
+│     ├─ level_distribution_stats.csv
+│     └─ new_versions.json
+├─ front/
+│  ├─ app.py
+│  ├─ requirements.txt
+│  └─ Dockerfile
+├─ tools/
+│  ├─ collect_profile_urls.py
+│  ├─ collect_maishift_profiles.py
+│  ├─ build_cohort_stats.py
+│  └─ update_database.py
+├─ docker-compose.yml
+├─ README.md
+└─ .gitignore
 ```
 
-생성되는 디버그 로그와 임시 산출물은 `.gitignore`에 포함되어 있습니다.
+---
+
+## 8. API 흐름
+
+본 프로젝트의 기본 요청 흐름은 다음과 같습니다.
+
+```text
+사용자 입력
+→ Streamlit 프론트엔드
+→ FastAPI 백엔드 요청
+→ 프로필 기록 파싱 또는 캐시 조회
+→ 추천 알고리즘 실행
+→ JSON 응답 반환
+→ Streamlit 화면에 추천 결과 출력
+```
+
+주요 API 엔드포인트:
+
+```text
+POST /recommend-by-url
+```
+
+요청 예시:
+
+```json
+{
+  "profile_url": "https://maimai.shiftpsh.com/profile/none/home",
+  "goal": "rating_up",
+  "main_level": "14+",
+  "chart_type": "any",
+  "top_n": 10,
+  "force_refresh": false
+}
+```
+
+---
+
+## 9. 데이터 갱신
+
+프로필 URL 수집, 레이팅 수집, cohort 통계 생성을 한 번에 실행할 수 있습니다.
+
+```bash
+python tools/update_database.py
+```
+
+URL 수집을 건너뛰고 기존 프로필 기준으로만 갱신하려면 다음과 같이 실행합니다.
+
+```bash
+python tools/update_database.py --skip-url-collect
+```
+
+이미 수집된 데이터로 통계만 다시 생성할 수도 있습니다.
+
+```bash
+python tools/update_database.py --skip-url-collect --skip-collect
+```
+
+---
+
+## 10. 고려사항
+
+- maishift 프로필 기록이 항상 동일한 형태로 제공되지 않아, 여러 방식의 수집과 fallback 처리를 함께 사용했습니다.
+- 일부 곡 제목이 축약되어 표시되는 경우가 있어, 제목 정규화와 prefix 기반 fallback 매칭을 추가했습니다.
+- 외부 사이트 요청 실패에 대비해 캐시를 사용하도록 구성했습니다.
+- 추천 결과가 단순 인기곡 목록이 되지 않도록, 사용자의 현재 기록과 Best50 기준점을 함께 고려했습니다.
+- Docker Compose를 이용해 FastAPI와 Streamlit을 분리된 컨테이너로 실행하도록 구성했습니다.
+
+---
+
+## 11. 한계점
+
+- maishift 웹페이지 구조가 바뀌면 파싱 로직 수정이 필요할 수 있습니다.
+- 추천 결과는 수집된 유저 표본에 영향을 받습니다.
+- maimai의 실제 내부 레이팅 계산식과 완전히 동일하다고 보장할 수는 없으며, 본 프로젝트에서는 추천 우선순위 계산을 위한 근사값으로 사용했습니다.
+- 고레이팅 유저의 경우 Best50 기준점이 높기 때문에 추천 후보가 고난도 채보에 집중될 수 있습니다.

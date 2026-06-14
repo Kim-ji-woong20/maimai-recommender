@@ -397,6 +397,29 @@ def ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
         if col not in df.columns:
             df[col] = ""
 
+    # pandas 2.x dtype 충돌 방지:
+    # CSV에서 빈 컬럼은 float64로 추론될 수 있으므로,
+    # 상태/에러/URL/시각 컬럼은 명시적으로 문자열(object) 컬럼으로 고정한다.
+    text_columns = [
+        "profile_id",
+        "profile_url",
+        "source_url",
+        "first_seen_at",
+        "last_seen_at",
+        "rating_band",
+        "collected_at",
+        "rating_collected_at",
+        "rating_collect_status",
+        "rating_collect_error",
+    ]
+
+    for col in text_columns:
+        df[col] = df[col].fillna("").astype("object")
+
+    # rating만 숫자 컬럼으로 유지한다.
+    # 빈 문자열은 NaN으로 정리해서 이후 coerce_rating / normalize_rating_columns와 충돌하지 않게 한다.
+    df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+
     return df
 
 
