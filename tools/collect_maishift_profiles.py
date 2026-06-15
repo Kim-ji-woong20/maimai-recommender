@@ -241,6 +241,42 @@ def html_to_visible_lines(html_text: str) -> list[str]:
     return [line for line in lines if line]
 
 
+def parse_trailing_rating_from_line(line: str) -> int | None:
+    """
+    maishift profile 텍스트에서 닉네임이 숫자로 끝나는 경우
+    nickname + rating이 한 줄로 붙어 나오는 케이스를 처리한다.
+
+    예:
+    - hwlove1615280 -> 15280
+    - loty_1115234 -> 15234
+
+    왼쪽부터 5자리를 잡으면 닉네임 끝 숫자가 섞이므로,
+    반드시 오른쪽 끝 5자리를 rating 후보로 본다.
+    단, 순수 숫자만 있는 긴 문자열은 오탐 위험이 있어 이 fallback에서는 제외한다.
+    """
+    text = normalize_line(line)
+    compact = re.sub(r"[,\s]", "", text)
+
+    match = re.search(r"(.+?)(\d{5})$", compact)
+
+    if not match:
+        return None
+
+    prefix, rating_text = match.groups()
+
+    # nickname이 포함된 결합형만 이 fallback에서 처리한다.
+    # 1615280 같은 순수 숫자 문자열은 오탐 가능성이 있어 제외한다.
+    if not re.search(r"[^0-9]", prefix):
+        return None
+
+    rating = int(rating_text)
+
+    if is_plausible_rating(rating):
+        return rating
+
+    return None
+
+
 def parse_rating_near_play_count(lines: list[str]) -> int | None:
     """
     maishift profile HTML에서 rating은 보통 '플레이 카운트' 직전의
@@ -282,6 +318,13 @@ def parse_rating_near_play_count(lines: list[str]) -> int | None:
 
                 if is_plausible_rating(rating):
                     return rating
+
+            # 닉네임이 숫자로 끝나 rating과 붙은 경우
+            # 예: hwlove16 + 15280 -> hwlove1615280
+            rating = parse_trailing_rating_from_line(line)
+
+            if rating is not None:
+                return rating
 
         # 2) 한 자리 숫자들이 분리되어 있는 경우
         digits = []

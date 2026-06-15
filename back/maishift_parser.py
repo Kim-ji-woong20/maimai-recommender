@@ -922,33 +922,103 @@ def parse_rank_combo_sync(tokens: list[str]) -> tuple[str, str, str]:
     return rank, combo, sync
 
 
+def parse_trailing_profile_rating_from_line(line: Any) -> int | None:
+    """
+    maishift home/profile 텍스트에서 nickname + rating이 결합된 케이스를 처리한다.
+
+    예:
+    - hwlove1615280 -> 15280
+    - loty_1115234 -> 15234
+
+    왼쪽부터 5자리를 찾지 않고 오른쪽 끝 5자리를 rating으로 본다.
+    순수 숫자만 있는 긴 문자열은 오탐 위험 때문에 제외한다.
+    """
+    text = normalize_spaces(line)
+    compact = re.sub(r"[,\s]", "", text)
+
+    match = re.search(r"(.+?)(\d{5})$", compact)
+
+    if not match:
+        return None
+
+    prefix, rating_text = match.groups()
+
+    if not re.search(r"[^0-9]", prefix):
+        return None
+
+    rating = int(rating_text)
+
+    if 10000 <= rating <= 20000:
+        return rating
+
+    return None
+
+
+def split_profile_name_and_rating(line: Any) -> tuple[str, int | None]:
+    """
+    친구 코드 직전 줄이 nickname + rating으로 붙어 있는 경우를 분리한다.
+
+    예:
+    - hwlove1615280 -> (hwlove16, 15280)
+    - loty_1115234 -> (loty_11, 15234)
+    """
+    text = normalize_spaces(line)
+    compact = re.sub(r"[,\s]", "", text)
+
+    match = re.search(r"(.+?)(\d{5})$", compact)
+
+    if not match:
+        return text, None
+
+    prefix, rating_text = match.groups()
+
+    if not re.search(r"[^0-9]", prefix):
+        return text, None
+
+    rating = int(rating_text)
+
+    if not (10000 <= rating <= 20000):
+        return text, None
+
+    # 원문 표시를 최대한 보존하면서 맨 끝 5자리 rating만 제거한다.
+    name = re.sub(r"[,\s]*\d\s*\d\s*\d\s*\d\s*\d\s*$", "", text).strip()
+
+    return name or text, rating
+
+
 def extract_profile_info_from_lines(
     lines: list[str],
     profile_url: str,
 ) -> dict[str, Any]:
     profile_id = extract_profile_id_from_url(profile_url)
     nickname = ""
+    rating = None
 
     for i, line in enumerate(lines):
         if line == "친구 코드" and i >= 1:
-            nickname = lines[i - 1]
+            raw_nickname_line = lines[i - 1]
+            parsed_nickname, parsed_rating = split_profile_name_and_rating(raw_nickname_line)
+            nickname = parsed_nickname or normalize_spaces(raw_nickname_line)
+
+            if parsed_rating is not None:
+                rating = parsed_rating
+
             break
 
     if not nickname and profile_id:
         nickname = profile_id
 
-    rating = None
-
     # rating이 숫자 5자리로 분리되어 나오는 경우 처리
-    for i in range(0, max(0, len(lines) - 4)):
-        five = lines[i:i + 5]
+    if rating is None:
+        for i in range(0, max(0, len(lines) - 4)):
+            five = lines[i:i + 5]
 
-        if all(re.fullmatch(r"\d", normalize_spaces(x)) for x in five):
-            candidate = int("".join(five))
+            if all(re.fullmatch(r"\d", normalize_spaces(x)) for x in five):
+                candidate = int("".join(five))
 
-            if 10000 <= candidate <= 20000:
-                rating = candidate
-                break
+                if 10000 <= candidate <= 20000:
+                    rating = candidate
+                    break
 
     if rating is None:
         for i, line in enumerate(lines):
@@ -961,6 +1031,16 @@ def extract_profile_info_from_lines(
                         break
 
             if rating is not None:
+                break
+
+    # 닉네임이 숫자로 끝나는 경우 nickname + rating이 붙어 한 줄로 나오는 케이스 처리.
+    # 예: hwlove16 + 15280 -> hwlove1615280
+    if rating is None:
+        for line in lines[:80]:
+            candidate = parse_trailing_profile_rating_from_line(line)
+
+            if candidate is not None:
+                rating = candidate
                 break
 
     if rating is None:
